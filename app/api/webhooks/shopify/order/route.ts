@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
 
     // Step 1: Find or create user
     let user = await getUserByEmail(order.customer.email);
+    let isNewUser = false;
 
     if (!user) {
       // Check if they have a Shopify customer ID already
@@ -70,6 +71,7 @@ export async function POST(request: NextRequest) {
 
       if (!user) {
         // Create new user
+        isNewUser = true;
         const fullName = `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim();
 
         // Check for referral code in multiple places
@@ -156,13 +158,14 @@ export async function POST(request: NextRequest) {
 
     console.log('Created commissions:', commissions.length);
 
-    // Step 4: Send magic link email for new customers to access dashboard
-    if (!user.has_auth_account) {
+    // Step 4: Send password setup email for new customers to access dashboard
+    // Only send if this is a newly created user (not an existing user making another purchase)
+    if (isNewUser) {
       try {
-        await sendMagicLinkEmail(supabaseAdmin, user.email, user.referral_code);
-        console.log('Sent magic link email to:', user.email);
+        await sendPasswordSetupEmail(supabaseAdmin, user.email, user.referral_code);
+        console.log('Sent password setup email to:', user.email);
       } catch (emailError) {
-        console.error('Failed to send magic link email:', emailError);
+        console.error('Failed to send password setup email:', emailError);
         // Don't fail the webhook if email fails
       }
     }
@@ -184,12 +187,36 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Send magic link email for passwordless login
- * Uses Supabase Auth to generate a secure one-time login link
+ * Send password setup email for new customers
+ * Uses Supabase Auth to generate a password reset link that serves as initial account setup
  */
-async function sendMagicLinkEmail(supabaseAdmin: any, email: string, referralCode: string) {
-  const { error } = await supabaseAdmin.auth.admin.generateLink({
-    type: 'magiclink',
+async function sendPasswordSetupEmail(supabaseAdmin: any, email: string, referralCode: string) {
+  // Try to create the user in Supabase Auth (if they don't exist)
+  // Note: This may fail if there's a database trigger conflict with the users table
+  const { data: authUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
+    email,
+    email_confirm: true, // Auto-confirm their email
+    user_metadata: {
+      referral_code: referralCode,
+    },
+  });
+
+  if (signUpError) {
+    if (signUpError.message?.includes('already registered')) {
+      console.log(`Auth user already exists for ${email}, sending password reset link`);
+    } else {
+      // Log the error but continue - we'll try to send the recovery link anyway
+      console.error('Warning: Error creating auth user:', signUpError.message);
+      console.log('Continuing to send password setup link...');
+    }
+  } else {
+    console.log(`Auth user created for ${email}`);
+  }
+
+  // Always try to generate and send the password recovery link
+  // This works whether the user was just created or already exists
+  const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'recovery',
     email,
     options: {
       redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
@@ -200,13 +227,12 @@ async function sendMagicLinkEmail(supabaseAdmin: any, email: string, referralCod
     throw error;
   }
 
-  // TODO: Send email via your email service (Klaviyo, SendGrid, etc.)
-  // For now, Supabase will send the default magic link email
-  // You can customize this by:
-  // 1. Getting the magic link from the response
-  // 2. Sending a custom email with your branding via Klaviyo
+  // TODO: Send custom branded email via Klaviyo with the password setup link
+  // For now, Supabase will send the default password recovery email
+  // Customize the email template in Supabase Dashboard → Authentication → Email Templates
+  // The link will be: data.properties.action_link
 
-  console.log(`Magic link generated for ${email} (Code: ${referralCode})`);
+  console.log(`Password setup email sent to ${email} (Code: ${referralCode})`);
 }
 
 /**

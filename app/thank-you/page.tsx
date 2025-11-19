@@ -22,6 +22,14 @@ function ThankYouContent() {
   const [copied, setCopied] = useState(false);
   const [socialLinks, setSocialLinks] = useState<any>(null);
 
+  // Password setup state
+  const [showPasswordSetup, setShowPasswordSetup] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [settingPassword, setSettingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+
   useEffect(() => {
     // Get order details from URL parameters
     // Shopify will pass: ?order_id=123&email=customer@email.com&name=John+Doe
@@ -99,6 +107,58 @@ function ThankYouContent() {
   const handleDownloadQR = () => {
     if (qrCodeDataUrl) {
       downloadQRCode(qrCodeDataUrl, `meatzy-referral-${referralCode}.png`);
+    }
+  };
+
+  const handlePasswordSetup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+
+    // Validation
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
+
+    setSettingPassword(true);
+
+    try {
+      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+      // Sign up the user with Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+        email: customerEmail,
+        password: password,
+        options: {
+          data: {
+            referral_code: referralCode,
+            full_name: customerName,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('Password setup error:', error);
+        setPasswordError(error.message || 'Failed to create account. Please try again.');
+      } else {
+        setPasswordSuccess(true);
+        setShowPasswordSetup(false);
+
+        // Auto-redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Password setup error:', error);
+      setPasswordError('An unexpected error occurred. Please try again.');
+    } finally {
+      setSettingPassword(false);
     }
   };
 
@@ -339,18 +399,128 @@ function ThankYouContent() {
               )}
             </div>
 
-            {/* Dashboard CTA */}
-            <div className="mt-8 text-center">
-              <a
-                href="/dashboard"
-                className="inline-block bg-white text-meatzy-olive font-display font-bold uppercase tracking-widest py-4 px-8 rounded-lg hover:bg-meatzy-mint transition-colors"
-              >
-                View Your Dashboard
-              </a>
-              <p className="text-sm mt-3 opacity-75">
-                Track your earnings, referrals, and network growth
-              </p>
-            </div>
+            {/* Password Setup Section */}
+            {!passwordSuccess && (
+              <div className="mt-8">
+                {!showPasswordSetup ? (
+                  <div className="text-center">
+                    <button
+                      onClick={() => setShowPasswordSetup(true)}
+                      className="inline-block bg-white text-meatzy-olive font-display font-bold uppercase tracking-widest py-4 px-8 rounded-lg hover:bg-meatzy-mint transition-colors shadow-lg"
+                    >
+                      Create Account Password
+                    </button>
+                    <p className="text-sm mt-3 opacity-75">
+                      Set a password to access your dashboard anytime
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                    <h3 className="text-xl font-bold uppercase tracking-wider mb-4 text-center">
+                      Set Your Password
+                    </h3>
+
+                    <form onSubmit={handlePasswordSetup} className="max-w-md mx-auto space-y-4">
+                      <div>
+                        <label className="block text-sm font-bold mb-2">
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          value={customerEmail}
+                          disabled
+                          className="w-full px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-bold mb-2">
+                          Password (min 8 characters)
+                        </label>
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full px-4 py-3 rounded-lg bg-white text-meatzy-olive border-2 border-white/30 focus:border-meatzy-gold focus:outline-none"
+                          placeholder="Enter password"
+                          required
+                          minLength={8}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-bold mb-2">
+                          Confirm Password
+                        </label>
+                        <input
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="w-full px-4 py-3 rounded-lg bg-white text-meatzy-olive border-2 border-white/30 focus:border-meatzy-gold focus:outline-none"
+                          placeholder="Confirm password"
+                          required
+                          minLength={8}
+                        />
+                      </div>
+
+                      {passwordError && (
+                        <div className="bg-red-500/20 border border-red-500 rounded-lg p-3 text-sm">
+                          {passwordError}
+                        </div>
+                      )}
+
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowPasswordSetup(false);
+                            setPassword('');
+                            setConfirmPassword('');
+                            setPasswordError('');
+                          }}
+                          className="flex-1 bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={settingPassword}
+                          className="flex-1 bg-meatzy-dill hover:bg-meatzy-dill/90 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {settingPassword ? 'Creating...' : 'Create Account'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Success Message */}
+            {passwordSuccess && (
+              <div className="mt-8 text-center">
+                <div className="bg-green-500/20 border border-green-500 rounded-lg p-6 mb-4">
+                  <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                  <h3 className="text-xl font-bold mb-2">Account Created!</h3>
+                  <p>Redirecting you to your dashboard...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Dashboard CTA - Only show if not setting up password */}
+            {!showPasswordSetup && !passwordSuccess && (
+              <div className="mt-8 text-center">
+                <p className="text-sm opacity-75 mb-4">
+                  Already have an account?
+                </p>
+                <a
+                  href="/dashboard"
+                  className="inline-block bg-white/20 hover:bg-white/30 text-white font-display font-bold uppercase tracking-widest py-3 px-6 rounded-lg transition-colors"
+                >
+                  Sign In to Dashboard
+                </a>
+              </div>
+            )}
           </div>
         )}
 
