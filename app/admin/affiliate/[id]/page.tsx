@@ -169,7 +169,7 @@ export default function AffiliateDetailPage() {
         .order('level')
         .order('created_at');
 
-      setTree((treeData || []) as TreeMember[]);
+      setTree((treeData || []) as unknown as TreeMember[]);
 
     } catch (error) {
       console.error('Error loading affiliate data:', error);
