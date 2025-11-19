@@ -26,10 +26,28 @@ export const ProductGrid: React.FC = () => {
     setAddingToCart(true);
 
     try {
+      console.log('=== ADDING PRODUCT TO CART ===');
+      console.log('Product:', product);
+      console.log('Product title:', product.title);
+      console.log('Product ID:', product.id);
+      console.log('Variants:', product.variants);
+
       // Get the first variant ID
       const variantId = product.variants.edges[0]?.node.id;
+      const variant = product.variants.edges[0]?.node;
+      console.log('Selected variant ID:', variantId);
+      console.log('Variant details:', variant);
+      console.log('Product availableForSale:', product.availableForSale);
+      console.log('Variant availableForSale:', variant?.availableForSale);
+
       if (!variantId) {
         alert('Product variant not available');
+        return;
+      }
+
+      if (!product.availableForSale || !variant?.availableForSale) {
+        console.error('Product or variant not available for sale!');
+        alert('This product is currently not available for purchase.');
         return;
       }
 
