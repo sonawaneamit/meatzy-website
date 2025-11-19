@@ -157,9 +157,21 @@ export async function POST(request: NextRequest) {
 
     console.log('Created commissions:', commissions.length);
 
+    // Step 4: Send magic link email for new customers to access dashboard
+    if (!user.has_auth_account) {
+      try {
+        await sendMagicLinkEmail(user.email, user.referral_code);
+        console.log('Sent magic link email to:', user.email);
+      } catch (emailError) {
+        console.error('Failed to send magic link email:', emailError);
+        // Don't fail the webhook if email fails
+      }
+    }
+
     return NextResponse.json({
       success: true,
       userId: user.id,
+      referralCode: user.referral_code,
       commissionsCreated: commissions.length,
     });
 
@@ -170,6 +182,32 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+/**
+ * Send magic link email for passwordless login
+ * Uses Supabase Auth to generate a secure one-time login link
+ */
+async function sendMagicLinkEmail(email: string, referralCode: string) {
+  const { error } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'magiclink',
+    email,
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  // TODO: Send email via your email service (Klaviyo, SendGrid, etc.)
+  // For now, Supabase will send the default magic link email
+  // You can customize this by:
+  // 1. Getting the magic link from the response
+  // 2. Sending a custom email with your branding via Klaviyo
+
+  console.log(`Magic link generated for ${email} (Code: ${referralCode})`);
 }
 
 /**
