@@ -1,0 +1,309 @@
+export const GET_ALL_PRODUCTS = `
+  query getAllProducts($first: Int = 25) {
+    products(first: $first) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          tags
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+            maxVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          featuredImage {
+            url
+            altText
+            width
+            height
+          }
+          images(first: 5) {
+            edges {
+              node {
+                url
+                altText
+                width
+                height
+              }
+            }
+          }
+          variants(first: 10) {
+            edges {
+              node {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                availableForSale
+                sku
+              }
+            }
+          }
+          availableForSale
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_BY_HANDLE = `
+  query getProductByHandle($handle: String!) {
+    productByHandle(handle: $handle) {
+      id
+      title
+      handle
+      description
+      descriptionHtml
+      tags
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+        maxVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      featuredImage {
+        url
+        altText
+        width
+        height
+      }
+      images(first: 10) {
+        edges {
+          node {
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+      variants(first: 20) {
+        edges {
+          node {
+            id
+            title
+            price {
+              amount
+              currencyCode
+            }
+            availableForSale
+            sku
+            selectedOptions {
+              name
+              value
+            }
+          }
+        }
+      }
+      options {
+        name
+        values
+      }
+      availableForSale
+    }
+  }
+`;
+
+export const GET_COLLECTIONS = `
+  query getCollections($first: Int = 10) {
+    collections(first: $first) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          image {
+            url
+            altText
+          }
+          products(first: 20) {
+            edges {
+              node {
+                id
+                title
+                handle
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                featuredImage {
+                  url
+                  altText
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_COLLECTION_BY_HANDLE = `
+  query getCollectionByHandle($handle: String!, $first: Int = 20) {
+    collectionByHandle(handle: $handle) {
+      id
+      title
+      handle
+      description
+      image {
+        url
+        altText
+      }
+      products(first: $first) {
+        edges {
+          node {
+            id
+            title
+            handle
+            description
+            tags
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            featuredImage {
+              url
+              altText
+              width
+              height
+            }
+            variants(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  availableForSale
+                  sku
+                }
+              }
+            }
+            availableForSale
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_CART = `
+  mutation createCart($input: CartInput!) {
+    cartCreate(input: $input) {
+      cart {
+        id
+        checkoutUrl
+        lines(first: 10) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  product {
+                    title
+                    featuredImage {
+                      url
+                      altText
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+          subtotalAmount {
+            amount
+            currencyCode
+          }
+        }
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const ADD_TO_CART = `
+  mutation addToCart($cartId: ID!, $lines: [CartLineInput!]!) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+        checkoutUrl
+        lines(first: 10) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id
+                  title
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  product {
+                    title
+                    featuredImage {
+                      url
+                      altText
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+          subtotalAmount {
+            amount
+            currencyCode
+          }
+        }
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;

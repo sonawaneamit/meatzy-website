@@ -1,0 +1,17 @@
+import { GraphQLClient } from 'graphql-request';
+
+const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
+const storefrontAccessToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+
+if (!domain || !storefrontAccessToken) {
+  throw new Error('Missing Shopify environment variables');
+}
+
+const endpoint = `https://${domain}/api/2024-10/graphql.json`;
+
+export const shopifyClient = new GraphQLClient(endpoint, {
+  headers: {
+    'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
+    'Content-Type': 'application/json',
+  },
+});
