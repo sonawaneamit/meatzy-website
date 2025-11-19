@@ -92,9 +92,12 @@ export default function AccountPage() {
 
         setWallet(walletData);
 
-        // Load Shopify orders if they have a customer ID
+        // Load Shopify orders - try by customer ID first, then by email
         if (user.shopify_customer_id) {
           await loadShopifyOrders(user.shopify_customer_id);
+        } else {
+          // No customer ID set, try loading by email
+          await loadShopifyOrdersByEmail(email);
         }
       } else {
         // Not in our system - check Shopify for orders
