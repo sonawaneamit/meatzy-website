@@ -7,6 +7,7 @@ import type { Cart, CreateCartResponse, AddToCartResponse } from './types';
  */
 export async function createCart(variantId: string, quantity: number = 1): Promise<Cart | null> {
   try {
+    console.log('Creating cart with variant:', variantId, 'quantity:', quantity);
     const data = await shopifyClient.request<CreateCartResponse>(CREATE_CART, {
       input: {
         lines: [
@@ -18,11 +19,14 @@ export async function createCart(variantId: string, quantity: number = 1): Promi
       },
     });
 
+    console.log('Cart creation response:', data);
+
     if (data.cartCreate.userErrors.length > 0) {
       console.error('Cart creation errors:', data.cartCreate.userErrors);
       return null;
     }
 
+    console.log('Cart created successfully:', data.cartCreate.cart.id);
     return data.cartCreate.cart;
   } catch (error) {
     console.error('Error creating cart:', error);
@@ -38,16 +42,20 @@ export async function addToCart(
   lines: { merchandiseId: string; quantity: number }[]
 ): Promise<Cart | null> {
   try {
+    console.log('Adding to cart:', cartId, 'lines:', lines);
     const data = await shopifyClient.request<AddToCartResponse>(ADD_TO_CART, {
       cartId,
       lines,
     });
+
+    console.log('Add to cart response:', data);
 
     if (data.cartLinesAdd.userErrors.length > 0) {
       console.error('Add to cart errors:', data.cartLinesAdd.userErrors);
       return null;
     }
 
+    console.log('Items added successfully to cart');
     return data.cartLinesAdd.cart;
   } catch (error) {
     console.error('Error adding to cart:', error);
@@ -68,6 +76,7 @@ export function getCartId(): string | null {
  */
 export function saveCartId(cartId: string): void {
   if (typeof window === 'undefined') return;
+  console.log('Saving cart ID to localStorage:', cartId);
   localStorage.setItem('shopify_cart_id', cartId);
 }
 
@@ -76,6 +85,7 @@ export function saveCartId(cartId: string): void {
  */
 export function saveCheckoutUrl(checkoutUrl: string): void {
   if (typeof window === 'undefined') return;
+  console.log('Saving checkout URL to localStorage:', checkoutUrl);
   localStorage.setItem('shopify_checkout_url', checkoutUrl);
 }
 
