@@ -134,3 +134,37 @@ export interface AddToCartResponse {
     }[];
   };
 }
+
+export interface Article {
+  id: string;
+  title: string;
+  handle: string;
+  excerpt?: string;
+  excerptHtml?: string;
+  content: string;
+  contentHtml: string;
+  publishedAt: string;
+  image?: Image;
+  tags: string[];
+  author?: {
+    name: string;
+  };
+}
+
+export interface Blog {
+  articles: {
+    edges: {
+      node: Article;
+    }[];
+  };
+}
+
+export interface BlogResponse {
+  blog: Blog;
+}
+
+export interface ArticleByHandleResponse {
+  blog: {
+    articleByHandle: Article;
+  };
+}

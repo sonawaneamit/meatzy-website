@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Product } from '../lib/shopify/types';
 import { getCollectionByHandle, createCart, addToCart as addToShopifyCart, getCartId, saveCartId, saveCheckoutUrl, getCheckoutUrl } from '../lib/shopify';
 import { AddonsModal } from './AddonsModal';
@@ -9,7 +10,6 @@ import { ArrowRight, Check, Star } from 'lucide-react';
 export const ProductGrid: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isSubscribe, setIsSubscribe] = useState(true); // Toggle for Subscribe vs One-time
   const [showAddonsModal, setShowAddonsModal] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
 
@@ -139,27 +139,12 @@ export const ProductGrid: React.FC = () => {
         <span className="text-meatzy-rare font-marker text-2xl md:text-3xl transform -rotate-2 mb-2 block">Best Sellers</span>
         <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-olive uppercase mb-6">Shop Our Boxes</h2>
         
-        {/* Subscribe vs One-Time Toggle */}
-        <div className="inline-flex bg-white border border-meatzy-mint rounded-full p-1 relative shadow-inner mb-8">
-            <button 
-                onClick={() => setIsSubscribe(true)}
-                className={`px-8 py-3 rounded-full text-sm font-bold uppercase tracking-wide transition-all ${isSubscribe ? 'bg-meatzy-welldone text-white shadow-md' : 'text-meatzy-olive hover:bg-gray-50'}`}
-            >
-                Subscribe & Save 20%
-            </button>
-            <button 
-                 onClick={() => setIsSubscribe(false)}
-                className={`px-8 py-3 rounded-full text-sm font-bold uppercase tracking-wide transition-all ${!isSubscribe ? 'bg-meatzy-welldone text-white shadow-md' : 'text-meatzy-olive hover:bg-gray-50'}`}
-            >
-                One-Time Purchase
-            </button>
-        </div>
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {products.map((product, index) => (
         <div key={product.id} className="flex flex-col bg-white rounded-xl overflow-hidden border border-meatzy-mint/50 shadow-lg hover:shadow-2xl transition-all duration-300 group relative">
-          
+
           {/* Best Seller Tag */}
           {index === 0 && (
               <div className="absolute top-4 left-4 z-20 bg-meatzy-rare text-white text-xs font-bold uppercase px-3 py-1 tracking-wider shadow-md">
@@ -168,18 +153,33 @@ export const ProductGrid: React.FC = () => {
           )}
 
           <div className="relative aspect-[5/4] overflow-hidden bg-gray-100">
-            <img 
-              src={product.featuredImage.url} 
-              alt={product.featuredImage.altText} 
-              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-            />
-            {isSubscribe && (
-                <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur text-meatzy-welldone px-3 py-1 text-xs font-bold border border-meatzy-welldone rounded-sm">
-                    Save $20 with Sub
-                </div>
+            {/* Check if this is Custom Box - if so, show simple image without hover effect */}
+            {product.title.toLowerCase().includes('custom box') || product.handle === 'custom-box' ? (
+              <img
+                src={product.featuredImage.url}
+                alt={product.featuredImage.altText}
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+              />
+            ) : (
+              <>
+                {/* First Image (Featured) */}
+                <img
+                  src={product.featuredImage.url}
+                  alt={product.featuredImage.altText}
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 absolute inset-0 z-10 group-hover:opacity-0"
+                />
+                {/* Second Image (Hover) - Only show if multiple images exist */}
+                {product.images && product.images.edges.length > 1 && (
+                  <img
+                    src={product.images.edges[1].node.url}
+                    alt={product.images.edges[1].node.altText}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 absolute inset-0 z-0"
+                  />
+                )}
+              </>
             )}
           </div>
-          
+
           <div className="p-6 flex flex-col flex-grow text-center md:text-left">
             <div className="flex justify-between items-start mb-2">
                 <h3 className="text-2xl font-black font-slab text-meatzy-olive uppercase leading-tight">{product.title}</h3>
@@ -191,7 +191,7 @@ export const ProductGrid: React.FC = () => {
                     <Star className="w-4 h-4 fill-current" />
                 </div>
             </div>
-            
+
             <p className="text-gray-500 text-sm mb-6 leading-relaxed flex-grow line-clamp-3">
               {product.description}
             </p>
@@ -206,7 +206,7 @@ export const ProductGrid: React.FC = () => {
                     <Check className="w-4 h-4 text-meatzy-dill" /> Free Shipping
                 </div>
             </div>
-            
+
             <div className="mt-auto pt-4 border-t border-gray-100">
                 <div className="flex justify-between items-end mb-4">
                     <div className="text-left">
@@ -218,21 +218,80 @@ export const ProductGrid: React.FC = () => {
                         </span>
                     </div>
                     <span className="text-xs font-bold text-meatzy-olive uppercase tracking-wide mb-1">
-                        {isSubscribe ? 'Per Box' : 'One Time'}
+                        Per Box
                     </span>
                 </div>
-                
-                <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={addingToCart}
-                    className="w-full bg-meatzy-olive text-white py-3 font-display font-bold uppercase tracking-widest hover:bg-meatzy-rare transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {addingToCart ? 'Adding...' : 'Add To Cart'}
-                </button>
+
+                {/* Different CTA based on product type */}
+                {product.title.toLowerCase().includes('custom box') || product.handle === 'custom-box' ? (
+                  <Link
+                    href="/build-box"
+                    className="w-full bg-meatzy-olive text-white py-3 font-display font-bold uppercase tracking-widest hover:bg-meatzy-rare transition-colors flex items-center justify-center gap-2"
+                  >
+                    Build Your Box
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/products/${product.handle}`}
+                    className="w-full bg-meatzy-olive text-white py-3 font-display font-bold uppercase tracking-widest hover:bg-meatzy-rare transition-colors flex items-center justify-center gap-2"
+                  >
+                    View Details
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                )}
             </div>
           </div>
         </div>
       ))}
+
+      {/* Quiz Card */}
+      <div className="flex flex-col bg-gradient-to-br from-meatzy-rare to-meatzy-welldone rounded-xl overflow-hidden border border-meatzy-rare shadow-lg hover:shadow-2xl transition-all duration-300 group relative">
+
+        <div className="relative aspect-[5/4] overflow-hidden bg-meatzy-olive/20 flex items-center justify-center">
+          <div className="text-white text-center p-8">
+            <svg className="w-24 h-24 mx-auto mb-4 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+            <div className="text-4xl font-black font-slab uppercase">?</div>
+          </div>
+        </div>
+
+        <div className="p-6 flex flex-col flex-grow text-center md:text-left bg-white">
+          <div className="mb-2">
+            <h3 className="text-2xl font-black font-slab text-meatzy-olive uppercase leading-tight">Not Sure Which Box?</h3>
+          </div>
+
+          <p className="text-gray-500 text-sm mb-6 leading-relaxed flex-grow">
+            Take our quick 60-second quiz and we'll recommend the perfect box for your lifestyle, dietary goals, and taste preferences.
+          </p>
+
+          <div className="space-y-2 mb-6">
+            <div className="flex items-center gap-2 text-xs text-meatzy-olive font-bold uppercase">
+              <Check className="w-4 h-4 text-meatzy-dill" /> 60 Seconds
+            </div>
+            <div className="flex items-center gap-2 text-xs text-meatzy-olive font-bold uppercase">
+              <Check className="w-4 h-4 text-meatzy-dill" /> Personalized Results
+            </div>
+          </div>
+
+          <div className="mt-auto pt-4 border-t border-gray-100">
+            <div className="mb-4 text-center">
+              <span className="text-sm text-gray-600 font-medium">
+                Find Your Perfect Match
+              </span>
+            </div>
+
+            <Link
+              href="/quiz"
+              className="w-full bg-meatzy-rare text-white py-3 font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-colors flex items-center justify-center gap-2"
+            >
+              Take the Quiz
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
 
     {/* Add-ons Modal */}

@@ -9,12 +9,12 @@ import { Testimonials } from '../components/Testimonials';
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col w-full overflow-x-hidden bg-meatzy-tallow font-sans selection:bg-meatzy-rare selection:text-white">
+    <main className="min-h-screen flex flex-col w-full overflow-x-hidden bg-meatzy-tallow font-sans selection:bg-meatzy-rare selection:text-white -mt-[140px]">
       <Hero />
       
       <HowItWorks />
 
-      <section id="shop" className="py-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <section id="shop" className="pt-12 pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
         <ProductGrid />
       </section>
       
@@ -44,7 +44,7 @@ export default function Home() {
                    </div>
               </div>
               <div className="w-full md:w-1/2 order-1 md:order-2">
-                   <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1000&auto=format&fit=crop" alt="Chef plating food" className="rounded-lg shadow-2xl border-4 border-meatzy-dill/20" />
+                   <img src="/gourmet.png" alt="Meatzy Gourmet" className="rounded-lg shadow-2xl border-4 border-meatzy-dill/20" />
               </div>
            </div>
       </section>

@@ -13,11 +13,11 @@ export const Features: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Feature 1 */}
+                {/* Feature 1 - Sourced for Flavor */}
                 <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img 
-                        src="https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop" 
-                        alt="Premium Steak" 
+                    <img
+                        src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?q=80&w=800&auto=format&fit=crop"
+                        alt="Grass-fed cattle on pasture"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
                     />
                     <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
@@ -28,11 +28,11 @@ export const Features: React.FC = () => {
                     </div>
                 </div>
 
-                 {/* Feature 2 */}
+                 {/* Feature 2 - Better Value */}
                  <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img 
-                        src="https://images.unsplash.com/photo-1553531384-cc64ac80f931?q=80&w=800&auto=format&fit=crop" 
-                        alt="Full box of food" 
+                    <img
+                        src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop"
+                        alt="Premium beef cuts"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
                     />
                     <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
@@ -43,11 +43,11 @@ export const Features: React.FC = () => {
                     </div>
                 </div>
 
-                 {/* Feature 3 */}
+                 {/* Feature 3 - Customize Your Box */}
                  <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img 
-                        src="https://images.unsplash.com/photo-1602498456745-e9503b30470b?q=80&w=800&auto=format&fit=crop" 
-                        alt="Variety of meats" 
+                    <img
+                        src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?q=80&w=800&auto=format&fit=crop"
+                        alt="Variety of premium meats"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
                     />
                     <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
@@ -58,11 +58,11 @@ export const Features: React.FC = () => {
                     </div>
                 </div>
 
-                 {/* Feature 4 */}
+                 {/* Feature 4 - Earn With Us */}
                  <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img 
-                        src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop" 
-                        alt="Friends dining" 
+                    <img
+                        src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop"
+                        alt="Prepared steak dinner"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
                     />
                     <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
@@ -79,9 +79,9 @@ export const Features: React.FC = () => {
                  <div className="w-full md:w-1/2">
                      <div className="relative">
                         <div className="absolute -top-4 -left-4 w-full h-full border-4 border-meatzy-dill rounded-lg"></div>
-                        <img 
-                            src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=800&auto=format&fit=crop" 
-                            alt="Sustainability Chef" 
+                        <img
+                            src="/meatzy-cares.png"
+                            alt="Meatzy Cares"
                             className="rounded-lg shadow-2xl relative z-10"
                         />
                      </div>

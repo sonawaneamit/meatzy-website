@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, Star, Users, Target, Lightbulb } from 'lucide
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen flex flex-col w-full overflow-x-hidden bg-meatzy-tallow font-sans">
+    <main className="min-h-screen flex flex-col w-full overflow-x-hidden bg-meatzy-tallow font-sans -mt-[140px]">
 
       {/* Hero Section - Matching homepage style */}
       <section className="relative min-h-[85vh] w-full flex items-center bg-meatzy-tallow overflow-hidden pt-32 lg:pt-28">

@@ -29,7 +29,9 @@ export default function RootLayout({
       >
         <Providers>
           <Navbar />
-          {children}
+          <main className="pt-[140px]">
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>

@@ -186,6 +186,16 @@ export const GET_COLLECTION_BY_HANDLE = `
               width
               height
             }
+            images(first: 10) {
+              edges {
+                node {
+                  url
+                  altText
+                  width
+                  height
+                }
+              }
+            }
             variants(first: 10) {
               edges {
                 node {
@@ -233,6 +243,64 @@ export const ADD_TO_CART = `
       userErrors {
         field
         message
+      }
+    }
+  }
+`;
+
+export const GET_BLOG_ARTICLES = `
+  query getBlogArticles($first: Int = 20) {
+    blog(handle: "recipes") {
+      articles(first: $first) {
+        edges {
+          node {
+            id
+            title
+            handle
+            excerpt
+            excerptHtml
+            content
+            contentHtml
+            publishedAt
+            image {
+              url
+              altText
+              width
+              height
+            }
+            tags
+            author {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_ARTICLE_BY_HANDLE = `
+  query getArticleByHandle($blogHandle: String!, $articleHandle: String!) {
+    blog(handle: $blogHandle) {
+      articleByHandle(handle: $articleHandle) {
+        id
+        title
+        handle
+        excerpt
+        excerptHtml
+        content
+        contentHtml
+        publishedAt
+        image {
+          url
+          altText
+          width
+          height
+        }
+        tags
+        author {
+          name
+        }
       }
     }
   }

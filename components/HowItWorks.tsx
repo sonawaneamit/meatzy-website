@@ -49,12 +49,6 @@ export const HowItWorks: React.FC = () => {
                     </p>
                 </div>
             </div>
-            
-            <div className="mt-16 text-center">
-                 <button className="bg-meatzy-olive text-white px-10 py-4 font-display font-bold uppercase tracking-widest hover:bg-meatzy-rare transition-colors">
-                    Start Your Subscription
-                 </button>
-            </div>
         </div>
     </section>
   );

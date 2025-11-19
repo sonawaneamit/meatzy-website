@@ -36,8 +36,8 @@ export const AiChef: React.FC = () => {
              </div>
              
              <h2 className="text-4xl md:text-5xl font-black font-slab mb-6 leading-tight">
-               Your Personal<br/>
-               <span className="text-meatzy-gold italic font-serif">Sous Chef</span>
+               <span className="text-meatzy-gold italic font-serif">Chef Meatsy</span><br/>
+               Your Personal Sous Chef
              </h2>
              
              <p className="text-gray-200 text-lg mb-8 leading-relaxed max-w-xl">
