@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
-import { Star, Check, ChevronDown, ShoppingCart, Truck, Shield, Award } from 'lucide-react';
+import { Star, Check, ChevronDown, ShoppingCart, Truck, Shield, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ProductImage {
   url: string;
@@ -68,7 +68,38 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
   const [expandedBoxItem, setExpandedBoxItem] = useState<number | null>(null);
   const [subscriptionFrequency, setSubscriptionFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | '6weeks' | 'bimonthly'>('monthly');
 
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+
   const totalPrice = basePrice * quantity + Array.from(selectedAddOns).reduce((sum, idx) => sum + addOns[idx].price, 0);
+
+  // Image navigation functions
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
+  };
+
+  // Swipe handling
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current - touchEndX.current > 50) {
+      // Swiped left
+      nextImage();
+    } else if (touchEndX.current - touchStartX.current > 50) {
+      // Swiped right
+      prevImage();
+    }
+  };
 
   // Show first 6 add-ons initially, then all when expanded
   const displayedAddOns = showAllAddOns ? addOns : addOns.slice(0, 6);
@@ -93,15 +124,54 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
           {/* Product Images */}
           <div className="space-y-4">
             {/* Main Product Image */}
-            <div className="aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30">
+            <div
+              className="aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onClick={nextImage}
+            >
               {productImages.length > 0 ? (
-                <Image
-                  src={productImages[currentImageIndex].url}
-                  alt={productImages[currentImageIndex].altText || 'Keto Box'}
-                  fill
-                  className="object-cover"
-                  priority
-                />
+                <>
+                  <Image
+                    src={productImages[currentImageIndex].url}
+                    alt={productImages[currentImageIndex].altText || 'Keto Box'}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+
+                  {/* Navigation Arrows - Desktop */}
+                  {productImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          prevImage();
+                        }}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-meatzy-olive rounded-full p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center"
+                      >
+                        <ChevronLeft className="w-6 h-6" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          nextImage();
+                        }}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-meatzy-olive rounded-full p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center"
+                      >
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Image Counter */}
+                  {productImages.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-bold">
+                      {currentImageIndex + 1} / {productImages.length}
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-meatzy-rare to-meatzy-welldone flex items-center justify-center">
                   <div className="text-center text-white p-8">
@@ -373,7 +443,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
               What's Inside Your Keto Box
             </h2>
             <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-              Hover or tap each item to learn more about what makes it special
+              Tap each item to learn more about what makes it special
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -381,8 +451,6 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
               <div
                 key={idx}
                 className="bg-white rounded-xl border-2 border-meatzy-mint/30 overflow-hidden hover:border-meatzy-rare transition-all cursor-pointer group"
-                onMouseEnter={() => setExpandedBoxItem(idx)}
-                onMouseLeave={() => setExpandedBoxItem(null)}
                 onClick={() => setExpandedBoxItem(expandedBoxItem === idx ? null : idx)}
               >
                 {/* Product Image */}

@@ -174,7 +174,7 @@ export default function BuildBoxPage() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
           {products.map((product) => {
             const isSelected = selectedProducts.has(product.id);
             const quantity = selectedProducts.get(product.id) || 0;
@@ -207,32 +207,32 @@ export default function BuildBoxPage() {
                 </div>
 
                 {/* Info */}
-                <div className="p-4">
-                  <h3 className="font-slab font-bold text-meatzy-olive text-base mb-2 line-clamp-2 min-h-[48px]">
+                <div className="p-3 md:p-4">
+                  <h3 className="font-slab font-bold text-meatzy-olive text-sm md:text-base mb-2 line-clamp-2 min-h-[40px] md:min-h-[48px]">
                     {product.title}
                   </h3>
 
                   {isSelected && price > 0 && (
-                    <div className="mb-3">
-                      <span className="text-sm font-medium text-gray-500">
+                    <div className="mb-2 md:mb-3">
+                      <span className="text-xs md:text-sm font-medium text-gray-500">
                         ${price.toFixed(2)} each
                       </span>
                     </div>
                   )}
 
                   {isSelected ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 md:gap-2">
                       <button
                         onClick={() => handleQuantityChange(product.id, -1)}
-                        className="flex-1 bg-meatzy-mint text-meatzy-olive px-3 py-2 rounded-lg font-bold hover:bg-meatzy-dill transition-colors"
+                        className="flex-1 bg-meatzy-mint text-meatzy-olive px-2 md:px-3 py-1.5 md:py-2 rounded-lg font-bold hover:bg-meatzy-dill transition-colors text-sm md:text-base"
                       >
                         -
                       </button>
-                      <span className="px-4 font-black text-meatzy-olive text-lg">{quantity}</span>
+                      <span className="px-2 md:px-4 font-black text-meatzy-olive text-base md:text-lg">{quantity}</span>
                       <button
                         onClick={() => handleQuantityChange(product.id, 1)}
                         disabled={!canAdd}
-                        className="flex-1 bg-meatzy-mint text-meatzy-olive px-3 py-2 rounded-lg font-bold hover:bg-meatzy-dill transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 bg-meatzy-mint text-meatzy-olive px-2 md:px-3 py-1.5 md:py-2 rounded-lg font-bold hover:bg-meatzy-dill transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
                       >
                         +
                       </button>
@@ -241,7 +241,7 @@ export default function BuildBoxPage() {
                     <button
                       onClick={() => handleToggleProduct(product.id)}
                       disabled={totalSelected >= MAX_PRODUCTS}
-                      className="w-full bg-meatzy-olive text-white py-2.5 rounded-lg font-display font-bold uppercase text-xs tracking-wider hover:bg-meatzy-rare transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-meatzy-olive text-white py-2 md:py-2.5 rounded-lg font-display font-bold uppercase text-[10px] md:text-xs tracking-wider hover:bg-meatzy-rare transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {totalSelected >= MAX_PRODUCTS ? 'Box Full' : 'Add to Box'}
                     </button>
