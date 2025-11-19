@@ -398,9 +398,14 @@ export default function AdminDashboard() {
                   return (
                     <tr key={affiliate.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-4 px-4">
-                        <div className="font-bold text-meatzy-olive">{affiliate.full_name || 'No name'}</div>
-                        <div className="text-sm text-gray-600">{affiliate.email}</div>
-                        <div className="text-xs text-gray-400">Joined {new Date(affiliate.created_at).toLocaleDateString()}</div>
+                        <button
+                          onClick={() => viewAffiliateDetails(affiliate.id)}
+                          className="text-left hover:underline"
+                        >
+                          <div className="font-bold text-meatzy-olive">{affiliate.full_name || 'No name'}</div>
+                          <div className="text-sm text-gray-600">{affiliate.email}</div>
+                          <div className="text-xs text-gray-400">Joined {new Date(affiliate.created_at).toLocaleDateString()}</div>
+                        </button>
                       </td>
                       <td className="py-4 px-4">
                         <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">{affiliate.referral_code}</code>
