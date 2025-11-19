@@ -220,7 +220,7 @@ export default function AccountPage() {
   }
 
   // CUSTOMER VIEW (Has orders, not an affiliate)
-  if (!loading && !isAffiliate && orders.length > 0) {
+  if (!loading && !isAffiliate && !userData && orders.length > 0) {
     const missedEarnings = calculateMissedEarnings();
     const totalSpent = orders.reduce((sum, order) => sum + parseFloat(order.total_price), 0);
 
