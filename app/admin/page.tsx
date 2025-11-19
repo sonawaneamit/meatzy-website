@@ -58,9 +58,20 @@ export default function AdminDashboard() {
         return;
       }
 
-      // TODO: Add admin check - for now, any authenticated user can access
-      // In production, check if authUser.email matches admin list
-      setCurrentUser(authUser);
+      // Check if user is admin
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('is_admin, email, full_name')
+        .eq('id', authUser.id)
+        .single();
+
+      if (userError || !userData || !userData.is_admin) {
+        console.error('Access denied: User is not an admin');
+        router.push('/dashboard');
+        return;
+      }
+
+      setCurrentUser(userData);
 
       // Load all stats
       await Promise.all([
