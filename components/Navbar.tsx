@@ -60,7 +60,9 @@ export const Navbar: React.FC = () => {
             <a href="/build-box" className={`hidden md:block px-6 py-2.5 font-display font-bold uppercase text-xs tracking-widest transition-all ${isScrolled ? 'bg-meatzy-olive text-white hover:bg-meatzy-rare' : 'bg-meatzy-olive text-white hover:bg-meatzy-rare'}`}>
                 Build Your Box
             </a>
-            <User className="w-6 h-6 cursor-pointer hover:text-meatzy-rare transition-colors" />
+            <a href="/account">
+              <User className="w-6 h-6 cursor-pointer hover:text-meatzy-rare transition-colors" />
+            </a>
             <div className="relative cursor-pointer" onClick={() => setIsOpen(true)}>
                 <ShoppingBag className="w-6 h-6 hover:text-meatzy-rare transition-colors" />
                 {items.length > 0 && (
