@@ -19,9 +19,10 @@ export async function GET(
       return NextResponse.json({ orders: [] });
     }
 
-    // Fetch orders for this customer
+    // Fetch all orders and filter by customer ID
+    // (The /customers/{id}/orders endpoint sometimes returns empty results)
     const ordersResponse = await fetch(
-      `https://${shopifyDomain}/admin/api/2024-01/customers/${customerId}/orders.json`,
+      `https://${shopifyDomain}/admin/api/2024-01/orders.json?status=any&limit=250`,
       {
         headers: {
           'X-Shopify-Access-Token': shopifyAccessToken,
@@ -36,9 +37,15 @@ export async function GET(
     }
 
     const ordersData = await ordersResponse.json();
+    const allOrders = ordersData.orders || [];
+
+    // Filter orders by customer ID
+    const customerOrders = allOrders.filter(order =>
+      order.customer && order.customer.id.toString() === customerId.toString()
+    );
 
     return NextResponse.json({
-      orders: ordersData.orders || []
+      orders: customerOrders
     });
 
   } catch (error) {

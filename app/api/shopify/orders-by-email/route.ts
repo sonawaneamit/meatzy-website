@@ -17,34 +17,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ orders: [] });
     }
 
-    // Search for customer by email
-    const customerResponse = await fetch(
-      `https://${shopifyDomain}/admin/api/2024-01/customers/search.json?query=email:${encodeURIComponent(email)}`,
-      {
-        headers: {
-          'X-Shopify-Access-Token': shopifyAccessToken,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    if (!customerResponse.ok) {
-      console.error('Shopify customer search failed:', await customerResponse.text());
-      return NextResponse.json({ orders: [] });
-    }
-
-    const customerData = await customerResponse.json();
-    const customers = customerData.customers || [];
-
-    if (customers.length === 0) {
-      return NextResponse.json({ orders: [] });
-    }
-
-    const customer = customers[0];
-
-    // Fetch orders for this customer
+    // Fetch all orders (Shopify's customer orders endpoint sometimes returns empty results)
+    // So we fetch all orders and filter by email instead
     const ordersResponse = await fetch(
-      `https://${shopifyDomain}/admin/api/2024-01/customers/${customer.id}/orders.json`,
+      `https://${shopifyDomain}/admin/api/2024-01/orders.json?status=any&limit=250`,
       {
         headers: {
           'X-Shopify-Access-Token': shopifyAccessToken,
@@ -59,15 +35,27 @@ export async function GET(request: NextRequest) {
     }
 
     const ordersData = await ordersResponse.json();
+    const allOrders = ordersData.orders || [];
+
+    // Filter orders by email
+    const userOrders = allOrders.filter(order =>
+      order.email && order.email.toLowerCase() === email.toLowerCase()
+    );
+
+    // Get customer info from first order if available
+    let customer = null;
+    if (userOrders.length > 0 && userOrders[0].customer) {
+      customer = {
+        id: userOrders[0].customer.id,
+        email: userOrders[0].customer.email,
+        first_name: userOrders[0].customer.first_name,
+        last_name: userOrders[0].customer.last_name,
+      };
+    }
 
     return NextResponse.json({
-      orders: ordersData.orders || [],
-      customer: {
-        id: customer.id,
-        email: customer.email,
-        first_name: customer.first_name,
-        last_name: customer.last_name,
-      }
+      orders: userOrders,
+      customer
     });
 
   } catch (error) {
