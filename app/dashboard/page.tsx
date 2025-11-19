@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import {
@@ -17,8 +17,16 @@ import {
   Share2,
   Check,
   LogOut,
-  AlertCircle
+  AlertCircle,
+  Download,
+  QrCode,
+  Facebook,
+  Twitter,
+  MessageCircle,
+  Mail
 } from 'lucide-react';
+import QRCodeLib from 'qrcode';
+import { generateReferralLink, generateSocialLinks, copyToClipboard, downloadQRCode } from '../../lib/referral-utils';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -28,6 +36,9 @@ export default function DashboardPage() {
   const [commissions, setCommissions] = useState<any[]>([]);
   const [referrals, setReferrals] = useState<any[]>([]);
   const [copied, setCopied] = useState(false);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
+  const [showQRModal, setShowQRModal] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     loadDashboard();
@@ -72,11 +83,46 @@ export default function DashboardPage() {
     }
   };
 
-  const copyReferralLink = () => {
-    const link = `${window.location.origin}?ref=${user.referral_code}`;
-    navigator.clipboard.writeText(link);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  // Generate QR code when user is loaded
+  useEffect(() => {
+    if (user?.referral_code) {
+      generateQRCode();
+    }
+  }, [user]);
+
+  const generateQRCode = async () => {
+    if (!user?.referral_code) return;
+
+    const referralLink = generateReferralLink(user.referral_code, { includeUTM: true });
+
+    try {
+      const dataUrl = await QRCodeLib.toDataURL(referralLink, {
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#2D2B25', // meatzy-olive
+          light: '#FFFFFF',
+        },
+      });
+      setQrCodeDataUrl(dataUrl);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+    }
+  };
+
+  const copyReferralLink = async () => {
+    const link = generateReferralLink(user.referral_code, { includeUTM: true });
+    const success = await copyToClipboard(link);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleDownloadQR = () => {
+    if (qrCodeDataUrl) {
+      downloadQRCode(qrCodeDataUrl, `meatzy-referral-${user.referral_code}.png`);
+    }
   };
 
   const handleLogout = async () => {
@@ -99,7 +145,8 @@ export default function DashboardPage() {
     return null;
   }
 
-  const referralLink = `${typeof window !== 'undefined' ? window.location.origin : ''}?ref=${user.referral_code}`;
+  const referralLink = generateReferralLink(user.referral_code, { includeUTM: true });
+  const socialLinks = generateSocialLinks(user.referral_code, referralLink);
 
   return (
     <div className="min-h-screen bg-meatzy-tallow pt-32 pb-20">
@@ -178,41 +225,111 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Referral Link */}
+        {/* Referral Link & QR Code Section */}
         <div className="bg-gradient-to-br from-meatzy-olive to-meatzy-rare rounded-xl p-8 mb-8 text-white">
           <div className="flex items-center gap-3 mb-4">
             <Share2 className="w-6 h-6" />
-            <h2 className="text-2xl font-black font-slab uppercase">Your Referral Link</h2>
+            <h2 className="text-2xl font-black font-slab uppercase">Share & Earn</h2>
           </div>
 
-          <p className="text-meatzy-mint mb-4">
-            Share this link to earn commissions on every purchase!
-          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Referral Link */}
+            <div className="lg:col-span-2">
+              <p className="text-meatzy-mint mb-4">
+                Share this link to earn commissions on every purchase!
+              </p>
 
-          <div className="flex gap-3">
-            <div className="flex-1 bg-white/10 backdrop-blur rounded-lg px-4 py-3 font-mono text-sm break-all">
-              {referralLink}
+              <div className="flex gap-3 mb-4">
+                <div className="flex-1 bg-white/10 backdrop-blur rounded-lg px-4 py-3 font-mono text-sm break-all">
+                  {referralLink}
+                </div>
+                <button
+                  onClick={copyReferralLink}
+                  className="px-6 py-3 bg-white text-meatzy-olive font-bold rounded-lg hover:bg-meatzy-mint transition-colors flex items-center gap-2"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-5 h-5" />
+                      Copy
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <div className="mb-4 text-sm text-meatzy-mint">
+                Your referral code: <span className="font-black text-white text-lg">{user.referral_code}</span>
+              </div>
+
+              {/* Social Sharing */}
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center gap-2 text-sm font-bold"
+                >
+                  <Facebook className="w-4 h-4" />
+                  Facebook
+                </a>
+                <a
+                  href={socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center gap-2 text-sm font-bold"
+                >
+                  <Twitter className="w-4 h-4" />
+                  Twitter
+                </a>
+                <a
+                  href={socialLinks.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center gap-2 text-sm font-bold"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  WhatsApp
+                </a>
+                <a
+                  href={socialLinks.email}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center gap-2 text-sm font-bold"
+                >
+                  <Mail className="w-4 h-4" />
+                  Email
+                </a>
+              </div>
             </div>
-            <button
-              onClick={copyReferralLink}
-              className="px-6 py-3 bg-white text-meatzy-olive font-bold rounded-lg hover:bg-meatzy-mint transition-colors flex items-center gap-2"
-            >
-              {copied ? (
+
+            {/* QR Code */}
+            <div className="flex flex-col items-center justify-center bg-white rounded-xl p-6">
+              {qrCodeDataUrl ? (
                 <>
-                  <Check className="w-5 h-5" />
-                  Copied!
+                  <img
+                    src={qrCodeDataUrl}
+                    alt="Referral QR Code"
+                    className="w-48 h-48 mb-4"
+                  />
+                  <button
+                    onClick={handleDownloadQR}
+                    className="px-4 py-2 bg-meatzy-olive text-white rounded-lg hover:bg-meatzy-rare transition-colors flex items-center gap-2 text-sm font-bold"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download QR
+                  </button>
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    Print or share this QR code
+                  </p>
                 </>
               ) : (
-                <>
-                  <Copy className="w-5 h-5" />
-                  Copy
-                </>
+                <div className="w-48 h-48 flex items-center justify-center bg-gray-100 rounded-lg">
+                  <QrCode className="w-12 h-12 text-gray-400" />
+                </div>
               )}
-            </button>
-          </div>
-
-          <div className="mt-4 text-sm text-meatzy-mint">
-            Your referral code: <span className="font-black text-white text-lg">{user.referral_code}</span>
+            </div>
           </div>
         </div>
 

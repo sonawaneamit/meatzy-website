@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Star, Check, ChevronDown, ShoppingCart, Truck, Shield, Award, ChevronLeft, ChevronRight } from 'lucide-react';
+import { createCart, addToCart as addToShopifyCart, getCartId, saveCartId, saveCheckoutUrl, getCheckoutUrl } from '@/lib/shopify';
 
 interface ProductImage {
   url: string;
@@ -14,6 +15,7 @@ interface AddOn {
   price: number;
   image: string;
   handle: string;
+  variantId?: string;
 }
 
 interface BoxItem {
@@ -29,6 +31,7 @@ interface KetoBoxClientProps {
   basePrice: number;
   productItems: string[];
   boxItems: BoxItem[];
+  variantId: string;
 }
 
 
@@ -59,7 +62,7 @@ const faqs = [
   }
 ];
 
-export default function KetoBoxClient({ productImages, addOns, basePrice, productItems, boxItems }: KetoBoxClientProps) {
+export default function KetoBoxClient({ productImages, addOns, basePrice, productItems, boxItems, variantId }: KetoBoxClientProps) {
   const [quantity, setQuantity] = useState(1);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [selectedAddOns, setSelectedAddOns] = useState<Set<number>>(new Set());
@@ -67,11 +70,65 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
   const [showAllAddOns, setShowAllAddOns] = useState(false);
   const [expandedBoxItem, setExpandedBoxItem] = useState<number | null>(null);
   const [subscriptionFrequency, setSubscriptionFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | '6weeks' | 'bimonthly'>('monthly');
+  const [addingToCart, setAddingToCart] = useState(false);
 
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
 
   const totalPrice = basePrice * quantity + Array.from(selectedAddOns).reduce((sum, idx) => sum + addOns[idx].price, 0);
+
+  const handleAddToCart = async () => {
+    setAddingToCart(true);
+
+    try {
+      let cartId = getCartId();
+
+      // Build line items - main product + add-ons
+      const lineItems = [
+        {
+          merchandiseId: variantId,
+          quantity,
+          attributes: [
+            { key: 'Subscription Frequency', value: subscriptionFrequency }
+          ]
+        },
+        // Add selected add-ons
+        ...Array.from(selectedAddOns).map(idx => ({
+          merchandiseId: addOns[idx].variantId || '',
+          quantity: 1
+        })).filter(item => item.merchandiseId) // Only include if variantId exists
+      ];
+
+      if (!cartId) {
+        // Create new cart with all items
+        const cart = await createCart(lineItems[0].merchandiseId, lineItems[0].quantity, lineItems[0].attributes);
+        if (cart) {
+          saveCartId(cart.id);
+          saveCheckoutUrl(cart.checkoutUrl);
+          cartId = cart.id;
+
+          // Add remaining items if any
+          if (lineItems.length > 1) {
+            await addToShopifyCart(cartId, lineItems.slice(1));
+          }
+        }
+      } else {
+        // Add all items to existing cart
+        await addToShopifyCart(cartId, lineItems);
+      }
+
+      // Redirect to checkout
+      const checkoutUrl = getCheckoutUrl();
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add to cart. Please try again.');
+    } finally {
+      setAddingToCart(false);
+    }
+  };
 
   // Image navigation functions
   const nextImage = () => {
@@ -360,9 +417,13 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
                 </div>
               </div>
 
-              <button className="w-full bg-meatzy-rare text-white py-4 font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-colors rounded-lg flex items-center justify-center gap-3">
+              <button
+                onClick={handleAddToCart}
+                disabled={addingToCart}
+                className="w-full bg-meatzy-rare text-white py-4 font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-colors rounded-lg flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <ShoppingCart className="w-5 h-5" />
-                Add to Cart
+                {addingToCart ? 'Adding...' : 'Add to Cart'}
               </button>
             </div>
           </div>

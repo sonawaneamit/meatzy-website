@@ -91,9 +91,11 @@ export default async function KetoBoxPage() {
       price: parseFloat(product?.priceRange?.minVariantPrice?.amount || '0'),
       image: product?.images?.edges?.[0]?.node?.url || '',
       handle: product?.handle || '',
+      variantId: product?.variants?.edges?.[0]?.node?.id || '',
     }));
 
   const price = parseFloat(ketoBox?.priceRange?.minVariantPrice?.amount || '169');
+  const variantId = ketoBox?.variants?.edges?.[0]?.node?.id || '';
 
   // SEO-optimized description
   const customDescription = 'Power your keto diet with premium grass-fed beef, pasture-raised chicken, and heritage pork. Our Keto Box delivers high-protein, zero-carb cuts perfect for low-carb meal prep—featuring quality meats that keep you in ketosis while satisfying your cravings. Fuel your ketogenic lifestyle with restaurant-quality proteins delivered to your door.';
@@ -146,6 +148,7 @@ export default async function KetoBoxPage() {
       productItems={productItems}
       boxItems={boxItems}
       faqs={faqs}
+      variantId={variantId}
     />
   );
 }

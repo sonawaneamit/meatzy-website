@@ -93,9 +93,11 @@ export default async function FamilyFavoritesPage() {
       price: parseFloat(p?.priceRange?.minVariantPrice?.amount || '0'),
       image: p?.images?.edges?.[0]?.node?.url || '',
       handle: p?.handle || '',
+      variantId: p?.variants?.edges?.[0]?.node?.id || '',
     }));
 
   const price = parseFloat(product?.priceRange?.minVariantPrice?.amount || '169');
+  const variantId = product?.variants?.edges?.[0]?.node?.id || '';
 
   // SEO-optimized description
   const customDescription = 'Simplify dinner time with family-friendly favorites the whole household will love. Our Family Favorites Box delivers versatile cuts perfect for busy weeknight meals and weekend BBQs—including juicy burgers, tender chicken thighs, premium ground beef, and more. Quality proteins that make meal planning easy and delicious.';
@@ -148,6 +150,7 @@ export default async function FamilyFavoritesPage() {
       productItems={productItems}
       boxItems={boxItems}
       faqs={faqs}
+      variantId={variantId}
     />
   );
 }

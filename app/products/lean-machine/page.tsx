@@ -93,9 +93,11 @@ export default async function LeanMachinePage() {
       price: parseFloat(p?.priceRange?.minVariantPrice?.amount || '0'),
       image: p?.images?.edges?.[0]?.node?.url || '',
       handle: p?.handle || '',
+      variantId: p?.variants?.edges?.[0]?.node?.id || '',
     }));
 
   const price = parseFloat(product?.priceRange?.minVariantPrice?.amount || '169');
+  const variantId = product?.variants?.edges?.[0]?.node?.id || '';
 
   // SEO-optimized description
   const customDescription = 'Build muscle and burn fat with our Lean Machine Box—packed with premium lean proteins including 93/7 ground beef, skinless chicken breast, and tenderloin cuts. Perfect for athletes, fitness enthusiasts, and anyone pursuing a healthy lifestyle. Get high-protein, low-fat meats that support your wellness goals without sacrificing flavor.';
@@ -148,6 +150,7 @@ export default async function LeanMachinePage() {
       productItems={productItems}
       boxItems={boxItems}
       faqs={faqs}
+      variantId={variantId}
     />
   );
 }

@@ -93,9 +93,11 @@ export default async function HolidayBoxPage() {
       price: parseFloat(p?.priceRange?.minVariantPrice?.amount || '0'),
       image: p?.images?.edges?.[0]?.node?.url || '',
       handle: p?.handle || '',
+      variantId: p?.variants?.edges?.[0]?.node?.id || '',
     }));
 
   const price = parseFloat(product?.priceRange?.minVariantPrice?.amount || '199');
+  const variantId = product?.variants?.edges?.[0]?.node?.id || '';
 
   // SEO-optimized description
   const customDescription = 'Make every holiday meal unforgettable with premium grass-fed beef and specialty cuts. Our Holiday Box features show-stopping short ribs, tri-tip steaks, and entertaining essentials perfect for Christmas dinners, Thanksgiving feasts, and special celebrations. Impress your guests with restaurant-quality meats delivered fresh to your door.';
@@ -148,6 +150,7 @@ export default async function HolidayBoxPage() {
       productItems={productItems}
       boxItems={boxItems}
       faqs={faqs}
+      variantId={variantId}
     />
   );
 }
