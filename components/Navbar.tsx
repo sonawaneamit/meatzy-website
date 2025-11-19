@@ -51,7 +51,7 @@ export const Navbar: React.FC = () => {
         <div className={`hidden md:flex gap-8 items-center mx-auto text-meatzy-olive`}>
           <a href="#shop" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">Shop All</a>
           <a href="#how-it-works" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">How It Works</a>
-          <a href="#referral" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">Earn Cash</a>
+          <a href="/signup" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">Earn Cash</a>
           <a href="/about" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">About Us</a>
         </div>
 
@@ -77,7 +77,7 @@ export const Navbar: React.FC = () => {
         <div className="absolute top-full left-0 w-full bg-white text-meatzy-olive shadow-xl border-t border-gray-100 py-8 px-6 flex flex-col gap-6 md:hidden min-h-screen">
             <a href="#shop" onClick={closeMobileMenu} className="font-slab font-bold text-2xl border-b border-gray-100 pb-4">Shop All</a>
             <a href="#how-it-works" onClick={closeMobileMenu} className="font-slab font-bold text-2xl border-b border-gray-100 pb-4">How It Works</a>
-            <a href="#referral" onClick={closeMobileMenu} className="font-slab font-bold text-2xl border-b border-gray-100 pb-4 text-meatzy-welldone">Earn Cash For Sharing</a>
+            <a href="/signup" onClick={closeMobileMenu} className="font-slab font-bold text-2xl border-b border-gray-100 pb-4 text-meatzy-welldone">Earn Cash For Sharing</a>
             <a href="/about" onClick={closeMobileMenu} className="font-slab font-bold text-2xl border-b border-gray-100 pb-4">About Us</a>
             <a href="/build-box" className="w-full bg-meatzy-welldone text-white py-4 font-display font-bold uppercase tracking-widest mt-4 text-center block">Build Your Box</a>
         </div>

@@ -1,6 +1,7 @@
 import { shopifyClient } from './client';
 import { CREATE_CART, ADD_TO_CART } from './queries';
 import type { Cart, CreateCartResponse, AddToCartResponse } from './types';
+import { getReferralCode } from '../../hooks/useReferralTracking';
 
 /**
  * Create a new Shopify cart
@@ -8,16 +9,47 @@ import type { Cart, CreateCartResponse, AddToCartResponse } from './types';
 export async function createCart(variantId: string, quantity: number = 1): Promise<Cart | null> {
   try {
     console.log('Creating cart with variant:', variantId, 'quantity:', quantity);
-    const data = await shopifyClient.request<CreateCartResponse>(CREATE_CART, {
-      input: {
-        lines: [
-          {
-            merchandiseId: variantId,
-            quantity,
-          },
-        ],
-      },
-    });
+
+    // Get referral code if exists
+    const referralCode = getReferralCode();
+
+    // Build cart input
+    const input: any = {
+      lines: [
+        {
+          merchandiseId: variantId,
+          quantity,
+          // Add referral code as line item attribute (shows in Shopify order)
+          ...(referralCode && {
+            attributes: [
+              {
+                key: 'Referral Code',
+                value: referralCode,
+              },
+            ],
+          }),
+        },
+      ],
+    };
+
+    // Add referral code as cart-level attribute AND as note
+    if (referralCode) {
+      input.attributes = [
+        {
+          key: 'referral_code',
+          value: referralCode,
+        },
+        {
+          key: 'Referral Code',
+          value: referralCode,
+        },
+      ];
+      // Also add to cart note for maximum visibility
+      input.note = `Referral Code: ${referralCode}`;
+      console.log('Adding referral code to cart:', referralCode);
+    }
+
+    const data = await shopifyClient.request<CreateCartResponse>(CREATE_CART, { input });
 
     console.log('Cart creation response:', JSON.stringify(data, null, 2));
 
