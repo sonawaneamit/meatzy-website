@@ -66,38 +66,44 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
     try {
       let cartId = getCartId();
 
-      // Build line items - main product + add-ons
-      const lineItems = [
-        {
+      if (!cartId) {
+        // Create new cart with main product
+        const cart = await createCart(variantId, quantity);
+        if (cart) {
+          saveCartId(cart.id);
+          saveCheckoutUrl(cart.checkoutUrl);
+          cartId = cart.id;
+        } else {
+          alert('Failed to create cart. Please try again.');
+          setAddingToCart(false);
+          return;
+        }
+      } else {
+        // Add main product to existing cart
+        const cart = await addToShopifyCart(cartId, [{
           merchandiseId: variantId,
           quantity,
           attributes: [
             { key: 'Subscription Frequency', value: subscriptionFrequency }
           ]
-        },
-        // Add selected add-ons
-        ...Array.from(selectedAddOns).map(idx => ({
-          merchandiseId: addOns[idx].variantId || '',
-          quantity: 1
-        })).filter(item => item.merchandiseId) // Only include if variantId exists
-      ];
-
-      if (!cartId) {
-        // Create new cart with all items
-        const cart = await createCart(lineItems[0].merchandiseId, lineItems[0].quantity, lineItems[0].attributes);
+        }]);
         if (cart) {
-          saveCartId(cart.id);
           saveCheckoutUrl(cart.checkoutUrl);
-          cartId = cart.id;
-
-          // Add remaining items if any
-          if (lineItems.length > 1) {
-            await addToShopifyCart(cartId, lineItems.slice(1));
-          }
         }
-      } else {
-        // Add all items to existing cart
-        await addToShopifyCart(cartId, lineItems);
+      }
+
+      // Add selected add-ons if any
+      if (selectedAddOns.size > 0) {
+        const addOnItems = Array.from(selectedAddOns)
+          .map(idx => ({
+            merchandiseId: addOns[idx].variantId || '',
+            quantity: 1
+          }))
+          .filter(item => item.merchandiseId);
+
+        if (addOnItems.length > 0) {
+          await addToShopifyCart(cartId, addOnItems);
+        }
       }
 
       // Redirect to checkout
