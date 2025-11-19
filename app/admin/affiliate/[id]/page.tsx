@@ -232,7 +232,7 @@ export default function AffiliateDetailPage() {
   const effectiveRate = affiliate.commission_override || affiliate.commission_rate;
 
   return (
-    <div className="min-h-screen bg-meatzy-tallow py-8">
+    <div className="min-h-screen bg-meatzy-tallow pt-32 pb-8">
       <div className="max-w-7xl mx-auto px-4">
 
         {/* Header */}
