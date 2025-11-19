@@ -82,10 +82,7 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
         // Add main product to existing cart
         const cart = await addToShopifyCart(cartId, [{
           merchandiseId: variantId,
-          quantity,
-          attributes: [
-            { key: 'Subscription Frequency', value: subscriptionFrequency }
-          ]
+          quantity
         }]);
         if (cart) {
           saveCheckoutUrl(cart.checkoutUrl);
