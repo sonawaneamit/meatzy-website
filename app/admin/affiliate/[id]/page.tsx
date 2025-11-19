@@ -355,7 +355,7 @@ export default function AffiliateDetailPage() {
               <DollarSign className="w-8 h-8 text-green-600" />
             </div>
             <div className="text-2xl font-black text-meatzy-olive">
-              ${wallet?.balance.toFixed(2) || '0.00'}
+              ${wallet?.balance?.toFixed(2) ?? '0.00'}
             </div>
             <div className="text-sm text-gray-500">Available Balance</div>
           </div>
@@ -365,7 +365,7 @@ export default function AffiliateDetailPage() {
               <TrendingUp className="w-8 h-8 text-yellow-600" />
             </div>
             <div className="text-2xl font-black text-meatzy-olive">
-              ${wallet?.pending_balance.toFixed(2) || '0.00'}
+              ${wallet?.pending_balance?.toFixed(2) ?? '0.00'}
             </div>
             <div className="text-sm text-gray-500">Pending</div>
           </div>
@@ -375,7 +375,7 @@ export default function AffiliateDetailPage() {
               <DollarSign className="w-8 h-8 text-meatzy-gold" />
             </div>
             <div className="text-2xl font-black text-meatzy-olive">
-              ${wallet?.lifetime_earnings.toFixed(2) || '0.00'}
+              ${wallet?.lifetime_earnings?.toFixed(2) ?? '0.00'}
             </div>
             <div className="text-sm text-gray-500">Lifetime Earnings</div>
           </div>
