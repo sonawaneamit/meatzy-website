@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ShoppingBag, Menu, User, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
@@ -43,9 +44,16 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Logo */}
-        <div className={`text-3xl md:text-4xl font-black tracking-tighter font-slab flex-1 md:flex-none text-center md:text-left ${isScrolled ? 'text-meatzy-welldone' : 'text-meatzy-welldone'}`}>
-          MEATZY
-        </div>
+        <a href="/" className="flex-1 md:flex-none flex justify-center md:justify-start">
+          <Image
+            src="/meatzy-logo.png"
+            alt="Meatzy"
+            width={180}
+            height={54}
+            className={`transition-all duration-300 ${isScrolled ? 'h-12' : 'h-14'}`}
+            priority
+          />
+        </a>
 
         {/* Desktop Links */}
         <div className={`hidden md:flex gap-8 items-center mx-auto text-meatzy-olive`}>
