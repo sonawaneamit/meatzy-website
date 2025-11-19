@@ -7,7 +7,7 @@ if (!domain || !storefrontAccessToken) {
   throw new Error('Missing Shopify environment variables');
 }
 
-const endpoint = `https://${domain}/api/2024-10/graphql.json`;
+const endpoint = `https://${domain}/api/2025-01/graphql.json`;
 
 export const shopifyClient = new GraphQLClient(endpoint, {
   headers: {
