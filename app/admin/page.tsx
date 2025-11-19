@@ -51,9 +51,10 @@ export default function AdminDashboard() {
       const supabase = createClient();
 
       // Check if user is authenticated and is admin
-      const { data: { user: authUser } } = await supabase.auth.getUser();
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
 
-      if (!authUser) {
+      if (authError || !authUser) {
+        console.error('Auth error:', authError);
         router.push('/login');
         return;
       }
@@ -65,12 +66,20 @@ export default function AdminDashboard() {
         .eq('id', authUser.id)
         .single();
 
-      if (userError || !userData || !userData.is_admin) {
-        console.error('Access denied: User is not an admin');
+      if (userError) {
+        console.error('Error fetching user data:', userError);
         router.push('/dashboard');
         return;
       }
 
+      if (!userData || !userData.is_admin) {
+        console.error('Access denied: User is not an admin', userData);
+        alert('Access denied: You must be an admin to view this page.');
+        router.push('/dashboard');
+        return;
+      }
+
+      console.log('Admin access granted:', userData);
       setCurrentUser(userData);
 
       // Load all stats
