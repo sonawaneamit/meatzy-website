@@ -40,6 +40,7 @@ export const ProductGrid: React.FC = () => {
         // Create new cart
         const cart = await createCart(variantId, 1);
         if (cart) {
+          console.log('Cart created:', cart.id, 'Checkout URL:', cart.checkoutUrl);
           saveCartId(cart.id);
           saveCheckoutUrl(cart.checkoutUrl);
         }
@@ -47,6 +48,7 @@ export const ProductGrid: React.FC = () => {
         // Add to existing cart
         const cart = await addToShopifyCart(cartId, [{ merchandiseId: variantId, quantity: 1 }]);
         if (cart) {
+          console.log('Added to cart, Checkout URL:', cart.checkoutUrl);
           saveCheckoutUrl(cart.checkoutUrl);
         }
       }
@@ -63,16 +65,23 @@ export const ProductGrid: React.FC = () => {
 
   const handleAddAddons = async (selectedAddons: { product: Product; quantity: number }[]) => {
     const cartId = getCartId();
-    if (!cartId) return;
+    if (!cartId) {
+      console.error('No cart ID found when adding add-ons');
+      return;
+    }
 
     const lines = selectedAddons.map(({ product, quantity }) => ({
       merchandiseId: product.variants.edges[0]?.node.id || '',
       quantity,
     }));
 
+    console.log('Adding add-ons to cart:', lines);
     const cart = await addToShopifyCart(cartId, lines);
     if (cart) {
+      console.log('Add-ons added, updated checkout URL:', cart.checkoutUrl);
       saveCheckoutUrl(cart.checkoutUrl);
+    } else {
+      console.error('Failed to add add-ons to cart');
     }
   };
 
@@ -80,9 +89,11 @@ export const ProductGrid: React.FC = () => {
     setShowAddonsModal(false);
     // Redirect to Shopify checkout using the stored checkout URL
     const checkoutUrl = getCheckoutUrl();
+    console.log('Checkout URL:', checkoutUrl); // Debug log
     if (checkoutUrl) {
       window.location.href = checkoutUrl;
     } else {
+      console.error('No checkout URL found in localStorage');
       alert('Cart not found. Please try adding items again.');
     }
   };
