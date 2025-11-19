@@ -22,6 +22,10 @@ function ThankYouContent() {
   const [copied, setCopied] = useState(false);
   const [socialLinks, setSocialLinks] = useState<any>(null);
 
+  // Order details state
+  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [loadingOrder, setLoadingOrder] = useState(false);
+
   // Password setup state
   const [showPasswordSetup, setShowPasswordSetup] = useState(false);
   const [password, setPassword] = useState('');
@@ -37,7 +41,10 @@ function ThankYouContent() {
     const email = searchParams.get('email');
     const name = searchParams.get('name');
 
-    if (orderId) setOrderNumber(orderId);
+    if (orderId) {
+      setOrderNumber(orderId);
+      fetchOrderDetails(orderId);
+    }
     if (email) setCustomerEmail(email);
     if (name) setCustomerName(name);
 
@@ -47,6 +54,24 @@ function ThankYouContent() {
       setLoading(false);
     }
   }, [searchParams]);
+
+  const fetchOrderDetails = async (orderId: string) => {
+    setLoadingOrder(true);
+    try {
+      const response = await fetch(`/api/shopify/order?order_id=${orderId}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        setOrderDetails(data);
+      } else {
+        console.error('Failed to fetch order details:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+    } finally {
+      setLoadingOrder(false);
+    }
+  };
 
   const fetchUserReferralData = async (email: string) => {
     try {
@@ -192,103 +217,215 @@ function ThankYouContent() {
           )}
         </div>
 
-        {/* What's Next */}
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-meatzy-mint/30 p-8 mb-8">
-          <h2 className="text-2xl font-black font-slab text-meatzy-olive uppercase mb-4">
-            What's Next?
-          </h2>
+        {/* Two Column Layout for Desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Left Column: Order Details & What's Next */}
+          <div className="space-y-8">
+            {/* Order Summary */}
+            {orderDetails && (
+              <div className="bg-white rounded-2xl shadow-xl border-2 border-meatzy-mint/30 p-8">
+                <h2 className="text-2xl font-black font-slab text-meatzy-olive uppercase mb-6">
+                  Order Summary
+                </h2>
 
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-meatzy-rare text-white flex items-center justify-center font-bold flex-shrink-0">
-                1
-              </div>
-              <div>
-                <p className="font-bold text-meatzy-olive">Check Your Email</p>
-                <p className="text-gray-600 text-sm">
-                  We've sent your order confirmation and shipping details
-                </p>
-              </div>
-            </div>
+                {/* Line Items */}
+                <div className="space-y-4 mb-6">
+                  {orderDetails.lineItems?.map((item: any) => (
+                    <div key={item.id} className="flex gap-4 pb-4 border-b border-gray-200 last:border-0">
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h3 className="font-bold text-meatzy-olive">{item.title}</h3>
+                        {item.variantTitle && item.variantTitle !== 'Default Title' && (
+                          <p className="text-sm text-gray-600">{item.variantTitle}</p>
+                        )}
+                        <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-meatzy-olive">
+                          ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                        </p>
+                        {parseFloat(item.totalDiscount) > 0 && (
+                          <p className="text-sm text-green-600">
+                            -${item.totalDiscount} discount
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-meatzy-rare text-white flex items-center justify-center font-bold flex-shrink-0">
-                2
-              </div>
-              <div>
-                <p className="font-bold text-meatzy-olive">Track Your Order</p>
-                <p className="text-gray-600 text-sm">
-                  You'll receive tracking information once your order ships
-                </p>
-              </div>
-            </div>
+                {/* Order Totals */}
+                <div className="border-t-2 border-meatzy-olive/20 pt-4 space-y-2">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span>${parseFloat(orderDetails.subtotalPrice).toFixed(2)}</span>
+                  </div>
+                  {parseFloat(orderDetails.totalShippingPrice) > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Shipping</span>
+                      <span>${parseFloat(orderDetails.totalShippingPrice).toFixed(2)}</span>
+                    </div>
+                  )}
+                  {parseFloat(orderDetails.totalTax) > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Tax</span>
+                      <span>${parseFloat(orderDetails.totalTax).toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-xl font-black text-meatzy-olive pt-2 border-t border-gray-300">
+                    <span>Total</span>
+                    <span>${parseFloat(orderDetails.totalPrice).toFixed(2)}</span>
+                  </div>
+                </div>
 
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-full bg-meatzy-rare text-white flex items-center justify-center font-bold flex-shrink-0">
-                3
+                {/* Shipping Address */}
+                {orderDetails.shippingAddress && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <h3 className="font-bold text-meatzy-olive mb-2">Shipping Address</h3>
+                    <div className="text-sm text-gray-600">
+                      <p>{orderDetails.shippingAddress.name}</p>
+                      <p>{orderDetails.shippingAddress.address1}</p>
+                      {orderDetails.shippingAddress.address2 && (
+                        <p>{orderDetails.shippingAddress.address2}</p>
+                      )}
+                      <p>
+                        {orderDetails.shippingAddress.city}, {orderDetails.shippingAddress.province} {orderDetails.shippingAddress.zip}
+                      </p>
+                      <p>{orderDetails.shippingAddress.country}</p>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div>
-                <p className="font-bold text-meatzy-olive">Enjoy Premium Meat</p>
-                <p className="text-gray-600 text-sm">
-                  Grass-fed, pasture-raised quality delivered to your door
-                </p>
+            )}
+
+            {/* What's Next */}
+            <div className="bg-white rounded-2xl shadow-xl border-2 border-meatzy-mint/30 p-8">
+              <h2 className="text-2xl font-black font-slab text-meatzy-olive uppercase mb-4">
+                What's Next?
+              </h2>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-meatzy-rare text-white flex items-center justify-center font-bold flex-shrink-0">
+                    1
+                  </div>
+                  <div>
+                    <p className="font-bold text-meatzy-olive">Check Your Email</p>
+                    <p className="text-gray-600 text-sm">
+                      We've sent your order confirmation and shipping details
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-meatzy-rare text-white flex items-center justify-center font-bold flex-shrink-0">
+                    2
+                  </div>
+                  <div>
+                    <p className="font-bold text-meatzy-olive">Track Your Order</p>
+                    <p className="text-gray-600 text-sm">
+                      You'll receive tracking information once your order ships
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-meatzy-rare text-white flex items-center justify-center font-bold flex-shrink-0">
+                    3
+                  </div>
+                  <div>
+                    <p className="font-bold text-meatzy-olive">Enjoy Premium Meat</p>
+                    <p className="text-gray-600 text-sm">
+                      Grass-fed, pasture-raised quality delivered to your door
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Referral Widget - Only show if we have referral data */}
-        {!loading && referralCode && referralLink && (
-          <div className="bg-gradient-to-br from-meatzy-rare to-meatzy-welldone rounded-2xl shadow-2xl p-8 text-white">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-black font-slab uppercase mb-3">
-                Start Earning Today! 💰
-              </h2>
-              <p className="text-lg md:text-xl opacity-90">
-                Share MEATZY with friends and earn{' '}
-                <span className="font-black text-meatzy-gold">13% commission</span> on every sale
-              </p>
-            </div>
+          {/* Right Column: Referral Widget */}
+          <div>
+            {!loading && referralCode && referralLink && (
+              <div className="bg-gradient-to-br from-meatzy-rare to-meatzy-welldone rounded-2xl shadow-2xl p-8 text-white sticky top-8">
+                {/* Header */}
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-black font-slab uppercase mb-2">
+                    Start Earning Today! 💰
+                  </h2>
+                  <p className="text-sm opacity-90">
+                    Share MEATZY with friends and earn{' '}
+                    <span className="font-black text-meatzy-gold">13% commission</span> on every sale
+                  </p>
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left 2 columns: Referral Link & Social Sharing */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* Your Referral Link */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                  <h3 className="text-xl font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
+                <div className="space-y-6">
+                  {/* Your Referral Link */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
                     <Share2 className="w-5 h-5" />
                     Your Referral Link
                   </h3>
 
-                  <div className="bg-white rounded-lg p-4 mb-3">
-                    <p className="text-meatzy-olive font-mono text-sm break-all">
-                      {referralLink}
-                    </p>
+                    <div className="bg-white rounded-lg p-3 mb-3">
+                      <p className="text-meatzy-olive font-mono text-xs break-all">
+                        {referralLink}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={handleCopyLink}
+                      className="w-full bg-meatzy-dill hover:bg-meatzy-dill/90 text-white font-bold uppercase tracking-wider py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      {copied ? (
+                        <>
+                          <CheckCircle className="w-4 h-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          Copy Link
+                        </>
+                      )}
+                    </button>
                   </div>
 
-                  <button
-                    onClick={handleCopyLink}
-                    className="w-full bg-meatzy-dill hover:bg-meatzy-dill/90 text-white font-display font-bold uppercase tracking-wider py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    {copied ? (
-                      <>
-                        <CheckCircle className="w-5 h-5" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-5 h-5" />
-                        Copy Link
-                      </>
-                    )}
-                  </button>
-                </div>
+                  {/* QR Code */}
+                  {qrCodeDataUrl && (
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                      <h3 className="text-sm font-bold uppercase tracking-wider mb-3 text-center">
+                        Scan & Share
+                      </h3>
 
-                {/* Social Sharing */}
-                {socialLinks && (
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                    <h3 className="text-xl font-bold uppercase tracking-wider mb-4">
+                      <div className="bg-white rounded-xl p-4 mb-3">
+                        <img
+                          src={qrCodeDataUrl}
+                          alt="Referral QR Code"
+                          className="w-full h-auto"
+                        />
+                      </div>
+
+                      <button
+                        onClick={handleDownloadQR}
+                        className="w-full bg-meatzy-olive hover:bg-meatzy-rare text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download QR
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Social Sharing */}
+                  {socialLinks && (
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                      <h3 className="text-sm font-bold uppercase tracking-wider mb-3">
                       Share on Social
                     </h3>
 
@@ -329,79 +466,52 @@ function ThankYouContent() {
                         Email
                       </a>
                     </div>
-                  </div>
-                )}
-
-                {/* Commission Structure */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                  <h3 className="text-xl font-bold uppercase tracking-wider mb-4">
-                    How You Earn
-                  </h3>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg bg-meatzy-gold flex items-center justify-center font-black text-meatzy-olive text-lg flex-shrink-0">
-                        13%
-                      </div>
-                      <p className="text-sm">
-                        <span className="font-bold">Direct Referrals</span> - People you refer directly
-                      </p>
                     </div>
+                  )}
 
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center font-black text-lg flex-shrink-0">
-                        2%
-                      </div>
-                      <p className="text-sm">
-                        <span className="font-bold">2nd Level</span> - People your referrals bring in
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center font-black text-lg flex-shrink-0">
-                        1%
-                      </div>
-                      <p className="text-sm">
-                        <span className="font-bold">3rd & 4th Level</span> - Extended network earnings
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right 1 column: QR Code */}
-              {qrCodeDataUrl && (
-                <div className="flex flex-col items-center justify-start">
-                  <div className="bg-white rounded-2xl p-6 shadow-2xl w-full">
-                    <h3 className="text-lg font-bold text-meatzy-olive uppercase tracking-wider mb-4 text-center">
-                      Scan & Share
+                  {/* Commission Structure */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider mb-3">
+                      How You Earn
                     </h3>
 
-                    <img
-                      src={qrCodeDataUrl}
-                      alt="Referral QR Code"
-                      className="w-full h-auto mb-4"
-                    />
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 rounded-lg bg-meatzy-gold flex items-center justify-center font-black text-meatzy-olive text-sm flex-shrink-0">
+                          13%
+                        </div>
+                        <p className="text-xs">
+                          <span className="font-bold">Direct Referrals</span><br/>
+                          People you refer directly
+                        </p>
+                      </div>
 
-                    <button
-                      onClick={handleDownloadQR}
-                      className="w-full bg-meatzy-olive hover:bg-meatzy-rare text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download QR
-                    </button>
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center font-black text-sm flex-shrink-0">
+                          2%
+                        </div>
+                        <p className="text-xs">
+                          <span className="font-bold">2nd Level</span><br/>
+                          People your referrals bring in
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center font-black text-sm flex-shrink-0">
+                          1%
+                        </div>
+                        <p className="text-xs">
+                          <span className="font-bold">3rd & 4th Level</span><br/>
+                          Extended network earnings
+                        </p>
+                      </div>
+                    </div>
                   </div>
-
-                  <p className="text-xs text-center mt-4 opacity-75">
-                    Print or share this QR code for easy referrals
-                  </p>
                 </div>
-              )}
-            </div>
 
-            {/* Password Setup Section */}
-            {!passwordSuccess && (
-              <div className="mt-8">
+                {/* Password Setup Section */}
+                {!passwordSuccess && (
+                  <div className="mt-6">
                 {!showPasswordSetup ? (
                   <div className="text-center">
                     <button
@@ -493,36 +603,38 @@ function ThankYouContent() {
                     </form>
                   </div>
                 )}
-              </div>
-            )}
+                  </div>
+                )}
 
-            {/* Success Message */}
-            {passwordSuccess && (
-              <div className="mt-8 text-center">
-                <div className="bg-green-500/20 border border-green-500 rounded-lg p-6 mb-4">
-                  <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
-                  <h3 className="text-xl font-bold mb-2">Account Created!</h3>
-                  <p>Redirecting you to your dashboard...</p>
-                </div>
-              </div>
-            )}
+                {/* Success Message */}
+                {passwordSuccess && (
+                  <div className="mt-6 text-center">
+                    <div className="bg-green-500/20 border border-green-500 rounded-lg p-4 mb-4">
+                      <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+                      <h3 className="text-lg font-bold mb-1">Account Created!</h3>
+                      <p className="text-sm">Redirecting to dashboard...</p>
+                    </div>
+                  </div>
+                )}
 
-            {/* Dashboard CTA - Only show if not setting up password */}
-            {!showPasswordSetup && !passwordSuccess && (
-              <div className="mt-8 text-center">
-                <p className="text-sm opacity-75 mb-4">
-                  Already have an account?
-                </p>
-                <a
-                  href="/dashboard"
-                  className="inline-block bg-white/20 hover:bg-white/30 text-white font-display font-bold uppercase tracking-widest py-3 px-6 rounded-lg transition-colors"
-                >
-                  Sign In to Dashboard
-                </a>
+                {/* Dashboard CTA - Only show if not setting up password */}
+                {!showPasswordSetup && !passwordSuccess && (
+                  <div className="mt-6 text-center">
+                    <p className="text-xs opacity-75 mb-3">
+                      Already have an account?
+                    </p>
+                    <a
+                      href="/dashboard"
+                      className="inline-block bg-white/20 hover:bg-white/30 text-white font-bold uppercase tracking-wider py-2 px-4 rounded-lg transition-colors text-sm"
+                    >
+                      Sign In to Dashboard
+                    </a>
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
+        </div>
 
         {/* Back to Home */}
         <div className="text-center mt-12">
