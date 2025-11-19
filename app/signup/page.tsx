@@ -51,6 +51,7 @@ export default function SignupPage() {
         phone: formData.phone,
         referralCode: formData.referralCode,
         hasPurchased: false, // They're signing up without purchase
+        authUserId: authData.user.id, // Pass the auth user ID
       });
 
       // 3. Redirect to dashboard

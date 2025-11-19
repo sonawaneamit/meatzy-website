@@ -40,6 +40,7 @@ export async function createUser(params: {
   referralCode?: string;
   shopifyCustomerId?: string;
   hasPurchased?: boolean;
+  authUserId?: string; // Optional auth user ID for signup
 }) {
   const supabase = createClient();
 
@@ -59,18 +60,26 @@ export async function createUser(params: {
   // 100% if they purchased, 50% if just signing up
   const commissionRate = params.hasPurchased ? 1.0 : 0.5;
 
+  // Prepare user data
+  const userData: any = {
+    email: params.email,
+    full_name: params.fullName,
+    phone: params.phone,
+    referral_code: newReferralCode,
+    referrer_id: referrerId,
+    shopify_customer_id: params.shopifyCustomerId,
+    has_purchased: params.hasPurchased || false,
+    commission_rate: commissionRate,
+  };
+
+  // If auth user ID is provided (from signup), use it as the user ID
+  if (params.authUserId) {
+    userData.id = params.authUserId;
+  }
+
   const { data, error } = await supabase
     .from('users')
-    .insert({
-      email: params.email,
-      full_name: params.fullName,
-      phone: params.phone,
-      referral_code: newReferralCode,
-      referrer_id: referrerId,
-      shopify_customer_id: params.shopifyCustomerId,
-      has_purchased: params.hasPurchased || false,
-      commission_rate: commissionRate,
-    })
+    .insert(userData)
     .select()
     .single();
 
