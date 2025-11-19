@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import QRCodeLib from 'qrcode';
@@ -10,7 +10,7 @@ import { generateReferralLink, generateSocialLinks, copyToClipboard, downloadQRC
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export default function ThankYouPage() {
+function ThankYouContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [orderNumber, setOrderNumber] = useState<string>('');
@@ -365,5 +365,19 @@ export default function ThankYouPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-meatzy-tallow">
+        <div className="text-meatzy-olive font-display font-bold uppercase tracking-widest text-xl">
+          Loading...
+        </div>
+      </div>
+    }>
+      <ThankYouContent />
+    </Suspense>
   );
 }
