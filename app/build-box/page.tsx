@@ -60,35 +60,50 @@ export default function BuildBoxPage() {
     setAddingToCart(true);
 
     try {
-      const lines = Array.from(selectedProducts.entries()).map(([productId, quantity]) => {
+      // Build a description of selected items
+      const selectedItemsList = Array.from(selectedProducts.entries()).map(([productId, quantity]) => {
         const product = products.find(p => p.id === productId)!;
-        return {
-          merchandiseId: product.variants.edges[0]?.node.id || '',
-          quantity,
-        };
-      });
+        return `${product.title} (${quantity}x)`;
+      }).join(', ');
+
+      console.log('Custom box items:', selectedItemsList);
+
+      // Get the Custom Box product variant ID from homepage-boxes collection
+      // We need to fetch this product first
+      const customBoxCollection = await getCollectionByHandle('homepage-boxes');
+      const customBoxProduct = customBoxCollection?.products.edges.find(
+        edge => edge.node.title.toLowerCase().includes('custom box') || edge.node.handle === 'custom-box'
+      );
+
+      if (!customBoxProduct) {
+        alert('Custom Box product not found. Please contact support.');
+        return;
+      }
+
+      const customBoxVariantId = customBoxProduct.node.variants.edges[0]?.node.id;
+      console.log('Adding Custom Box to cart:', customBoxVariantId);
+      console.log('With items:', selectedItemsList);
 
       let cartId = getCartId();
 
       if (!cartId) {
-        const cart = await createCart(lines[0].merchandiseId, lines[0].quantity);
+        // Create cart with Custom Box product
+        const cart = await createCart(customBoxVariantId, 1);
         if (cart) {
           saveCartId(cart.id);
           saveCheckoutUrl(cart.checkoutUrl);
-          cartId = cart.id;
-
-          // Add remaining items
-          if (lines.length > 1) {
-            const updatedCart = await addToShopifyCart(cartId, lines.slice(1));
-            if (updatedCart) {
-              saveCheckoutUrl(updatedCart.checkoutUrl);
-            }
-          }
+        } else {
+          alert('Failed to create cart. Please ensure Custom Box product allows one-time purchases.');
+          return;
         }
       } else {
-        const cart = await addToShopifyCart(cartId, lines);
+        // Add Custom Box to existing cart
+        const cart = await addToShopifyCart(cartId, [{ merchandiseId: customBoxVariantId, quantity: 1 }]);
         if (cart) {
           saveCheckoutUrl(cart.checkoutUrl);
+        } else {
+          alert('Failed to add to cart. Please try again.');
+          return;
         }
       }
 

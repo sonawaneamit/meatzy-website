@@ -32,6 +32,13 @@ export const ProductGrid: React.FC = () => {
       console.log('Product ID:', product.id);
       console.log('Variants:', product.variants);
 
+      // Check if this is the Custom Box - redirect to builder instead
+      if (product.title.toLowerCase().includes('custom box') || product.handle === 'custom-box') {
+        console.log('Custom Box detected - redirecting to builder');
+        window.location.href = '/build-box';
+        return;
+      }
+
       // Get the first variant ID
       const variantId = product.variants.edges[0]?.node.id;
       const variant = product.variants.edges[0]?.node;
