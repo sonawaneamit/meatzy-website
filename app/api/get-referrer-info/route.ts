@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 /**
  * API endpoint to get referrer information by referral code
  * Used by the referral popup to show who sent the visitor
@@ -23,6 +18,12 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Create Supabase client
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // Get user by referral code
     const { data: user, error } = await supabase

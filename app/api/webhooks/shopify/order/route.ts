@@ -3,12 +3,6 @@ import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { calculateCommissions, createUser, getUserByEmail, getUserByShopifyId } from '../../../../../lib/supabase/referral';
 
-// Create a Supabase client with service role for webhook use
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 /**
  * Shopify Order Created Webhook
  * This endpoint receives notifications when orders are created in Shopify
@@ -21,6 +15,11 @@ const supabaseAdmin = createClient(
  */
 export async function POST(request: NextRequest) {
   try {
+    // Create a Supabase client with service role for webhook use
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     // Get raw body for HMAC verification
     const rawBody = await request.text();
 
@@ -160,7 +159,7 @@ export async function POST(request: NextRequest) {
     // Step 4: Send magic link email for new customers to access dashboard
     if (!user.has_auth_account) {
       try {
-        await sendMagicLinkEmail(user.email, user.referral_code);
+        await sendMagicLinkEmail(supabaseAdmin, user.email, user.referral_code);
         console.log('Sent magic link email to:', user.email);
       } catch (emailError) {
         console.error('Failed to send magic link email:', emailError);
@@ -188,7 +187,7 @@ export async function POST(request: NextRequest) {
  * Send magic link email for passwordless login
  * Uses Supabase Auth to generate a secure one-time login link
  */
-async function sendMagicLinkEmail(email: string, referralCode: string) {
+async function sendMagicLinkEmail(supabaseAdmin: any, email: string, referralCode: string) {
   const { error } = await supabaseAdmin.auth.admin.generateLink({
     type: 'magiclink',
     email,
