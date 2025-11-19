@@ -46,12 +46,12 @@ export const AddonsModal: React.FC<AddonsModalProps> = ({ isOpen, onClose, onAdd
     setSelectedAddons(newSelected);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const addonsToAdd = Array.from(selectedAddons.entries()).map(([productId, quantity]) => {
       const product = addons.find(a => a.id === productId)!;
       return { product, quantity };
     });
-    onAddAddons(addonsToAdd);
+    await onAddAddons(addonsToAdd);
     onContinue();
   };
 

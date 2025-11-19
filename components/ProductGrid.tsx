@@ -70,7 +70,10 @@ export const ProductGrid: React.FC = () => {
       quantity,
     }));
 
-    await addToShopifyCart(cartId, lines);
+    const cart = await addToShopifyCart(cartId, lines);
+    if (cart) {
+      saveCheckoutUrl(cart.checkoutUrl);
+    }
   };
 
   const handleContinueToCart = () => {
