@@ -19,10 +19,15 @@ export async function createCart(variantId: string, quantity: number = 1): Promi
       },
     });
 
-    console.log('Cart creation response:', data);
+    console.log('Cart creation response:', JSON.stringify(data, null, 2));
 
     if (data.cartCreate.userErrors.length > 0) {
       console.error('Cart creation errors:', data.cartCreate.userErrors);
+      return null;
+    }
+
+    if (!data.cartCreate.cart) {
+      console.error('Cart creation returned null cart. Full response:', JSON.stringify(data, null, 2));
       return null;
     }
 
