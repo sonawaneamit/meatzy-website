@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Fetch user by email
     const { data: user, error: userError } = await supabase
       .from('users')
-      .select('id, email, referral_code, first_name, last_name')
+      .select('id, email, referral_code, full_name')
       .eq('email', email.toLowerCase())
       .single();
 
@@ -78,8 +78,7 @@ export async function GET(request: NextRequest) {
       exists: true,
       user: {
         email: user.email,
-        firstName: user.first_name,
-        lastName: user.last_name,
+        fullName: user.full_name,
         referralCode: user.referral_code,
       },
       referralLink,

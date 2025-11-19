@@ -47,7 +47,7 @@ function ThankYouContent() {
       // Fetch user by email
       const { data: user, error } = await supabase
         .from('users')
-        .select('referral_code, first_name, last_name')
+        .select('referral_code, full_name')
         .eq('email', email.toLowerCase())
         .single();
 
