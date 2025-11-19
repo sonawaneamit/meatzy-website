@@ -61,6 +61,9 @@ export const ProductGrid: React.FC = () => {
           console.log('Cart created:', cart.id, 'Checkout URL:', cart.checkoutUrl);
           saveCartId(cart.id);
           saveCheckoutUrl(cart.checkoutUrl);
+        } else {
+          alert('Failed to create cart. Please ensure the product allows one-time purchases.');
+          return;
         }
       } else {
         // Add to existing cart
@@ -68,6 +71,9 @@ export const ProductGrid: React.FC = () => {
         if (cart) {
           console.log('Added to cart, Checkout URL:', cart.checkoutUrl);
           saveCheckoutUrl(cart.checkoutUrl);
+        } else {
+          alert('Failed to add to cart. Please try again.');
+          return;
         }
       }
 

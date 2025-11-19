@@ -53,14 +53,20 @@ export async function addToCart(
       lines,
     });
 
-    console.log('Add to cart response:', data);
+    console.log('Add to cart response:', JSON.stringify(data, null, 2));
 
     if (data.cartLinesAdd.userErrors.length > 0) {
       console.error('Add to cart errors:', data.cartLinesAdd.userErrors);
       return null;
     }
 
-    console.log('Items added successfully to cart');
+    if (!data.cartLinesAdd.cart) {
+      console.error('Add to cart returned null cart');
+      return null;
+    }
+
+    console.log('Items added successfully. Cart ID:', data.cartLinesAdd.cart.id);
+    console.log('Checkout URL from response:', data.cartLinesAdd.cart.checkoutUrl);
     return data.cartLinesAdd.cart;
   } catch (error) {
     console.error('Error adding to cart:', error);
