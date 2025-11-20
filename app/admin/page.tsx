@@ -172,6 +172,8 @@ export default function AdminDashboard() {
 
       const result = await response.json();
       if (result.success && result.affiliates) {
+        console.log('Loaded affiliates:', result.affiliates.length);
+        console.log('Sample affiliate (Lucas):', result.affiliates.find(a => a.full_name?.includes('Lucas')));
         setAffiliates(result.affiliates);
       }
     } catch (error) {
