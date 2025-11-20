@@ -190,7 +190,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 w-20 md:w-full ${
+                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 w-20 md:w-full bg-white ${
                       currentImageIndex === idx
                         ? 'border-meatzy-rare shadow-lg ring-2 ring-meatzy-rare/30'
                         : 'border-meatzy-mint/30 hover:border-meatzy-mint'
@@ -200,7 +200,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
                       src={image.url}
                       alt={image.altText || `Product ${idx + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-contain p-1"
                     />
                   </button>
                 ))}
