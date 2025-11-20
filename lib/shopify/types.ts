@@ -68,6 +68,9 @@ export interface Collection {
 export interface CartLine {
   id: string;
   quantity: number;
+  cost: {
+    totalAmount: MoneyV2;
+  };
   merchandise: ProductVariant & {
     product: {
       title: string;
@@ -79,6 +82,7 @@ export interface CartLine {
 export interface Cart {
   id: string;
   checkoutUrl: string;
+  totalQuantity?: number;
   lines: {
     edges: {
       node: CartLine;
