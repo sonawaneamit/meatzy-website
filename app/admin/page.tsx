@@ -150,23 +150,32 @@ export default function AdminDashboard() {
   const loadAffiliates = async () => {
     const supabase = createClient();
 
-    const { data, error } = await supabase
-      .from('users')
-      .select(`
-        id,
-        email,
-        full_name,
-        referral_code,
-        has_purchased,
-        commission_rate,
-        created_at,
-        wallet:wallet(pending_balance, available_balance, lifetime_earnings)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(50);
+    // Get auth token
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.error('No session found');
+      return;
+    }
 
-    if (!error && data) {
-      setAffiliates(data);
+    // Call API route with service role permissions
+    try {
+      const response = await fetch('/api/admin/affiliates', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+
+      if (!response.ok) {
+        console.error('Failed to load affiliates:', response.statusText);
+        return;
+      }
+
+      const result = await response.json();
+      if (result.success && result.affiliates) {
+        setAffiliates(result.affiliates);
+      }
+    } catch (error) {
+      console.error('Error loading affiliates:', error);
     }
   };
 
