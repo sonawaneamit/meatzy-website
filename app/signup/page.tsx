@@ -1,15 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import { createUser } from '../../lib/supabase/referral';
-import { Users, Mail, User as UserIcon, ArrowRight } from 'lucide-react';
+import { Users, Mail, User as UserIcon, ArrowRight, CheckCircle } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -18,6 +20,23 @@ export default function SignupPage() {
     phone: '',
     referralCode: '',
   });
+
+  // Prefill email from URL param or localStorage
+  useEffect(() => {
+    const emailFromUrl = searchParams.get('email');
+    const emailFromStorage = localStorage.getItem('meatzy_signup_email');
+
+    if (emailFromUrl) {
+      setFormData(prev => ({ ...prev, email: emailFromUrl }));
+      setShowSuccessMessage(true);
+      // Clear from localStorage
+      localStorage.removeItem('meatzy_signup_email');
+    } else if (emailFromStorage) {
+      setFormData(prev => ({ ...prev, email: emailFromStorage }));
+      setShowSuccessMessage(true);
+      localStorage.removeItem('meatzy_signup_email');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +111,15 @@ export default function SignupPage() {
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 {error}
+              </div>
+            )}
+
+            {showSuccessMessage && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                <span className="text-sm font-bold">
+                  Great! Just one more step to start earning 💰
+                </span>
               </div>
             )}
 

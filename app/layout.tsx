@@ -8,6 +8,8 @@ import { ReferralBar } from '../components/ReferralBar';
 import { Providers } from './providers';
 import { ReferralProvider } from '../context/ReferralContext';
 import { CartDrawerProvider } from '../context/CartDrawerContext';
+import { CalculatorProvider } from '../context/CalculatorContext';
+import { EarningsCalculator } from '../components/EarningsCalculator';
 import { parseReferralCookie } from '../lib/referral-cookie-utils';
 import './globals.css';
 
@@ -40,12 +42,15 @@ export default async function RootLayout({
         <ReferralProvider initialData={referralData}>
           <Providers>
             <CartDrawerProvider>
-              <ReferralBar />
-              <Navbar />
-              <main className="pt-[140px]">
-                {children}
-              </main>
-              <Footer />
+              <CalculatorProvider>
+                <ReferralBar />
+                <Navbar />
+                <main className="pt-[140px]">
+                  {children}
+                </main>
+                <Footer />
+                <EarningsCalculator />
+              </CalculatorProvider>
             </CartDrawerProvider>
           </Providers>
         </ReferralProvider>
