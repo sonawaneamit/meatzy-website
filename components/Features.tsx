@@ -26,7 +26,7 @@ export const Features: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 max-w-6xl mx-auto">
                 {/* Badge 1 - Origin Verified */}
                 <div className="flex flex-col items-center text-center gap-4">
-                    <MapPin className="w-16 h-16 md:w-20 md:h-20 text-meatzy-olive" strokeWidth={2} />
+                    <MapPin className="w-16 h-16 md:w-20 md:h-20 text-meatzy-dill" strokeWidth={2} />
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
                         Origin<br/>Verified
                     </h3>
@@ -35,14 +35,14 @@ export const Features: React.FC = () => {
                 {/* Badge 2 - Chef Tested */}
                 <div className="flex flex-col items-center text-center gap-4">
                     <ChefHat className="w-16 h-16 md:w-20 md:h-20 text-meatzy-rare" strokeWidth={2} />
-                    <h3 className="font-black font-display text-meatzy-olive uppercase text-sm md:text-base tracking-wide">
+                    <h3 className="font-black font-display text-meatzy-dill uppercase text-sm md:text-base tracking-wide">
                         Chef<br/>Tested
                     </h3>
                 </div>
 
                 {/* Badge 3 - Sustainably Raised */}
                 <div className="flex flex-col items-center text-center gap-4">
-                    <Leaf className="w-16 h-16 md:w-20 md:h-20 text-meatzy-olive" strokeWidth={2} />
+                    <Leaf className="w-16 h-16 md:w-20 md:h-20 text-meatzy-dill" strokeWidth={2} />
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
                         Sustainably<br/>Raised
                     </h3>
@@ -51,14 +51,14 @@ export const Features: React.FC = () => {
                 {/* Badge 4 - Hormone and Antibiotic Free */}
                 <div className="flex flex-col items-center text-center gap-4">
                     <Shield className="w-16 h-16 md:w-20 md:h-20 text-meatzy-rare" strokeWidth={2} />
-                    <h3 className="font-black font-display text-meatzy-olive uppercase text-sm md:text-base tracking-wide leading-tight">
+                    <h3 className="font-black font-display text-meatzy-dill uppercase text-sm md:text-base tracking-wide leading-tight">
                         Hormone &<br/>Antibiotic Free
                     </h3>
                 </div>
 
                 {/* Badge 5 - Transparent Sourcing */}
                 <div className="flex flex-col items-center text-center col-span-2 md:col-span-3 lg:col-span-1 gap-4">
-                    <FileCheck className="w-16 h-16 md:w-20 md:h-20 text-meatzy-olive" strokeWidth={2} />
+                    <FileCheck className="w-16 h-16 md:w-20 md:h-20 text-meatzy-dill" strokeWidth={2} />
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide leading-tight">
                         Transparent<br/>Sourcing
                     </h3>
