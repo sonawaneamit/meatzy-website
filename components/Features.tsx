@@ -74,40 +74,162 @@ export const Features: React.FC = () => {
                 </div>
             </div>
 
-            {/* Sustainability Section */}
-            <div className="mt-32 flex flex-col md:flex-row gap-16 items-center bg-meatzy-tallow p-8 md:p-16 rounded-3xl border border-meatzy-mint">
-                 <div className="w-full md:w-1/2">
-                     <div className="relative">
-                        <div className="absolute -top-4 -left-4 w-full h-full border-4 border-meatzy-dill rounded-lg"></div>
-                        <img
-                            src="/meatzy-cares.png"
-                            alt="Meatzy Cares"
-                            className="rounded-lg shadow-2xl relative z-10"
-                        />
-                     </div>
-                 </div>
-                 <div className="w-full md:w-1/2">
-                    <span className="text-meatzy-rare font-marker text-2xl md:text-3xl mb-2 block transform -rotate-1">Meatzy Cares</span>
-                    <h2 className="text-3xl md:text-4xl font-black font-slab text-meatzy-olive uppercase mb-6 leading-none">
-                        Excellence Without<br/>Borders
+            {/* Us vs Them Comparison Section */}
+            <div className="mt-32">
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-olive uppercase mb-4">
+                        Us vs. Them
                     </h2>
-                    <p className="text-meatzy-olive/80 mb-6 leading-relaxed text-lg">
-                        We don't just limit ourselves to one region. We scour the globe—from American family farms to sustainable fisheries worldwide—to find the absolute best tasting proteins. 
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Not all meat subscriptions are created equal. Here's how we stack up against other boxes and premium grocery stores.
                     </p>
-                    <p className="text-meatzy-olive/80 mb-8 leading-relaxed text-lg">
-                        Whether it's pasture-raised beef or sustainably caught seafood, if it's on a Meatzy menu, it's passed our rigorous quality tests. We bring the same ingredients used by 5-star resorts directly to your kitchen.
-                    </p>
-                    <div className="flex gap-6 opacity-80 hover:opacity-100 transition-all duration-500">
-                        <div className="flex flex-col items-center gap-2">
-                            <ShieldCheck className="w-10 h-10 text-meatzy-dill" />
-                            <span className="text-xs font-bold uppercase text-meatzy-dill">Chef Verified</span>
-                        </div>
-                         <div className="flex flex-col items-center gap-2">
-                            <Award className="w-10 h-10 text-meatzy-gold" />
-                            <span className="text-xs font-bold uppercase text-meatzy-gold">Resort Quality</span>
-                        </div>
-                    </div>
-                 </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse bg-white shadow-xl rounded-lg overflow-hidden">
+                        <thead>
+                            <tr className="border-b-2 border-gray-200">
+                                <th className="p-4 text-left font-black font-display text-meatzy-olive uppercase text-sm md:text-base"></th>
+                                <th className="p-4 bg-meatzy-rare text-white font-black font-display uppercase text-sm md:text-lg">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <span>Meatzy</span>
+                                    </div>
+                                </th>
+                                <th className="p-4 text-center font-bold text-gray-600 text-sm md:text-base">Other Meat Boxes</th>
+                                <th className="p-4 text-center font-bold text-gray-600 text-sm md:text-base">Premium Grocers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {/* Row 1 - Price per Pound */}
+                            <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                <td className="p-4 font-bold text-meatzy-olive">Price per Pound</td>
+                                <td className="p-4 bg-meatzy-rare/5 text-center">
+                                    <div className="font-black text-meatzy-rare text-xl">$12-15</div>
+                                    <div className="text-xs text-gray-500">Premium quality</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <div className="font-bold text-gray-600 text-xl">$18-25</div>
+                                    <div className="text-xs text-gray-500">Often higher</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <div className="font-bold text-gray-600 text-xl">$15-30</div>
+                                    <div className="text-xs text-gray-500">Variable quality</div>
+                                </td>
+                            </tr>
+
+                            {/* Row 2 - Origin Transparency */}
+                            <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                <td className="p-4 font-bold text-meatzy-olive">Origin Transparency</td>
+                                <td className="p-4 bg-meatzy-rare/5 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">Always disclosed</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-xs text-gray-600 mt-1">Sometimes vague</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Globe className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-xs text-gray-600 mt-1">Often unclear</div>
+                                </td>
+                            </tr>
+
+                            {/* Row 3 - Customization */}
+                            <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                <td className="p-4 font-bold text-meatzy-olive">Full Box Customization</td>
+                                <td className="p-4 bg-meatzy-rare/5 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">Build your own</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Award className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-xs text-gray-600 mt-1">Limited options</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">Buy individual</div>
+                                </td>
+                            </tr>
+
+                            {/* Row 4 - Earn While You Shop */}
+                            <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                <td className="p-4 font-bold text-meatzy-olive">Earn Cash Referrals</td>
+                                <td className="p-4 bg-meatzy-rare/5 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">Up to 17% per box</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
+                                    <div className="text-xs text-gray-600 mt-1">No program</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
+                                    <div className="text-xs text-gray-600 mt-1">No program</div>
+                                </td>
+                            </tr>
+
+                            {/* Row 5 - Hormone & Antibiotic Free */}
+                            <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                <td className="p-4 font-bold text-meatzy-olive">Hormone & Antibiotic Free</td>
+                                <td className="p-4 bg-meatzy-rare/5 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">100% guaranteed</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">Usually yes</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
+                                </td>
+                            </tr>
+
+                            {/* Row 6 - Flexible Subscriptions */}
+                            <tr className="border-b border-gray-200 hover:bg-gray-50">
+                                <td className="p-4 font-bold text-meatzy-olive">Flexible Delivery Schedule</td>
+                                <td className="p-4 bg-meatzy-rare/5 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">4, 6, or 8 weeks</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-xs text-gray-600 mt-1">Limited options</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
+                                    <div className="text-xs text-gray-600 mt-1">No subscription</div>
+                                </td>
+                            </tr>
+
+                            {/* Row 7 - Chef Tested */}
+                            <tr className="hover:bg-gray-50">
+                                <td className="p-4 font-bold text-meatzy-olive">Chef Tested Quality</td>
+                                <td className="p-4 bg-meatzy-rare/5 text-center">
+                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <div className="text-xs text-gray-600 mt-1">Resort-grade</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-xs text-gray-600 mt-1">Variable</div>
+                                </td>
+                                <td className="p-4 text-center">
+                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="mt-12 text-center">
+                    <a
+                        href="/build-box"
+                        className="inline-block bg-meatzy-rare text-white px-10 py-4 text-lg font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-colors shadow-xl"
+                    >
+                        Build Your Box
+                    </a>
+                </div>
             </div>
         </div>
     </section>
