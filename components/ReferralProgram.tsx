@@ -103,7 +103,7 @@ export const ReferralProgram: React.FC = () => {
             </div>
             
             <div className="mt-6 text-center">
-                <a href="#" className="text-xs font-bold text-meatzy-rare uppercase underline decoration-2 underline-offset-4 hover:text-meatzy-welldone">Referral Program Guidelines</a>
+                <a href="/referral-policy" className="text-xs font-bold text-meatzy-rare uppercase underline decoration-2 underline-offset-4 hover:text-meatzy-welldone">Referral Program Guidelines</a>
             </div>
           </div>
 
