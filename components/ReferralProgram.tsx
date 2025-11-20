@@ -61,78 +61,78 @@ export const ReferralProgram: React.FC = () => {
             </div>
 
             {/* Referral Chain */}
-            <div className="space-y-4 mb-6">
+            <div className="space-y-3 mb-6">
                 {/* Tier 1 */}
-                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-meatzy-tallow/50 p-4 rounded-lg hover:bg-meatzy-tallow transition-all duration-300 hover:shadow-md group animate-fade-in opacity-0" style={{animationDelay: '0.1s', animationFillMode: 'forwards'}}>
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-full bg-meatzy-rare flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 rounded-full bg-meatzy-mediumrare flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform">
                                 Y
                             </div>
-                            <span className="text-gray-400">→</span>
-                            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                            <span className="text-meatzy-dill">→</span>
+                            <div className="w-10 h-10 rounded-full bg-meatzy-marbling flex items-center justify-center text-meatzy-olive font-bold group-hover:scale-110 transition-transform">
                                 S
                             </div>
                         </div>
                         <span className="text-meatzy-olive font-medium">You refer Sarah</span>
                     </div>
-                    <div className="text-meatzy-rare font-black text-xl">$24.57</div>
+                    <div className="text-meatzy-welldone font-black text-xl group-hover:scale-110 transition-transform">$24.57</div>
                 </div>
 
                 {/* Tier 2 */}
-                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-meatzy-tallow/50 p-4 rounded-lg hover:bg-meatzy-tallow transition-all duration-300 hover:shadow-md group animate-fade-in opacity-0" style={{animationDelay: '0.2s', animationFillMode: 'forwards'}}>
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 rounded-full bg-meatzy-marbling flex items-center justify-center text-meatzy-olive font-bold group-hover:scale-110 transition-transform">
                                 S
                             </div>
-                            <span className="text-gray-400">→</span>
-                            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
+                            <span className="text-meatzy-dill">→</span>
+                            <div className="w-10 h-10 rounded-full bg-meatzy-mint flex items-center justify-center text-meatzy-olive font-bold group-hover:scale-110 transition-transform">
                                 M
                             </div>
                         </div>
                         <span className="text-meatzy-olive font-medium">Sarah refers Marcus</span>
                     </div>
-                    <div className="text-meatzy-rare font-black text-xl">$3.78</div>
+                    <div className="text-meatzy-welldone font-black text-xl group-hover:scale-110 transition-transform">$3.78</div>
                 </div>
 
                 {/* Tier 3 */}
-                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-meatzy-tallow/50 p-4 rounded-lg hover:bg-meatzy-tallow transition-all duration-300 hover:shadow-md group animate-fade-in opacity-0" style={{animationDelay: '0.3s', animationFillMode: 'forwards'}}>
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 rounded-full bg-meatzy-mint flex items-center justify-center text-meatzy-olive font-bold group-hover:scale-110 transition-transform">
                                 M
                             </div>
-                            <span className="text-gray-400">→</span>
-                            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
+                            <span className="text-meatzy-dill">→</span>
+                            <div className="w-10 h-10 rounded-full bg-meatzy-rosemary flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform">
                                 J
                             </div>
                         </div>
                         <span className="text-meatzy-olive font-medium">Marcus refers Jennifer</span>
                     </div>
-                    <div className="text-meatzy-rare font-black text-xl">$1.89</div>
+                    <div className="text-meatzy-welldone font-black text-xl group-hover:scale-110 transition-transform">$1.89</div>
                 </div>
 
                 {/* Tier 4 */}
-                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between bg-meatzy-tallow/50 p-4 rounded-lg hover:bg-meatzy-tallow transition-all duration-300 hover:shadow-md group animate-fade-in opacity-0" style={{animationDelay: '0.4s', animationFillMode: 'forwards'}}>
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 rounded-full bg-meatzy-rosemary flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform">
                                 J
                             </div>
-                            <span className="text-gray-400">→</span>
-                            <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold">
+                            <span className="text-meatzy-dill">→</span>
+                            <div className="w-10 h-10 rounded-full bg-meatzy-gold flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform">
                                 D
                             </div>
                         </div>
                         <span className="text-meatzy-olive font-medium">Jennifer refers David</span>
                     </div>
-                    <div className="text-meatzy-rare font-black text-xl">$1.89</div>
+                    <div className="text-meatzy-welldone font-black text-xl group-hover:scale-110 transition-transform">$1.89</div>
                 </div>
             </div>
 
             {/* Total Earnings */}
-            <div className="bg-meatzy-rare p-6 rounded-lg text-white">
+            <div className="bg-meatzy-welldone/90 p-6 rounded-lg text-white hover:bg-meatzy-welldone transition-colors duration-300 animate-fade-in opacity-0" style={{animationDelay: '0.5s', animationFillMode: 'forwards'}}>
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div>
                         <p className="text-sm font-bold uppercase mb-1">What YOU earn from this chain:</p>
@@ -146,33 +146,49 @@ export const ReferralProgram: React.FC = () => {
             </div>
 
             {/* Others Earn Too */}
-            <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+            <div className="mt-6 bg-meatzy-tallow/50 p-4 rounded-lg border border-meatzy-mint animate-fade-in opacity-0" style={{animationDelay: '0.6s', animationFillMode: 'forwards'}}>
                 <p className="text-sm font-bold text-meatzy-olive mb-3">What others in this chain also earn:</p>
                 <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between hover:bg-white/50 p-2 rounded transition-colors">
                         <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">S</div>
+                            <div className="w-6 h-6 rounded-full bg-meatzy-marbling flex items-center justify-center text-meatzy-olive text-xs font-bold">S</div>
                             <span className="text-gray-600">Sarah earns</span>
                         </div>
-                        <span className="font-bold text-gray-700">$30.24</span>
+                        <span className="font-bold text-meatzy-olive">$30.24</span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between hover:bg-white/50 p-2 rounded transition-colors">
                         <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">M</div>
+                            <div className="w-6 h-6 rounded-full bg-meatzy-mint flex items-center justify-center text-meatzy-olive text-xs font-bold">M</div>
                             <span className="text-gray-600">Marcus earns</span>
                         </div>
-                        <span className="font-bold text-gray-700">$28.35</span>
+                        <span className="font-bold text-meatzy-olive">$28.35</span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between hover:bg-white/50 p-2 rounded transition-colors">
                         <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-bold">J</div>
+                            <div className="w-6 h-6 rounded-full bg-meatzy-rosemary flex items-center justify-center text-white text-xs font-bold">J</div>
                             <span className="text-gray-600">Jennifer earns</span>
                         </div>
-                        <span className="font-bold text-gray-700">$24.57</span>
+                        <span className="font-bold text-meatzy-olive">$24.57</span>
                     </div>
                 </div>
                 <p className="text-xs text-gray-500 italic text-center mt-3">Everyone wins when the network grows</p>
             </div>
+
+            <style jsx>{`
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .animate-fade-in {
+                    animation: fadeIn 0.5s ease-out;
+                }
+            `}</style>
 
             <div className="mt-6 text-center">
                 <a href="/referral-policy" className="text-xs font-bold text-meatzy-rare uppercase underline decoration-2 underline-offset-4 hover:text-meatzy-welldone">Referral Program Guidelines</a>
