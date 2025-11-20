@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Award, Zap, Globe, MapPin, ChefHat, Leaf, Shield, FileCheck, Check } from 'lucide-react';
+import { ShieldCheck, Award, Zap, Globe, MapPin, ChefHat, Leaf, Shield, FileCheck, Check, X, Minus } from 'lucide-react';
 
 export const Features: React.FC = () => {
   return (
@@ -127,11 +127,11 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Always disclosed</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
+                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">Sometimes vague</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
+                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">Often unclear</div>
                                 </td>
                             </tr>
@@ -144,7 +144,7 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Build your own</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
+                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">Limited options</div>
                                 </td>
                                 <td className="p-4 text-center">
@@ -161,11 +161,11 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Up to 17% per box</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
+                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">No program</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
+                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">No program</div>
                                 </td>
                             </tr>
@@ -182,7 +182,7 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Usually yes</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
+                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
                                 </td>
                             </tr>
@@ -195,11 +195,11 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">4, 6, or 8 weeks</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
+                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">Limited options</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
+                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">No subscription</div>
                                 </td>
                             </tr>
@@ -212,11 +212,11 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Resort-grade</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
+                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">Variable</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
+                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
                                     <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
                                 </td>
                             </tr>

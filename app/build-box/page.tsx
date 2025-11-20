@@ -133,7 +133,7 @@ export default function BuildBoxPage() {
   }
 
   return (
-    <div className="min-h-screen bg-meatzy-tallow pt-32 pb-20">
+    <div className="min-h-screen bg-meatzy-tallow -mt-[140px] pt-44 pb-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
 
         {/* Header */}

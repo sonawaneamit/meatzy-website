@@ -4,10 +4,10 @@ import { ArrowRight, ShieldCheck, Award, Truck, CheckCircle2, Star, ChefHat, Ute
 export const Hero: React.FC = () => {
   return (
     <div className="flex flex-col">
-        <section className="relative min-h-[85vh] w-full flex items-center bg-meatzy-tallow overflow-hidden pt-32 lg:pt-28">
-            
+        <section className="relative min-h-[90vh] w-full flex items-center bg-meatzy-tallow overflow-hidden pt-40 lg:pt-36 pb-16">
+
             <div className="max-w-7xl mx-auto px-4 md:px-8 w-full">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
                     
                     {/* Left Content */}
                     <div className="relative z-10 order-2 lg:order-1 text-center lg:text-left py-10 lg:py-0">
@@ -22,26 +22,26 @@ export const Hero: React.FC = () => {
                             <span className="text-xs font-bold uppercase tracking-wider text-meatzy-olive">Trusted by Top Chefs</span>
                         </div>
 
-                        <h1 className="text-5xl md:text-6xl xl:text-7xl font-black text-meatzy-olive leading-[0.9] mb-6 font-slab capitalize tracking-tight">
+                        <h1 className="text-5xl md:text-6xl xl:text-7xl font-black text-meatzy-olive leading-[0.95] mb-8 font-slab capitalize tracking-tight">
                         The Only Box<br/>
                         That Feeds You <br/>
                         <span className="text-meatzy-rare">And Pays You.</span>
                         </h1>
-                        
-                        <p className="text-lg text-meatzy-olive/70 mb-10 max-w-xl font-medium leading-relaxed mx-auto lg:mx-0">
-                        We supply luxury resorts, but we partner with families. We're flipping the food system by paying <span className="font-bold text-meatzy-olive">you</span> instead of ad agencies to spread the word. Experience culinary-grade meat at home and earn cash for sharing the movement.
+
+                        <p className="text-xl md:text-2xl text-meatzy-olive/80 mb-12 max-w-xl font-normal leading-relaxed mx-auto lg:mx-0">
+                        We supply luxury resorts, but we partner with families. We're flipping the food system by paying <span className="font-semibold text-meatzy-olive">you</span> instead of ad agencies to spread the word.
                         </p>
                         
-                        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
-                        <a href="/build-box" className="bg-meatzy-rare text-white px-10 py-4 text-lg font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-all shadow-xl flex items-center justify-center gap-3">
+                        <div className="flex flex-col sm:flex-row gap-5 w-full justify-center lg:justify-start mb-10">
+                        <a href="/build-box" className="bg-meatzy-rare text-white px-12 py-5 text-base font-display font-bold uppercase tracking-wide hover:bg-meatzy-welldone transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
                             Build Your Box <ArrowRight className="w-5 h-5" />
                         </a>
-                        <a href="#how-it-works" className="bg-transparent text-meatzy-olive border-2 border-meatzy-olive px-10 py-4 text-lg font-display font-bold uppercase tracking-widest hover:bg-meatzy-olive hover:text-white transition-all flex items-center justify-center">
+                        <a href="#how-it-works" className="bg-white text-meatzy-olive border-2 border-meatzy-mint px-12 py-5 text-base font-display font-semibold uppercase tracking-wide hover:border-meatzy-olive transition-all flex items-center justify-center shadow-sm hover:shadow-md">
                             How It Works
                         </a>
                         </div>
 
-                        <div className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-xs font-bold uppercase tracking-wide text-meatzy-olive/60">
+                        <div className="flex items-center justify-center lg:justify-start gap-8 text-sm font-medium text-meatzy-olive/70">
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="w-4 h-4 text-meatzy-dill" /> No Antibiotics
                             </div>
@@ -76,35 +76,35 @@ export const Hero: React.FC = () => {
         </section>
 
         {/* Trust Strip */}
-        <div className="bg-meatzy-olive text-white border-t border-meatzy-olive relative z-20">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/10">
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="p-2 bg-white/10 rounded-full">
-                            <ChefHat className="w-6 h-6 text-meatzy-gold" />
+        <div className="bg-white border-y border-meatzy-mint/30 relative z-20">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="p-3 bg-meatzy-tallow/50 rounded-full">
+                            <ChefHat className="w-7 h-7 text-meatzy-dill" />
                         </div>
-                        <span className="font-display font-bold uppercase tracking-wider text-xs">Luxury Resort Supplier</span>
+                        <span className="font-display font-semibold text-meatzy-olive text-sm">Luxury Resort Supplier</span>
                     </div>
-                    
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="p-2 bg-white/10 rounded-full">
-                            <ShieldCheck className="w-6 h-6 text-meatzy-gold" />
+
+                    <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="p-3 bg-meatzy-tallow/50 rounded-full">
+                            <ShieldCheck className="w-7 h-7 text-meatzy-dill" />
                         </div>
-                        <span className="font-display font-bold uppercase tracking-wider text-xs">Sourced for Flavor</span>
+                        <span className="font-display font-semibold text-meatzy-olive text-sm">Sourced for Flavor</span>
                     </div>
-                    
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="p-2 bg-white/10 rounded-full">
-                            <Utensils className="w-6 h-6 text-meatzy-gold" />
+
+                    <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="p-3 bg-meatzy-tallow/50 rounded-full">
+                            <Utensils className="w-7 h-7 text-meatzy-dill" />
                         </div>
-                        <span className="font-display font-bold uppercase tracking-wider text-xs">Restaurant Grade</span>
+                        <span className="font-display font-semibold text-meatzy-olive text-sm">Restaurant Grade</span>
                     </div>
-                    
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="p-2 bg-white/10 rounded-full">
-                            <Truck className="w-6 h-6 text-meatzy-gold" />
+
+                    <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="p-3 bg-meatzy-tallow/50 rounded-full">
+                            <Truck className="w-7 h-7 text-meatzy-dill" />
                         </div>
-                        <span className="font-display font-bold uppercase tracking-wider text-xs">Free Shipping</span>
+                        <span className="font-display font-semibold text-meatzy-olive text-sm">Free Shipping</span>
                     </div>
                 </div>
             </div>

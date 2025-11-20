@@ -33,6 +33,8 @@ function ThankYouContent() {
   const [settingPassword, setSettingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [temporaryPassword, setTemporaryPassword] = useState<string>('');
+  const [tempPasswordCopied, setTempPasswordCopied] = useState(false);
 
   useEffect(() => {
     // Get order details from URL parameters
@@ -80,7 +82,7 @@ function ThankYouContent() {
       // Fetch user by email
       const { data: user, error } = await supabase
         .from('users')
-        .select('referral_code, full_name')
+        .select('referral_code, full_name, temporary_password, requires_password_change')
         .eq('email', email.toLowerCase())
         .single();
 
@@ -91,6 +93,22 @@ function ThankYouContent() {
       }
 
       setReferralCode(user.referral_code);
+
+      // Check if this user was created by webhook (has referral code but no auth account)
+      // If so, show temporary password and login instructions
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) {
+        // User exists in database but no auth - created by webhook
+        console.log('User created by webhook, showing temporary password');
+
+        // Store temporary password if it exists
+        if (user.temporary_password) {
+          setTemporaryPassword(user.temporary_password);
+        }
+
+        setPasswordSuccess(true); // Show success state
+        setShowPasswordSetup(false); // Don't show password form
+      }
 
       // Generate simple referral link (no UTM for cleaner look)
       const link = generateReferralLink(user.referral_code);
@@ -159,31 +177,44 @@ function ThankYouContent() {
     setSettingPassword(true);
 
     try {
-      const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-      // Sign up the user with Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
-        email: customerEmail,
-        password: password,
-        options: {
-          data: {
-            referral_code: referralCode,
-            full_name: customerName,
-          },
+      // Call smart backend API that handles both existing and new users
+      const response = await fetch('/api/auth/setup-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          email: customerEmail,
+          password: password,
+          referralCode: referralCode,
+          fullName: customerName,
+        }),
       });
 
-      if (error) {
-        console.error('Password setup error:', error);
-        setPasswordError(error.message || 'Failed to create account. Please try again.');
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Password setup error:', data.error);
+        setPasswordError(data.error || 'Failed to create account. Please try again.');
       } else {
         setPasswordSuccess(true);
         setShowPasswordSetup(false);
 
-        // Auto-redirect to dashboard after 2 seconds
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 2000);
+        if (data.useMagicLink) {
+          // Magic link was sent - show email check message (no redirect)
+          setPasswordError(''); // Clear any errors
+        } else {
+          // Password was set - store session and redirect
+          if (data.session) {
+            const supabase = createClient(supabaseUrl, supabaseAnonKey);
+            await supabase.auth.setSession(data.session);
+          }
+
+          // Auto-redirect to dashboard after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+        }
       }
     } catch (error) {
       console.error('Password setup error:', error);
@@ -626,8 +657,65 @@ function ThankYouContent() {
                   <div className="mt-6 text-center">
                     <div className="bg-green-500/20 border border-green-500 rounded-lg p-4 mb-4">
                       <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
-                      <h3 className="text-lg font-bold mb-1">Account Created!</h3>
-                      <p className="text-sm">Redirecting to dashboard...</p>
+                      {referralCode && !showPasswordSetup ? (
+                        // Webhook user - show temporary password and login instructions
+                        <>
+                          <h3 className="text-lg font-bold mb-2">Your Affiliate Account Is Ready!</h3>
+                          <p className="text-sm mb-4">
+                            We've created your affiliate account with a temporary password.
+                          </p>
+
+                          {temporaryPassword && (
+                            <div className="bg-white/10 border border-white/30 rounded-lg p-4 mb-4">
+                              <p className="text-xs font-bold uppercase tracking-wider mb-2 opacity-75">
+                                Temporary Password
+                              </p>
+                              <div className="flex items-center justify-center gap-3">
+                                <code className="text-xl font-mono font-bold bg-white/20 px-4 py-2 rounded">
+                                  {temporaryPassword}
+                                </code>
+                                <button
+                                  onClick={async () => {
+                                    const success = await copyToClipboard(temporaryPassword);
+                                    if (success) {
+                                      setTempPasswordCopied(true);
+                                      setTimeout(() => setTempPasswordCopied(false), 2000);
+                                    }
+                                  }}
+                                  className="bg-white/20 hover:bg-white/30 p-2 rounded transition-colors"
+                                  title="Copy password"
+                                >
+                                  <Copy className="w-5 h-5" />
+                                </button>
+                              </div>
+                              {tempPasswordCopied && (
+                                <p className="text-xs text-green-300 mt-2">Copied!</p>
+                              )}
+                            </div>
+                          )}
+
+                          <p className="text-sm mb-3">
+                            Use this password to log in to your dashboard. You'll be prompted to change it after your first login.
+                          </p>
+
+                          <a
+                            href="/login"
+                            className="inline-block bg-meatzy-olive text-white font-bold uppercase tracking-wider py-3 px-6 rounded-lg hover:bg-meatzy-rare transition-colors text-sm"
+                          >
+                            Go to Login Page
+                          </a>
+
+                          <p className="text-xs mt-3 opacity-75">
+                            Email: {customerEmail}
+                          </p>
+                        </>
+                      ) : (
+                        // New signup - show redirect message
+                        <>
+                          <h3 className="text-lg font-bold mb-1">Account Created!</h3>
+                          <p className="text-sm">Redirecting to dashboard...</p>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}

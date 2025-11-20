@@ -153,13 +153,13 @@ export const ProductGrid: React.FC = () => {
 
   return (
     <>
-    <div className="text-center mb-12">
-        <span className="text-meatzy-rare font-marker text-2xl md:text-3xl transform -rotate-2 mb-2 block">Best Sellers</span>
-        <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-olive uppercase mb-6">Shop Our Boxes</h2>
-        
+    <div className="text-center mb-20 max-w-2xl mx-auto">
+        <span className="text-meatzy-rare font-marker text-2xl md:text-3xl transform -rotate-2 mb-4 block">Best Sellers</span>
+        <h2 className="text-4xl md:text-6xl font-black font-slab text-meatzy-olive leading-tight mb-6">Shop Our Boxes</h2>
+        <p className="text-lg text-meatzy-olive/70">Curated collections of premium, sustainably-raised protein.</p>
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
       {products.map((product, index) => (
         <div key={product.id} className="flex flex-col bg-white rounded-xl overflow-hidden border border-meatzy-mint/50 shadow-lg hover:shadow-2xl transition-all duration-300 group relative">
 
@@ -184,16 +184,8 @@ export const ProductGrid: React.FC = () => {
                 <img
                   src={getLocalImage(product.handle) || product.featuredImage.url}
                   alt={product.featuredImage.altText}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 absolute inset-0 z-10 group-hover:opacity-0"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700"
                 />
-                {/* Second Image (Hover) - Only show if multiple images exist */}
-                {product.images && product.images.edges.length > 1 && (
-                  <img
-                    src={product.images.edges[1].node.url}
-                    alt={product.images.edges[1].node.altText}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 absolute inset-0 z-0"
-                  />
-                )}
               </>
             )}
           </div>

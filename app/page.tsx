@@ -14,37 +14,37 @@ export default function Home() {
       
       <HowItWorks />
 
-      <section id="shop" className="pt-12 pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
+      <section id="shop" className="py-32 px-4 md:px-8 max-w-7xl mx-auto w-full bg-meatzy-tallow">
         <ProductGrid />
       </section>
-      
+
       <Features />
 
       <ReferralProgram />
 
       {/* Business Section - Meatzy Gourmet */}
-      <section className="bg-meatzy-olive py-24 text-white relative overflow-hidden">
+      <section className="bg-meatzy-olive py-32 text-white relative overflow-hidden">
            {/* Background Pattern */}
            <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-           
-           <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center gap-16 relative z-10">
+
+           <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center gap-20 relative z-10">
               <div className="w-full md:w-1/2 order-2 md:order-1">
-                   <span className="text-meatzy-rare font-display font-bold uppercase tracking-widest text-sm mb-2 block">Meatzy For Business</span>
-                   <h2 className="text-4xl md:text-5xl font-black font-slab uppercase mb-6 leading-tight">Meatzy Gourmet</h2>
-                   <p className="text-gray-300 mb-8 leading-relaxed text-lg">
+                   <span className="text-meatzy-gold font-display font-semibold uppercase tracking-wider text-sm mb-4 block">Meatzy For Business</span>
+                   <h2 className="text-4xl md:text-5xl font-black font-slab mb-8 leading-tight">Meatzy Gourmet</h2>
+                   <p className="text-white/80 mb-10 leading-relaxed text-xl">
                       At MEATZY, we make it easy for restaurants, hotels, and other businesses to access premium proteins at competitive wholesale prices. Request custom quotes and lock in protein prices for 6 months at a time.
                    </p>
-                   <div className="flex flex-col sm:flex-row gap-4 items-start">
-                       <p className="text-white font-bold uppercase tracking-wide py-3">
+                   <div className="flex flex-col gap-6">
+                       <p className="text-white text-lg font-medium">
                           Let's grow together, reach out to a rep today.
                        </p>
-                       <button className="bg-meatzy-rare text-white px-8 py-3 font-display font-bold uppercase tracking-widest hover:bg-white hover:text-meatzy-olive transition-colors shadow-lg">
+                       <button className="bg-white text-meatzy-olive px-10 py-4 font-display font-bold uppercase tracking-wide hover:bg-meatzy-rare hover:text-white transition-colors shadow-xl w-fit">
                           Get In Touch
                        </button>
                    </div>
               </div>
               <div className="w-full md:w-1/2 order-1 md:order-2">
-                   <img src="/gourmet.png" alt="Meatzy Gourmet" className="rounded-lg shadow-2xl border-4 border-meatzy-dill/20" />
+                   <img src="/gourmet.png" alt="Meatzy Gourmet" className="rounded-2xl shadow-2xl border-4 border-white/10" />
               </div>
            </div>
       </section>
