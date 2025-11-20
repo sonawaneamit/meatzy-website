@@ -43,7 +43,7 @@ export default async function RootLayout({
             <CartDrawerProvider>
               <CalculatorProvider>
                 <StickyHeader />
-                <main className="pt-[140px]">
+                <main className="pt-20">
                   {children}
                 </main>
                 <Footer />

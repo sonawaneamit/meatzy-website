@@ -231,7 +231,7 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-meatzy-tallow pt-32">
+      <div className="min-h-screen flex items-center justify-center bg-meatzy-tallow pt-0">
         <div className="text-meatzy-olive font-display font-bold uppercase tracking-widest text-xl">
           Loading admin dashboard...
         </div>
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-meatzy-tallow pt-32 pb-20">
+    <div className="min-h-screen bg-meatzy-tallow pt-0 pb-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
 
         {/* Header */}

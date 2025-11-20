@@ -23,15 +23,19 @@ import {
   Facebook,
   Twitter,
   MessageCircle,
-  Mail
+  Mail,
+  Wallet,
+  Lock
 } from 'lucide-react';
 import QRCodeLib from 'qrcode';
 import { generateReferralLink, generateSocialLinks, copyToClipboard, downloadQRCode } from '../../lib/referral-utils';
+import { getDisplayName } from '../../lib/privacy-utils';
 
 export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [wallet, setWallet] = useState<any>(null);
   const [commissions, setCommissions] = useState<any[]>([]);
   const [referrals, setReferrals] = useState<any[]>([]);
@@ -64,6 +68,9 @@ export default function DashboardPage() {
       }
 
       setUser(userData);
+
+      // Check if user is admin
+      setIsAdmin(userData.is_admin || false);
 
       // Load wallet, commissions, and referrals
       const [walletData, commissionsData, referralsData] = await Promise.all([
@@ -133,7 +140,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-meatzy-tallow pt-32">
+      <div className="min-h-screen flex items-center justify-center bg-meatzy-tallow pt-0">
         <div className="text-meatzy-olive font-display font-bold uppercase tracking-widest text-xl">
           Loading dashboard...
         </div>
@@ -149,7 +156,7 @@ export default function DashboardPage() {
   const socialLinks = generateSocialLinks(user.referral_code, referralLink);
 
   return (
-    <div className="min-h-screen bg-meatzy-tallow pt-32 pb-20">
+    <div className="min-h-screen bg-meatzy-tallow pt-0 pb-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
 
         {/* Header */}
@@ -222,6 +229,90 @@ export default function DashboardPage() {
             <div className="text-3xl font-black text-meatzy-olive">
               {referrals.length}
             </div>
+          </div>
+        </div>
+
+        {/* Request Payment Section */}
+        <div className="bg-white rounded-xl shadow-xl border-2 border-meatzy-mint/50 p-8 mb-8">
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`p-3 rounded-full ${
+                  (wallet?.available_balance || 0) >= 100
+                    ? 'bg-meatzy-dill/20'
+                    : 'bg-gray-100'
+                }`}>
+                  <Wallet className={`w-6 h-6 ${
+                    (wallet?.available_balance || 0) >= 100
+                      ? 'text-meatzy-dill'
+                      : 'text-gray-400'
+                  }`} />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black font-slab text-meatzy-olive uppercase">
+                    Request Payment
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Minimum payout: $100
+                  </p>
+                </div>
+              </div>
+
+              {(wallet?.available_balance || 0) >= 100 ? (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Check className="w-5 h-5 text-meatzy-dill" />
+                    <p className="text-meatzy-dill font-bold">
+                      You're eligible for payment! 🎉
+                    </p>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    You have <span className="font-black text-meatzy-dill">${wallet?.available_balance?.toFixed(2)}</span> ready to withdraw.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-gray-600">Progress to $100</span>
+                      <span className="font-bold text-meatzy-olive">
+                        ${wallet?.available_balance?.toFixed(2) || '0.00'} / $100
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-meatzy-rare to-meatzy-gold h-full transition-all duration-500"
+                        style={{ width: `${Math.min(((wallet?.available_balance || 0) / 100) * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Earn <span className="font-black text-meatzy-rare">${(100 - (wallet?.available_balance || 0)).toFixed(2)}</span> more to request payment
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <button
+              disabled={(wallet?.available_balance || 0) < 100}
+              className={`px-8 py-4 rounded-lg font-display font-bold uppercase tracking-widest text-lg transition-all flex items-center gap-3 ${
+                (wallet?.available_balance || 0) >= 100
+                  ? 'bg-meatzy-dill text-white hover:bg-meatzy-olive shadow-lg hover:shadow-xl cursor-pointer'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              {(wallet?.available_balance || 0) >= 100 ? (
+                <>
+                  <Wallet className="w-6 h-6" />
+                  Request Payment
+                </>
+              ) : (
+                <>
+                  <Lock className="w-6 h-6" />
+                  Locked
+                </>
+              )}
+            </button>
           </div>
         </div>
 
@@ -333,65 +424,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Withdrawal Section */}
-        <div className="bg-white rounded-xl p-8 mb-8 shadow-lg border border-meatzy-mint/30">
-          <h2 className="text-2xl font-black font-slab text-meatzy-olive uppercase mb-4">
-            Request Withdrawal
-          </h2>
-
-          {wallet && wallet.available_balance >= 100 ? (
-            <div>
-              <p className="text-gray-600 mb-6">
-                You have <span className="font-black text-meatzy-dill">${wallet.available_balance.toFixed(2)}</span> available for withdrawal.
-              </p>
-
-              <div className="bg-meatzy-mint/10 border border-meatzy-mint rounded-lg p-6 mb-6">
-                <h3 className="font-bold text-meatzy-olive mb-3">How to Request Withdrawal:</h3>
-                <ol className="space-y-2 text-sm text-gray-700">
-                  <li className="flex gap-2">
-                    <span className="font-bold">1.</span>
-                    <span>Make sure you have at least $100 in available balance</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-bold">2.</span>
-                    <span>Fill out our withdrawal request form with your PayPal email</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-bold">3.</span>
-                    <span>We'll process your payment within 2-3 business days</span>
-                  </li>
-                </ol>
-              </div>
-
-              <a
-                href="https://form.klaviyo.com/YOUR_FORM_ID"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-8 py-4 bg-meatzy-dill text-white font-display font-bold uppercase tracking-widest hover:bg-meatzy-olive transition-colors rounded-lg"
-              >
-                Request Withdrawal via Klaviyo Form
-              </a>
-
-              <p className="text-xs text-gray-500 mt-4">
-                * Minimum withdrawal amount: $100
-              </p>
-            </div>
-          ) : (
-            <div className="bg-gray-50 rounded-lg p-6 text-center">
-              <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-2">
-                Minimum withdrawal amount is <span className="font-bold">$100</span>
-              </p>
-              <p className="text-sm text-gray-500">
-                Current available balance: ${wallet?.available_balance?.toFixed(2) || '0.00'}
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Keep earning! You need ${(100 - (wallet?.available_balance || 0)).toFixed(2)} more.
-              </p>
-            </div>
-          )}
-        </div>
-
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
@@ -448,6 +480,7 @@ export default function DashboardPage() {
               <div className="space-y-3">
                 {referrals.map((referral: any) => {
                   const refUser = referral.users;
+                  const displayName = getDisplayName(refUser.full_name, refUser.email, isAdmin);
                   return (
                     <div
                       key={referral.user_id}
@@ -455,8 +488,13 @@ export default function DashboardPage() {
                     >
                       <div>
                         <div className="font-bold text-meatzy-olive">
-                          {refUser.full_name || refUser.email}
+                          {displayName}
                         </div>
+                        {isAdmin && (
+                          <div className="text-xs text-gray-400">
+                            {refUser.email}
+                          </div>
+                        )}
                         <div className="text-sm text-gray-500">
                           Joined {new Date(refUser.created_at).toLocaleDateString()}
                         </div>
