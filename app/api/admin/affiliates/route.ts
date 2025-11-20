@@ -22,15 +22,26 @@ export async function GET(request: NextRequest) {
     // Verify user is authenticated and is admin
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      console.error('No authorization header');
+      return NextResponse.json({ error: 'Unauthorized - No token' }, { status: 401 });
     }
 
     const token = authHeader.replace('Bearer ', '');
+    console.log('Validating token...');
+
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (authError) {
+      console.error('Auth error:', authError);
+      return NextResponse.json({ error: 'Unauthorized - Invalid token', details: authError.message }, { status: 401 });
     }
+
+    if (!user) {
+      console.error('No user found');
+      return NextResponse.json({ error: 'Unauthorized - No user' }, { status: 401 });
+    }
+
+    console.log('User authenticated:', user.id);
 
     // Check if user is admin
     const { data: userData, error: userError } = await supabaseAdmin
@@ -39,9 +50,17 @@ export async function GET(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (userError || !userData?.is_admin) {
+    if (userError) {
+      console.error('Error checking admin status:', userError);
+      return NextResponse.json({ error: 'Database error checking admin', details: userError.message }, { status: 500 });
+    }
+
+    if (!userData?.is_admin) {
+      console.error('User is not admin:', user.id);
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
+
+    console.log('Admin validated:', user.id);
 
     // Fetch all affiliates with wallet data
     const { data: affiliates, error: fetchError } = await supabaseAdmin
