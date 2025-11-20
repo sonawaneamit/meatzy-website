@@ -127,11 +127,11 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Always disclosed</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
                                     <div className="text-xs text-gray-600 mt-1">Sometimes vague</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Globe className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-2xl text-gray-400 mx-auto">✕</div>
                                     <div className="text-xs text-gray-600 mt-1">Often unclear</div>
                                 </td>
                             </tr>
@@ -144,7 +144,7 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Build your own</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Award className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
                                     <div className="text-xs text-gray-600 mt-1">Limited options</div>
                                 </td>
                                 <td className="p-4 text-center">
@@ -182,7 +182,7 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Usually yes</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
                                     <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
                                 </td>
                             </tr>
@@ -195,7 +195,7 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">4, 6, or 8 weeks</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
                                     <div className="text-xs text-gray-600 mt-1">Limited options</div>
                                 </td>
                                 <td className="p-4 text-center">
@@ -212,11 +212,11 @@ export const Features: React.FC = () => {
                                     <div className="text-xs text-gray-600 mt-1">Resort-grade</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
                                     <div className="text-xs text-gray-600 mt-1">Variable</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Zap className="w-8 h-8 text-gray-400 mx-auto" />
+                                    <div className="text-4xl text-gray-400 font-bold mx-auto">--</div>
                                     <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
                                 </td>
                             </tr>
