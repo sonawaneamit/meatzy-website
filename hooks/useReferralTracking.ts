@@ -16,8 +16,25 @@ export function useReferralTracking() {
 
     if (refCode) {
       // Store in localStorage for later use during checkout/signup
-      localStorage.setItem(REFERRAL_CODE_KEY, refCode.toUpperCase());
-      console.log('Referral code captured:', refCode);
+      const upperCode = refCode.toUpperCase();
+      localStorage.setItem(REFERRAL_CODE_KEY, upperCode);
+      console.log('Referral code captured:', upperCode);
+
+      // Also update the HTTPOnly cookie via API (overwrites existing referral)
+      fetch('/api/referral/set-from-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ referralCode: upperCode })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Referral cookie updated for:', data.referrerName);
+            // Force page reload to update ReferralBar
+            window.location.reload();
+          }
+        })
+        .catch(err => console.error('Failed to set referral cookie:', err));
     }
   }, [searchParams]);
 }
