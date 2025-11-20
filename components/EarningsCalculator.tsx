@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, DollarSign, Users, ShoppingCart, TrendingUp, Calendar } from 'lucide-react';
+import { X, Calculator, Users, ShoppingCart, TrendingUp, Calendar } from 'lucide-react';
 import { useCalculator } from '@/context/CalculatorContext';
 import { useAuth } from '@/hooks/useAuth';
 import { Slider } from '@/components/ui/Slider';
@@ -26,23 +26,26 @@ export function EarningsCalculator() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
-  const [showAnimation, setShowAnimation] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Show calculator with animation after 2 seconds
+  // Show calculator after user scrolls 30-40% down the page
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAnimation(true);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    const handleScroll = () => {
+      const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
 
-  // Hide from logged-in users
-  if (loading || isLoggedIn) {
-    return null;
-  }
+      // Show after 30% scroll
+      if (scrollPercentage >= 30 && !showCalculator) {
+        setShowCalculator(true);
+      }
+    };
 
-  // Don't show until animation timer fires
-  if (!showAnimation) {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [showCalculator]);
+
+  // Hide from logged-in users or before scroll threshold
+  if (loading || isLoggedIn || !showCalculator) {
     return null;
   }
 
@@ -73,35 +76,54 @@ export function EarningsCalculator() {
       {/* Desktop: Floating Widget */}
       <div className="hidden md:block">
         {!isExpanded ? (
-          // Collapsed State
+          // Collapsed State - Icon only with hover text
           <button
             onClick={() => setIsExpanded(true)}
-            className="fixed bottom-6 right-6 z-[90] bg-gradient-to-r from-meatzy-rare to-meatzy-welldone text-white px-6 py-4 rounded-full shadow-2xl font-display font-bold uppercase tracking-wide hover:scale-105 transition-transform flex items-center gap-2 animate-slideInUp animate-pulse"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="fixed bottom-6 right-6 z-[90] bg-white text-meatzy-rare rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-slideInUp border border-gray-200 hover:border-meatzy-rare group"
+            style={{
+              width: isHovered ? 'auto' : '56px',
+              paddingLeft: isHovered ? '20px' : '16px',
+              paddingRight: isHovered ? '20px' : '16px',
+              paddingTop: '16px',
+              paddingBottom: '16px',
+            }}
           >
-            <DollarSign className="w-5 h-5" />
-            <span className="whitespace-nowrap">Calculate Your Earnings</span>
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <Calculator className="w-5 h-5 flex-shrink-0" />
+              <span
+                className="font-display font-bold uppercase tracking-wide text-sm overflow-hidden transition-all duration-300"
+                style={{
+                  width: isHovered ? 'auto' : '0',
+                  opacity: isHovered ? 1 : 0,
+                }}
+              >
+                Calculate Earnings
+              </span>
+            </div>
           </button>
         ) : (
-          // Expanded State
-          <div className="fixed bottom-6 right-6 z-[90] w-[440px] bg-white rounded-2xl shadow-2xl border-2 border-meatzy-mint animate-slideUp max-h-[90vh] overflow-y-auto">
+          // Expanded State - Sleeker Design
+          <div className="fixed bottom-6 right-6 z-[90] w-[400px] bg-white rounded-xl shadow-xl border border-gray-200 animate-slideUp max-h-[85vh] overflow-y-auto">
             {/* Header */}
-            <div className="bg-gradient-to-r from-meatzy-olive to-meatzy-rosemary text-white p-6 rounded-t-2xl relative">
-              <h3 className="text-xl font-black font-slab pr-8">
-                Your Affiliate Earnings Potential
+            <div className="bg-gradient-to-r from-meatzy-olive to-meatzy-rosemary text-white px-5 py-4 rounded-t-xl relative">
+              <h3 className="text-lg font-black font-slab pr-8">
+                Earnings Calculator
               </h3>
-              <p className="text-sm text-white/80 mt-1">
-                See how much you can earn with Meatzy
+              <p className="text-xs text-white/80 mt-0.5">
+                See your earning potential
               </p>
               <button
                 onClick={() => setIsExpanded(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="absolute top-3 right-3 p-1.5 hover:bg-white/20 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Calculator Inputs */}
-            <div className="p-6 space-y-6">
+            <div className="p-5 space-y-5">
               <Slider
                 label="Referrals"
                 value={referrals}
@@ -161,70 +183,69 @@ export function EarningsCalculator() {
             </div>
 
             {/* Earnings Breakdown */}
-            <div className="bg-meatzy-tallow p-6 space-y-3">
-              <h4 className="text-sm font-black text-gray-600 uppercase tracking-wider mb-4">
+            <div className="bg-meatzy-tallow/30 p-4 space-y-2.5">
+              <h4 className="text-xs font-black text-gray-600 uppercase tracking-wider mb-3">
                 Potential Earnings
               </h4>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
-                    <span className="font-bold text-meatzy-olive">Tier 1</span> (Direct · 13%)
+                  <span className="text-xs text-gray-600">
+                    <span className="font-bold text-meatzy-olive">Tier 1</span> (13%)
                   </span>
-                  <span className="text-lg font-black text-meatzy-olive">
+                  <span className="text-base font-black text-meatzy-olive">
                     {formatMoney(earnings.tier1)}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
-                    <span className="font-bold text-meatzy-olive">Tier 2</span> (2nd Level · 2%)
+                  <span className="text-xs text-gray-600">
+                    <span className="font-bold text-meatzy-olive">Tier 2</span> (2%)
                   </span>
-                  <span className="text-lg font-black text-meatzy-olive">
+                  <span className="text-base font-black text-meatzy-olive">
                     {formatMoney(earnings.tier2)}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
-                    <span className="font-bold text-meatzy-olive">Tier 3</span> (3rd Level · 1%)
+                  <span className="text-xs text-gray-600">
+                    <span className="font-bold text-meatzy-olive">Tier 3</span> (1%)
                   </span>
-                  <span className="text-lg font-black text-meatzy-olive">
+                  <span className="text-base font-black text-meatzy-olive">
                     {formatMoney(earnings.tier3)}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
-                    <span className="font-bold text-meatzy-olive">Tier 4</span> (4th Level · 1%)
+                  <span className="text-xs text-gray-600">
+                    <span className="font-bold text-meatzy-olive">Tier 4</span> (1%)
                   </span>
-                  <span className="text-lg font-black text-meatzy-olive">
+                  <span className="text-base font-black text-meatzy-olive">
                     {formatMoney(earnings.tier4)}
                   </span>
                 </div>
               </div>
 
-              <div className="border-t border-gray-300 pt-3 mt-3">
+              <div className="border-t border-gray-300 pt-2.5 mt-2.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-base font-black text-gray-700 uppercase">
-                    Total {timePeriod.charAt(0).toUpperCase() + timePeriod.slice(1)}
+                  <span className="text-sm font-black text-gray-700 uppercase">
+                    Total {timePeriod}
                   </span>
-                  <span className="text-3xl font-black text-meatzy-rare">
+                  <span className="text-2xl font-black text-meatzy-rare">
                     {formatMoney(earnings.total)}
                   </span>
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500 italic mt-4">
-                * Based on 4-tier commission structure. Assumes first-time customer purchases only.
-                Actual earnings may vary.
+              <p className="text-xs text-gray-500 italic mt-3 leading-relaxed">
+                * Based on 4-tier structure. Actual earnings may vary.
               </p>
             </div>
 
             {/* Email Capture Form */}
-            <form onSubmit={handleEmailSubmit} className="p-6 border-t border-meatzy-mint">
-              <h4 className="text-base font-black text-meatzy-olive mb-3 uppercase">
-                Ready to Start Earning?
+            <form onSubmit={handleEmailSubmit} className="p-5 border-t border-gray-200">
+              <h4 className="text-sm font-black text-meatzy-olive mb-2 uppercase tracking-wide">
+                Start Earning
               </h4>
               <input
                 type="email"
@@ -232,13 +253,13 @@ export function EarningsCalculator() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-meatzy-rare focus:outline-none text-gray-800 mb-3"
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-meatzy-rare focus:ring-1 focus:ring-meatzy-rare focus:outline-none text-sm mb-3"
               />
               <button
                 type="submit"
-                className="w-full bg-meatzy-rare text-white py-4 rounded-lg font-display font-bold uppercase tracking-wider hover:bg-meatzy-welldone transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-meatzy-rare text-white py-3 rounded-lg font-display font-bold uppercase tracking-wider text-sm hover:bg-meatzy-welldone transition-colors flex items-center justify-center gap-2"
               >
-                Start Earning Now
+                Get Started
                 <span>→</span>
               </button>
             </form>
@@ -249,40 +270,39 @@ export function EarningsCalculator() {
       {/* Mobile: Bottom Drawer */}
       <div className="md:hidden">
         {!isExpanded ? (
-          // Collapsed State (Mobile)
+          // Collapsed State (Mobile) - Icon only
           <button
             onClick={() => setIsExpanded(true)}
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[90] bg-gradient-to-r from-meatzy-rare to-meatzy-welldone text-white px-6 py-3 rounded-full shadow-2xl font-display font-bold uppercase tracking-wide text-sm flex items-center gap-2 animate-slideInUp animate-pulse"
+            className="fixed bottom-4 right-4 z-[90] bg-white text-meatzy-rare p-4 rounded-full shadow-lg border border-gray-200 animate-slideInUp"
           >
-            <DollarSign className="w-4 h-4" />
-            <span>Calculate Earnings</span>
+            <Calculator className="w-5 h-5" />
           </button>
         ) : (
-          // Expanded State (Mobile Drawer)
-          <div className="fixed inset-x-0 bottom-0 z-[90] bg-white rounded-t-3xl shadow-2xl max-h-[85vh] overflow-y-auto animate-slideUpMobile">
+          // Expanded State (Mobile Drawer) - Sleeker
+          <div className="fixed inset-x-0 bottom-0 z-[90] bg-white rounded-t-2xl shadow-xl border-t border-gray-200 max-h-[85vh] overflow-y-auto animate-slideUpMobile">
             {/* Drag Handle */}
-            <div className="pt-3 pb-2 flex justify-center">
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            <div className="pt-2 pb-1 flex justify-center">
+              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
             </div>
 
             {/* Header */}
-            <div className="bg-gradient-to-r from-meatzy-olive to-meatzy-rosemary text-white p-5 relative">
-              <h3 className="text-lg font-black font-slab pr-8">
-                Your Earnings Potential
+            <div className="bg-gradient-to-r from-meatzy-olive to-meatzy-rosemary text-white px-4 py-3 relative">
+              <h3 className="text-base font-black font-slab pr-8">
+                Earnings Calculator
               </h3>
-              <p className="text-xs text-white/80 mt-1">
-                See how much you can earn
+              <p className="text-xs text-white/80 mt-0.5">
+                See your potential
               </p>
               <button
                 onClick={() => setIsExpanded(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="absolute top-2 right-2 p-1.5 hover:bg-white/20 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Calculator Inputs */}
-            <div className="p-5 space-y-5">
+            <div className="p-4 space-y-4">
               <Slider
                 label="Referrals"
                 value={referrals}
@@ -342,17 +362,17 @@ export function EarningsCalculator() {
             </div>
 
             {/* Earnings Breakdown */}
-            <div className="bg-meatzy-tallow p-5 space-y-3">
-              <h4 className="text-xs font-black text-gray-600 uppercase tracking-wider mb-3">
+            <div className="bg-meatzy-tallow/30 p-4 space-y-2.5">
+              <h4 className="text-xs font-black text-gray-600 uppercase tracking-wider mb-2">
                 Potential Earnings
               </h4>
 
-              <div className="space-y-2 text-sm">
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-gray-600">
                     <span className="font-bold text-meatzy-olive">Tier 1</span> (13%)
                   </span>
-                  <span className="text-base font-black text-meatzy-olive">
+                  <span className="text-sm font-black text-meatzy-olive">
                     {formatMoney(earnings.tier1)}
                   </span>
                 </div>
@@ -361,7 +381,7 @@ export function EarningsCalculator() {
                   <span className="text-xs text-gray-600">
                     <span className="font-bold text-meatzy-olive">Tier 2</span> (2%)
                   </span>
-                  <span className="text-base font-black text-meatzy-olive">
+                  <span className="text-sm font-black text-meatzy-olive">
                     {formatMoney(earnings.tier2)}
                   </span>
                 </div>
@@ -370,7 +390,7 @@ export function EarningsCalculator() {
                   <span className="text-xs text-gray-600">
                     <span className="font-bold text-meatzy-olive">Tier 3</span> (1%)
                   </span>
-                  <span className="text-base font-black text-meatzy-olive">
+                  <span className="text-sm font-black text-meatzy-olive">
                     {formatMoney(earnings.tier3)}
                   </span>
                 </div>
@@ -379,32 +399,32 @@ export function EarningsCalculator() {
                   <span className="text-xs text-gray-600">
                     <span className="font-bold text-meatzy-olive">Tier 4</span> (1%)
                   </span>
-                  <span className="text-base font-black text-meatzy-olive">
+                  <span className="text-sm font-black text-meatzy-olive">
                     {formatMoney(earnings.tier4)}
                   </span>
                 </div>
               </div>
 
-              <div className="border-t border-gray-300 pt-3 mt-3">
+              <div className="border-t border-gray-300 pt-2 mt-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-black text-gray-700 uppercase">
+                  <span className="text-xs font-black text-gray-700 uppercase">
                     Total {timePeriod}
                   </span>
-                  <span className="text-2xl font-black text-meatzy-rare">
+                  <span className="text-xl font-black text-meatzy-rare">
                     {formatMoney(earnings.total)}
                   </span>
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500 italic mt-3">
-                * Based on 4-tier structure. Actual earnings may vary.
+              <p className="text-xs text-gray-500 italic mt-2 leading-relaxed">
+                * Based on 4-tier structure. Actual may vary.
               </p>
             </div>
 
             {/* Email Capture Form */}
-            <form onSubmit={handleEmailSubmit} className="p-5 border-t border-meatzy-mint">
-              <h4 className="text-sm font-black text-meatzy-olive mb-2 uppercase">
-                Start Earning Now
+            <form onSubmit={handleEmailSubmit} className="p-4 border-t border-gray-200">
+              <h4 className="text-sm font-black text-meatzy-olive mb-2 uppercase tracking-wide">
+                Start Earning
               </h4>
               <input
                 type="email"
@@ -412,11 +432,11 @@ export function EarningsCalculator() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-meatzy-rare focus:outline-none text-gray-800 mb-3 text-base"
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-meatzy-rare focus:ring-1 focus:ring-meatzy-rare focus:outline-none text-sm mb-3"
               />
               <button
                 type="submit"
-                className="w-full bg-meatzy-rare text-white py-4 rounded-lg font-display font-bold uppercase tracking-wider hover:bg-meatzy-welldone transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-meatzy-rare text-white py-3 rounded-lg font-display font-bold uppercase tracking-wider text-sm hover:bg-meatzy-welldone transition-colors flex items-center justify-center gap-2"
               >
                 Get Started
                 <span>→</span>
