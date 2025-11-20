@@ -125,6 +125,17 @@ export async function addToCart(
 
     if (data.cartLinesAdd.userErrors.length > 0) {
       console.error('Add to cart errors:', data.cartLinesAdd.userErrors);
+
+      // Check if cart is invalid/expired
+      const hasCartError = data.cartLinesAdd.userErrors.some((err: any) =>
+        err.message?.includes('cart') || err.message?.includes('not found')
+      );
+
+      if (hasCartError) {
+        console.log('Cart is invalid/expired, clearing localStorage');
+        clearCartId();
+      }
+
       return null;
     }
 
@@ -138,6 +149,8 @@ export async function addToCart(
     return data.cartLinesAdd.cart;
   } catch (error) {
     console.error('Error adding to cart:', error);
+    // Clear cart on error (might be expired)
+    clearCartId();
     return null;
   }
 }

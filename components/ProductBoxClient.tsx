@@ -80,11 +80,25 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
         }
       } else {
         // Add main product to existing cart
-        const cart = await addToShopifyCart(cartId, [{
+        let cart = await addToShopifyCart(cartId, [{
           merchandiseId: variantId,
           quantity
         }]);
-        if (cart) {
+
+        // If adding to cart failed (cart might be expired), create a new cart
+        if (!cart) {
+          console.log('Existing cart failed, creating new cart...');
+          cart = await createCart(variantId, quantity);
+          if (cart) {
+            saveCartId(cart.id);
+            await saveCheckoutUrl(cart.checkoutUrl);
+            cartId = cart.id;
+          } else {
+            alert('Failed to create cart. Please try again.');
+            setAddingToCart(false);
+            return;
+          }
+        } else {
           await saveCheckoutUrl(cart.checkoutUrl);
         }
       }
