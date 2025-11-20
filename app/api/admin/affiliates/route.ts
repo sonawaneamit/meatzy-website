@@ -62,35 +62,52 @@ export async function GET(request: NextRequest) {
 
     console.log('Admin validated:', user.id);
 
-    // Fetch all affiliates with wallet data
-    const { data: affiliates, error: fetchError } = await supabaseAdmin
+    // Fetch all affiliates
+    console.log('Fetching affiliates...');
+    const { data: users, error: usersError } = await supabaseAdmin
       .from('users')
-      .select(`
-        id,
-        email,
-        full_name,
-        referral_code,
-        slug,
-        has_purchased,
-        commission_rate,
-        created_at,
-        wallet (
-          pending_balance,
-          available_balance,
-          lifetime_earnings
-        )
-      `)
+      .select('id, email, full_name, referral_code, slug, has_purchased, commission_rate, created_at')
       .order('created_at', { ascending: false })
       .limit(100);
 
-    if (fetchError) {
-      console.error('Error fetching affiliates:', fetchError);
-      return NextResponse.json({ error: 'Database error' }, { status: 500 });
+    if (usersError) {
+      console.error('Error fetching users:', usersError);
+      return NextResponse.json({
+        error: 'Database error fetching users',
+        details: usersError.message
+      }, { status: 500 });
     }
+
+    console.log(`Fetched ${users?.length || 0} users`);
+
+    // Fetch all wallets
+    const { data: wallets, error: walletsError } = await supabaseAdmin
+      .from('wallet')
+      .select('user_id, pending_balance, available_balance, lifetime_earnings');
+
+    if (walletsError) {
+      console.error('Error fetching wallets:', walletsError);
+      // Continue without wallet data
+    }
+
+    // Join wallets with users
+    const affiliates = (users || []).map(user => {
+      const wallet = wallets?.find(w => w.user_id === user.id);
+      return {
+        ...user,
+        wallet: wallet ? {
+          pending_balance: wallet.pending_balance,
+          available_balance: wallet.available_balance,
+          lifetime_earnings: wallet.lifetime_earnings
+        } : null
+      };
+    });
+
+    console.log('Returning affiliates with wallet data');
 
     return NextResponse.json({
       success: true,
-      affiliates: affiliates || []
+      affiliates
     });
 
   } catch (error) {
