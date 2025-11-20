@@ -16,6 +16,7 @@ import {
   Clock,
   ArrowUpRight,
   BarChart3,
+  Copy,
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -396,6 +397,7 @@ export default function AdminDashboard() {
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Affiliate</th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Code</th>
+                  <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">SafeLink</th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Status</th>
                   <th className="text-right py-3 px-4 font-bold text-gray-700 uppercase text-xs">Pending</th>
                   <th className="text-right py-3 px-4 font-bold text-gray-700 uppercase text-xs">Lifetime</th>
@@ -421,6 +423,25 @@ export default function AdminDashboard() {
                       </td>
                       <td className="py-4 px-4">
                         <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">{affiliate.referral_code}</code>
+                      </td>
+                      <td className="py-4 px-4">
+                        {affiliate.safe_link ? (
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(affiliate.safe_link);
+                              alert('SafeLink copied!');
+                            }}
+                            className="flex items-center gap-2 text-sm text-meatzy-olive hover:text-meatzy-rare transition-colors"
+                            title="Click to copy SafeLink"
+                          >
+                            <Copy className="w-4 h-4" />
+                            <span className="font-mono text-xs truncate max-w-[150px]">
+                              /go/{affiliate.slug}
+                            </span>
+                          </button>
+                        ) : (
+                          <span className="text-gray-400 text-xs">No link</span>
+                        )}
                       </td>
                       <td className="py-4 px-4">
                         {affiliate.has_purchased ? (
