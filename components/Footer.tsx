@@ -54,7 +54,7 @@ export const Footer: React.FC = () => {
             <li><a href="#" className="hover:text-meatzy-rare font-medium">Terms & Conditions</a></li>
             <li><a href="#" className="hover:text-meatzy-rare font-medium">Privacy Policy</a></li>
             <li><a href="#" className="hover:text-meatzy-rare font-medium">Returns and Refunds Policy</a></li>
-            <li><a href="#" className="hover:text-meatzy-rare font-medium">Meatzy Referral Program Agreement</a></li>
+            <li><a href="/referral-policy" className="hover:text-meatzy-rare font-medium">Meatzy Referral Program Agreement</a></li>
           </ul>
         </div>
         <div>

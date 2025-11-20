@@ -242,6 +242,15 @@ export default function AffiliatePage() {
                 </p>
               </div>
 
+              <div className="mt-6 text-center">
+                <Link
+                  href="/referral-policy"
+                  className="inline-block text-meatzy-rare font-bold text-lg uppercase tracking-wide hover:underline border-b-2 border-meatzy-rare pb-1"
+                >
+                  Referral Program Guidelines
+                </Link>
+              </div>
+
               <div className="mt-6 bg-meatzy-rare/10 p-4 rounded-lg">
                 <p className="text-sm font-bold text-meatzy-olive mb-2">What Others in This Chain Also Earn:</p>
                 <div className="space-y-1 text-sm text-gray-600">
