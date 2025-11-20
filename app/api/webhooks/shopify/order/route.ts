@@ -59,9 +59,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No customer email' }, { status: 400 });
     }
 
-    // Step 1: Find or create user
+    // Step 1: Find user or prepare for new user creation
     let user = await getUserByEmail(order.customer.email);
     let isNewUser = false;
+    let extractedReferralCode = null;
 
     if (!user) {
       // Check if they have a Shopify customer ID already
@@ -70,30 +71,28 @@ export async function POST(request: NextRequest) {
       }
 
       if (!user) {
-        // Create new user
+        // This is a NEW user - create their affiliate account with temporary password
         isNewUser = true;
         const fullName = `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim();
 
         // Check for referral code in multiple places
-        let referralCode = null;
-
         // Method 1: Check note_attributes
         const refAttr = body.note_attributes?.find((attr: any) =>
           attr.name === 'referral_code' || attr.name === 'Referral Code'
         );
         if (refAttr) {
-          referralCode = refAttr.value;
+          extractedReferralCode = refAttr.value;
         }
 
         // Method 2: Check line item properties
-        if (!referralCode && body.line_items) {
+        if (!extractedReferralCode && body.line_items) {
           for (const item of body.line_items) {
             if (item.properties) {
               const refProp = item.properties.find((prop: any) =>
                 prop.name === 'Referral Code' || prop.name === 'referral_code'
               );
               if (refProp && refProp.value) {
-                referralCode = refProp.value;
+                extractedReferralCode = refProp.value;
                 break;
               }
             }
@@ -101,25 +100,78 @@ export async function POST(request: NextRequest) {
         }
 
         // Method 3: Check order note for referral code pattern
-        if (!referralCode && body.note) {
+        if (!extractedReferralCode && body.note) {
           const match = body.note.match(/(?:ref|referral|code):\s*([A-Z0-9]{6,10})/i);
           if (match) {
-            referralCode = match[1];
+            extractedReferralCode = match[1];
           }
         }
 
-        console.log('Referral code extracted:', referralCode || 'None');
+        console.log('Referral code extracted:', extractedReferralCode || 'None');
 
-        user = await createUser({
+        // Look up referrer by code if provided
+        let referrerId = null;
+        if (extractedReferralCode) {
+          const { data: referrer } = await supabaseAdmin
+            .from('users')
+            .select('id')
+            .eq('referral_code', extractedReferralCode.toUpperCase())
+            .single();
+
+          if (referrer) {
+            referrerId = referrer.id;
+            console.log('✓ Found referrer:', referrerId);
+          } else {
+            console.log('⚠️  Referral code not found:', extractedReferralCode);
+          }
+        }
+
+        // Generate referral code and temporary password
+        const newUserReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+        const temporaryPassword = generateMemorablePassword();
+
+        // Step 1: Create auth account (no trigger conflict since we disabled it!)
+        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
           email: order.customer.email,
-          fullName: fullName || undefined,
-          phone: order.customer.phone,
-          shopifyCustomerId: order.customer.id,
-          referralCode: referralCode,
-          hasPurchased: true,
-        }, supabaseAdmin);
+          password: temporaryPassword,
+          email_confirm: true, // Auto-confirm email
+        });
 
-        console.log('Created new user:', user.id, user.email);
+        if (authError) {
+          console.error('Error creating auth account:', authError);
+          throw new Error(`Failed to create auth account: ${authError.message}`);
+        }
+
+        console.log('✓ Auth account created for:', order.customer.email);
+
+        // Step 2: Create users record with all the data
+        const { data: userData, error: userError } = await supabaseAdmin
+          .from('users')
+          .insert({
+            id: authData.user.id,
+            email: order.customer.email.toLowerCase(),
+            full_name: fullName || null,
+            referral_code: newUserReferralCode,
+            referrer_id: referrerId, // Use UUID, not code
+            shopify_customer_id: order.customer.id,
+            has_purchased: true,
+            commission_rate: 1.0, // 100% commission for customers
+            temporary_password: temporaryPassword,
+            requires_password_change: true,
+          })
+          .select()
+          .single();
+
+        if (userError) {
+          console.error('Error creating user record:', userError);
+          // Clean up auth account if user record creation fails
+          await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+          throw new Error(`Failed to create user record: ${userError.message}`);
+        }
+
+        console.log('✓ User record created:', userData.id);
+
+        user = userData;
       }
     } else if (!user.has_purchased) {
       // Update user to mark as having purchased
@@ -149,7 +201,7 @@ export async function POST(request: NextRequest) {
       console.log('Created subscription for user:', user.id);
     }
 
-    // Step 3: Calculate commissions (pass service role client for permissions)
+    // Step 3: Calculate commissions
     const commissions = await calculateCommissions({
       buyerUserId: user.id,
       orderId: order.id,
@@ -158,16 +210,14 @@ export async function POST(request: NextRequest) {
 
     console.log('Created commissions:', commissions.length);
 
-    // Step 4: Send password setup email for new customers to access dashboard
-    // Only send if this is a newly created user (not an existing user making another purchase)
+    // Step 4: Send welcome email for new customers
+    // TODO: Add email service (Resend/SendGrid) to send credentials
     if (isNewUser) {
-      try {
-        await sendPasswordSetupEmail(supabaseAdmin, user.email, user.referral_code);
-        console.log('Sent password setup email to:', user.email);
-      } catch (emailError) {
-        console.error('Failed to send password setup email:', emailError);
-        // Don't fail the webhook if email fails
-      }
+      console.log('New user created - email should be sent with credentials');
+      console.log('Email:', user.email);
+      console.log('Temp Password:', user.temporary_password);
+      console.log('Referral Code:', user.referral_code);
+      // Email sending will be added next
     }
 
     return NextResponse.json({
@@ -175,6 +225,8 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       referralCode: user.referral_code,
       commissionsCreated: commissions.length,
+      isNewUser,
+      temporaryPassword: isNewUser ? user.temporary_password : undefined,
     });
 
   } catch (error) {
@@ -186,54 +238,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * Send password setup email for new customers
- * Uses Supabase Auth to generate a password reset link that serves as initial account setup
- */
-async function sendPasswordSetupEmail(supabaseAdmin: any, email: string, referralCode: string) {
-  // Try to create the user in Supabase Auth (if they don't exist)
-  // Note: This may fail if there's a database trigger conflict with the users table
-  const { data: authUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
-    email,
-    email_confirm: true, // Auto-confirm their email
-    user_metadata: {
-      referral_code: referralCode,
-    },
-  });
-
-  if (signUpError) {
-    if (signUpError.message?.includes('already registered')) {
-      console.log(`Auth user already exists for ${email}, sending password reset link`);
-    } else {
-      // Log the error but continue - we'll try to send the recovery link anyway
-      console.error('Warning: Error creating auth user:', signUpError.message);
-      console.log('Continuing to send password setup link...');
-    }
-  } else {
-    console.log(`Auth user created for ${email}`);
-  }
-
-  // Always try to generate and send the password recovery link
-  // This works whether the user was just created or already exists
-  const { data, error } = await supabaseAdmin.auth.admin.generateLink({
-    type: 'recovery',
-    email,
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
-    },
-  });
-
-  if (error) {
-    throw error;
-  }
-
-  // TODO: Send custom branded email via Klaviyo with the password setup link
-  // For now, Supabase will send the default password recovery email
-  // Customize the email template in Supabase Dashboard → Authentication → Email Templates
-  // The link will be: data.properties.action_link
-
-  console.log(`Password setup email sent to ${email} (Code: ${referralCode})`);
-}
+// TODO: Add email service integration (Resend/SendGrid/Klaviyo)
+// Email template should include:
+// - Welcome message
+// - Temporary password
+// - Dashboard login link
+// - Referral code and link
+// - Commission structure info
+// - Next steps
 
 /**
  * Verify Shopify webhook signature using HMAC
@@ -276,4 +288,28 @@ function verifyShopifyWebhook(request: NextRequest, body: string): boolean {
     console.error('Error verifying HMAC:', error);
     return false;
   }
+}
+
+/**
+ * Generate memorable temporary password
+ * Format: adjectiveNounNumber (e.g., pinkElephant121)
+ */
+function generateMemorablePassword(): string {
+  const adjectives = [
+    'red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'gold',
+    'silver', 'brave', 'happy', 'swift', 'bright', 'cool', 'warm', 'fresh',
+    'wild', 'calm', 'bold', 'smart', 'quick', 'strong', 'sweet', 'smooth'
+  ];
+
+  const nouns = [
+    'Tiger', 'Eagle', 'Dolphin', 'Lion', 'Panda', 'Falcon', 'Wolf', 'Bear',
+    'Fox', 'Hawk', 'Shark', 'Dragon', 'Phoenix', 'Rabbit', 'Elephant', 'Zebra',
+    'Giraffe', 'Penguin', 'Koala', 'Cheetah', 'Leopard', 'Jaguar', 'Owl', 'Deer'
+  ];
+
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const number = Math.floor(Math.random() * 900) + 100; // 3-digit number (100-999)
+
+  return `${adjective}${noun}${number}`;
 }

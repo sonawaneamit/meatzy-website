@@ -2,15 +2,19 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { ShoppingBag, Menu, User, X, ChevronDown } from 'lucide-react';
 import { useCartDrawer } from '../context/CartDrawerContext';
 import { getCartId, getCart } from '../lib/shopify';
+import { createClient } from '../lib/supabase/client';
 
 export const Navbar: React.FC = () => {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { openDrawer } = useCartDrawer();
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -20,6 +24,25 @@ export const Navbar: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Fetch cart count
@@ -40,6 +63,14 @@ export const Navbar: React.FC = () => {
     const interval = setInterval(fetchCartCount, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  // Handle logout
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    router.push('/');
+  };
 
   const navClasses = `w-full transition-all duration-300 border-b ${
     isScrolled
@@ -140,13 +171,27 @@ export const Navbar: React.FC = () => {
                 Build Your Box
             </a>
             <div className="hidden md:flex gap-4 items-center">
-              <a href="/signup" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">
-                Sign Up
-              </a>
-              <span className="text-gray-300">|</span>
-              <a href="/login" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">
-                Login
-              </a>
+              {isLoggedIn ? (
+                <>
+                  <a href="/dashboard" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">
+                    Dashboard
+                  </a>
+                  <span className="text-gray-300">|</span>
+                  <button onClick={handleLogout} className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <a href="/signup" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">
+                    Sign Up
+                  </a>
+                  <span className="text-gray-300">|</span>
+                  <a href="/login" className="text-sm font-display font-bold uppercase tracking-widest hover:text-meatzy-rare transition-colors">
+                    Login
+                  </a>
+                </>
+              )}
             </div>
             <div className="relative cursor-pointer" onClick={openDrawer}>
                 <ShoppingBag className="w-6 h-6 hover:text-meatzy-rare transition-colors" />
@@ -175,10 +220,17 @@ export const Navbar: React.FC = () => {
 
             <a href="/contact" onClick={closeMobileMenu} className="font-slab font-bold text-2xl border-b border-gray-100 pb-4">Contact Us</a>
 
-            <div className="flex gap-4 border-b border-gray-100 pb-4">
-              <a href="/signup" onClick={closeMobileMenu} className="flex-1 text-center bg-meatzy-olive text-white py-3 font-display font-bold uppercase tracking-widest">Sign Up</a>
-              <a href="/login" onClick={closeMobileMenu} className="flex-1 text-center border-2 border-meatzy-olive text-meatzy-olive py-3 font-display font-bold uppercase tracking-widest">Login</a>
-            </div>
+            {isLoggedIn ? (
+              <div className="flex gap-4 border-b border-gray-100 pb-4">
+                <a href="/dashboard" onClick={closeMobileMenu} className="flex-1 text-center bg-meatzy-olive text-white py-3 font-display font-bold uppercase tracking-widest">Dashboard</a>
+                <button onClick={() => { handleLogout(); closeMobileMenu(); }} className="flex-1 text-center border-2 border-meatzy-olive text-meatzy-olive py-3 font-display font-bold uppercase tracking-widest">Logout</button>
+              </div>
+            ) : (
+              <div className="flex gap-4 border-b border-gray-100 pb-4">
+                <a href="/signup" onClick={closeMobileMenu} className="flex-1 text-center bg-meatzy-olive text-white py-3 font-display font-bold uppercase tracking-widest">Sign Up</a>
+                <a href="/login" onClick={closeMobileMenu} className="flex-1 text-center border-2 border-meatzy-olive text-meatzy-olive py-3 font-display font-bold uppercase tracking-widest">Login</a>
+              </div>
+            )}
             <a href="/build-box" className="w-full bg-meatzy-welldone text-white py-4 font-display font-bold uppercase tracking-widest text-center block">Build Your Box</a>
         </div>
       )}

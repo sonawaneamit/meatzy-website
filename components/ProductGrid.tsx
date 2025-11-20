@@ -13,6 +13,24 @@ export const ProductGrid: React.FC = () => {
   const [showAddonsModal, setShowAddonsModal] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
 
+  // Map product handles to local images
+  const getLocalImage = (handle: string) => {
+    const imageMap: { [key: string]: string } = {
+      'family-faves-box': '/family-faves-box.jpeg',
+      'family-favorites': '/family-faves-box.jpeg',
+      'family-favorites-box': '/family-faves-box.jpeg',
+      'holiday-box': '/holiday-box.jpeg',
+      'keto-box': '/keto-box.jpeg',
+      'lean-machine-box': '/lean-machine-box.jpeg',
+      'lean-machine': '/lean-machine-box.jpeg',
+    };
+
+    // Debug: log the handle
+    console.log('Product handle:', handle, 'Mapped image:', imageMap[handle]);
+
+    return imageMap[handle] || null;
+  };
+
   useEffect(() => {
     getCollectionByHandle('homepage-boxes').then(collection => {
       if (collection) {
@@ -162,9 +180,9 @@ export const ProductGrid: React.FC = () => {
               />
             ) : (
               <>
-                {/* First Image (Featured) */}
+                {/* First Image (Featured) - Use local image if available */}
                 <img
-                  src={product.featuredImage.url}
+                  src={getLocalImage(product.handle) || product.featuredImage.url}
                   alt={product.featuredImage.altText}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 absolute inset-0 z-10 group-hover:opacity-0"
                 />
