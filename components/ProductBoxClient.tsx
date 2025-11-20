@@ -71,7 +71,7 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
         const cart = await createCart(variantId, quantity);
         if (cart) {
           saveCartId(cart.id);
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
           cartId = cart.id;
         } else {
           alert('Failed to create cart. Please try again.');
@@ -85,7 +85,7 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
           quantity
         }]);
         if (cart) {
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
         }
       }
 

@@ -47,11 +47,6 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-    {/* Promo Bar - Always fixed at top */}
-    <div className="bg-meatzy-welldone text-meatzy-tallow text-center py-2.5 text-xs md:text-sm font-display font-bold uppercase tracking-widest relative z-[60] flex justify-center items-center gap-2">
-        <span>HUNGRY FOR MORE? GET FIRST DIBS ON DEALS AND DROPS.</span>
-    </div>
-    
     <nav className={`${navClasses} ${isScrolled ? 'top-0' : 'top-[40px]'}`}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
         

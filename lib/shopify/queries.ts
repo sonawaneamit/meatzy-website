@@ -224,6 +224,16 @@ export const CREATE_CART = `
       cart {
         id
         checkoutUrl
+        discountCodes {
+          code
+          applicable
+        }
+        discountAllocations {
+          discountedAmount {
+            amount
+            currencyCode
+          }
+        }
       }
       userErrors {
         field

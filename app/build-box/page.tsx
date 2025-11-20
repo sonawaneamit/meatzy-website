@@ -91,7 +91,7 @@ export default function BuildBoxPage() {
         const cart = await createCart(customBoxVariantId, 1);
         if (cart) {
           saveCartId(cart.id);
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
         } else {
           alert('Failed to create cart. Please ensure Custom Box product allows one-time purchases.');
           return;
@@ -100,7 +100,7 @@ export default function BuildBoxPage() {
         // Add Custom Box to existing cart
         const cart = await addToShopifyCart(cartId, [{ merchandiseId: customBoxVariantId, quantity: 1 }]);
         if (cart) {
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
         } else {
           alert('Failed to add to cart. Please try again.');
           return;

@@ -88,7 +88,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
         const cart = await createCart(variantId, quantity);
         if (cart) {
           saveCartId(cart.id);
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
           cartId = cart.id;
         } else {
           alert('Failed to create cart. Please try again.');
@@ -102,7 +102,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
           quantity
         }]);
         if (cart) {
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
         }
       }
 

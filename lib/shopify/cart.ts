@@ -4,14 +4,38 @@ import type { Cart, CreateCartResponse, AddToCartResponse } from './types';
 import { getReferralCode } from '../../hooks/useReferralTracking';
 
 /**
+ * Get referral data from the secure HTTPOnly cookie via API
+ */
+async function getReferralDataFromCookie(): Promise<{
+  referralCode: string | null;
+  discountCode: string | null;
+  affiliateId: string | null;
+} | null> {
+  try {
+    const response = await fetch('/api/referral/get-cookie');
+    const data = await response.json();
+    return data.hasReferral ? data : null;
+  } catch (error) {
+    console.error('Error fetching referral cookie:', error);
+    return null;
+  }
+}
+
+/**
  * Create a new Shopify cart
  */
 export async function createCart(variantId: string, quantity: number = 1): Promise<Cart | null> {
   try {
     console.log('Creating cart with variant:', variantId, 'quantity:', quantity);
 
-    // Get referral code if exists
-    const referralCode = getReferralCode();
+    // Get referral data from cookie (preferred) or fall back to localStorage
+    const cookieReferral = await getReferralDataFromCookie();
+    const localReferralCode = getReferralCode();
+
+    // Use cookie data if available, otherwise fall back to localStorage
+    const referralCode = cookieReferral?.referralCode || localReferralCode;
+    const discountCode = cookieReferral?.discountCode;
+    const affiliateId = cookieReferral?.affiliateId;
 
     // Build cart input
     const input: any = {
@@ -44,10 +68,22 @@ export async function createCart(variantId: string, quantity: number = 1): Promi
           value: referralCode,
         },
       ];
+
+      // Add affiliate ID if available (from cookie-based referral)
+      if (affiliateId) {
+        input.attributes.push({
+          key: 'referrer_id',
+          value: affiliateId,
+        });
+      }
+
       // Also add to cart note for maximum visibility
       input.note = `Referral Code: ${referralCode}`;
       console.log('Adding referral code to cart:', referralCode);
     }
+
+    // Note: Discount code is applied via checkout URL parameter (see saveCheckoutUrl)
+    // This avoids sales channel configuration issues
 
     const data = await shopifyClient.request<CreateCartResponse>(CREATE_CART, { input });
 
@@ -125,9 +161,24 @@ export function saveCartId(cartId: string): void {
 
 /**
  * Save checkout URL to localStorage
+ * Automatically appends discount code if one exists in the referral cookie
  */
-export function saveCheckoutUrl(checkoutUrl: string): void {
+export async function saveCheckoutUrl(checkoutUrl: string): Promise<void> {
   if (typeof window === 'undefined') return;
+
+  // Try to append discount code from referral cookie
+  try {
+    const cookieReferral = await getReferralDataFromCookie();
+    if (cookieReferral?.discountCode) {
+      const url = new URL(checkoutUrl);
+      url.searchParams.set('discount', cookieReferral.discountCode);
+      checkoutUrl = url.toString();
+      console.log('Appended discount code to checkout URL:', cookieReferral.discountCode);
+    }
+  } catch (error) {
+    console.error('Error appending discount code to checkout URL:', error);
+  }
+
   console.log('Saving checkout URL to localStorage:', checkoutUrl);
   localStorage.setItem('shopify_checkout_url', checkoutUrl);
 }

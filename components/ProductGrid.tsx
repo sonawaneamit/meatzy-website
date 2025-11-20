@@ -67,7 +67,7 @@ export const ProductGrid: React.FC = () => {
         if (cart) {
           console.log('Cart created:', cart.id, 'Checkout URL:', cart.checkoutUrl);
           saveCartId(cart.id);
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
         } else {
           alert('Failed to create cart. Please ensure the product allows one-time purchases.');
           return;
@@ -77,7 +77,7 @@ export const ProductGrid: React.FC = () => {
         const cart = await addToShopifyCart(cartId, [{ merchandiseId: variantId, quantity: 1 }]);
         if (cart) {
           console.log('Added to cart, Checkout URL:', cart.checkoutUrl);
-          saveCheckoutUrl(cart.checkoutUrl);
+          await saveCheckoutUrl(cart.checkoutUrl);
         } else {
           alert('Failed to add to cart. Please try again.');
           return;
@@ -110,7 +110,7 @@ export const ProductGrid: React.FC = () => {
     const cart = await addToShopifyCart(cartId, lines);
     if (cart) {
       console.log('Add-ons added, updated checkout URL:', cart.checkoutUrl);
-      saveCheckoutUrl(cart.checkoutUrl);
+      await saveCheckoutUrl(cart.checkoutUrl);
     } else {
       console.error('Failed to add add-ons to cart');
     }

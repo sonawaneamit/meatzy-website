@@ -1,0 +1,28 @@
+<!-- MEATZY Custom Thank You Page Redirect Script -->
+<!-- Add this to: Shopify Admin → Settings → Checkout → Additional scripts -->
+
+
+
+<!--
+  IMPORTANT NOTES:
+
+  1. This script will redirect customers to your custom thank you page
+  2. The 2-second delay allows Shopify to track the conversion
+  3. The script is wrapped in try-catch to prevent breaking Shopify's page
+  4. All customer data is URL-encoded for safety
+  5. The page will work even if redirect fails
+
+  TO ENABLE DEBUG MODE:
+  - Change "debug: false" to "debug: true" in the config
+  - Open browser console to see logs
+  - Remember to turn off before going live!
+
+  TO CHANGE REDIRECT URL:
+  - Update "redirectUrl" in config
+  - For local testing: 'http://localhost:3000/thank-you'
+  - For production: 'https://getmeatzy.com/thank-you'
+
+  TO ADJUST DELAY:
+  - Change "delay" value (in milliseconds)
+  - 0 = instant, 2000 = 2 seconds, 5000 = 5 seconds
+-->

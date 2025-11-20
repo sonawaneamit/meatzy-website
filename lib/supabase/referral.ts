@@ -77,6 +77,7 @@ export async function createUser(params: {
     userData.id = params.authUserId;
   }
 
+  // First insert the user to get the ID
   const { data, error } = await supabase
     .from('users')
     .insert(userData)
@@ -88,7 +89,22 @@ export async function createUser(params: {
     throw error;
   }
 
-  return data;
+  // Generate and update slug after user creation (needs user ID)
+  const nameForSlug = params.fullName || params.email.split('@')[0] || 'user';
+  const slug = await generateUniqueSlug(nameForSlug, data.id);
+
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ slug })
+    .eq('id', data.id);
+
+  if (updateError) {
+    console.error('Error updating slug:', updateError);
+    // Don't throw - user is created, slug can be backfilled later
+  }
+
+  // Return updated user data with slug
+  return { ...data, slug };
 }
 
 /**
@@ -114,6 +130,50 @@ async function generateUniqueReferralCode(): Promise<string> {
   }
 
   throw new Error('Failed to generate unique referral code');
+}
+
+/**
+ * Generate a unique human-readable slug for SafeLinks
+ * Format: {firstName}-{4chars}
+ * Example: natalia-8c4f, jorge-19ab
+ */
+export async function generateUniqueSlug(name: string, userId: string): Promise<string> {
+  const supabase = createClient();
+
+  // Create base from first name
+  // Remove special characters, lowercase, take first 15 chars
+  const base = name
+    .toLowerCase()
+    .split(' ')[0]
+    .replace(/[^a-z0-9]/g, '')
+    .slice(0, 15);
+
+  // If name is empty after cleaning, use 'user' as fallback
+  const cleanBase = base || 'user';
+
+  // Create 4-char suffix from userId (more collision-resistant than random)
+  const suffix = userId.slice(0, 4);
+
+  let slug = `${cleanBase}-${suffix}`;
+
+  // Check for collision and regenerate if needed
+  for (let attempts = 0; attempts < 10; attempts++) {
+    const { data } = await supabase
+      .from('users')
+      .select('id')
+      .eq('slug', slug)
+      .single();
+
+    if (!data) {
+      return slug;
+    }
+
+    // On collision, add random chars
+    const randomSuffix = Math.random().toString(36).substring(2, 6);
+    slug = `${cleanBase}-${randomSuffix}`;
+  }
+
+  throw new Error('Failed to generate unique slug');
 }
 
 /**
