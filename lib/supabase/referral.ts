@@ -13,8 +13,8 @@ export const COMMISSION_TIERS = {
 /**
  * Get referrer user ID from referral code
  */
-export async function getReferrerByCode(referralCode: string) {
-  const supabase = createClient();
+export async function getReferrerByCode(referralCode: string, supabaseClient?: any) {
+  const supabase = supabaseClient || createClient();
 
   const { data, error } = await supabase
     .from('users')
@@ -33,21 +33,24 @@ export async function getReferrerByCode(referralCode: string) {
 /**
  * Create a new user with optional referrer
  */
-export async function createUser(params: {
-  email: string;
-  fullName?: string;
-  phone?: string;
-  referralCode?: string;
-  shopifyCustomerId?: string;
-  hasPurchased?: boolean;
-  authUserId?: string; // Optional auth user ID for signup
-}) {
-  const supabase = createClient();
+export async function createUser(
+  params: {
+    email: string;
+    fullName?: string;
+    phone?: string;
+    referralCode?: string;
+    shopifyCustomerId?: string;
+    hasPurchased?: boolean;
+    authUserId?: string; // Optional auth user ID for signup
+  },
+  supabaseClient?: any
+) {
+  const supabase = supabaseClient || createClient();
 
   // Find referrer if code provided
   let referrerId = null;
   if (params.referralCode) {
-    const referrer = await getReferrerByCode(params.referralCode);
+    const referrer = await getReferrerByCode(params.referralCode, supabase);
     if (referrer) {
       referrerId = referrer.id;
     }
@@ -221,12 +224,15 @@ export async function getUserByShopifyId(shopifyCustomerId: string) {
  * When someone makes a purchase, we find all their ancestors and pay each one
  * based on how deep the buyer is in THEIR network (not the buyer's depth)
  */
-export async function calculateCommissions(params: {
-  buyerUserId: string;
-  orderId: string;
-  orderTotal: number;
-}) {
-  const supabase = createClient();
+export async function calculateCommissions(
+  params: {
+    buyerUserId: string;
+    orderId: string;
+    orderTotal: number;
+  },
+  supabaseClient?: any
+) {
+  const supabase = supabaseClient || createClient();
 
   // Get ALL ancestors of the buyer (up to 4 levels up)
   // These are all the people who should earn commissions

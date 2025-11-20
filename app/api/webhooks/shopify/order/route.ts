@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
           shopifyCustomerId: order.customer.id,
           referralCode: referralCode,
           hasPurchased: true,
-        });
+        }, supabaseAdmin);
 
         console.log('Created new user:', user.id, user.email);
       }
@@ -149,12 +149,12 @@ export async function POST(request: NextRequest) {
       console.log('Created subscription for user:', user.id);
     }
 
-    // Step 3: Calculate commissions
+    // Step 3: Calculate commissions (pass service role client for permissions)
     const commissions = await calculateCommissions({
       buyerUserId: user.id,
       orderId: order.id,
       orderTotal: order.totalPrice,
-    });
+    }, supabaseAdmin);
 
     console.log('Created commissions:', commissions.length);
 
