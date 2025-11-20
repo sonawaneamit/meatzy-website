@@ -179,34 +179,10 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
 
           {/* Product Images */}
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Thumbnail Strip - Vertical on Desktop, Horizontal on Mobile */}
-            {productImages.length > 1 && (
-              <div className="order-2 md:order-1 flex md:flex-col gap-2 overflow-x-auto md:overflow-x-visible md:w-24 flex-shrink-0">
-                {productImages.map((image, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 w-20 md:w-full bg-white ${
-                      currentImageIndex === idx
-                        ? 'border-meatzy-rare shadow-lg ring-2 ring-meatzy-rare/30'
-                        : 'border-meatzy-mint/30 hover:border-meatzy-mint'
-                    }`}
-                  >
-                    <Image
-                      src={image.url}
-                      alt={image.altText || `Product ${idx + 1}`}
-                      fill
-                      className="object-contain p-1"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-
+          <div className="space-y-4">
             {/* Main Product Image */}
             <div
-              className="order-1 md:order-2 aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
+              className="aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -271,10 +247,32 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Trust Badges - Moved Outside Images Container */}
-          <div className="lg:hidden">
+            {/* Image Thumbnails */}
+            {productImages.length > 1 && (
+              <div className="grid grid-cols-5 gap-2">
+                {productImages.map((image, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                      currentImageIndex === idx
+                        ? 'border-meatzy-rare shadow-lg'
+                        : 'border-meatzy-mint/30 hover:border-meatzy-mint'
+                    }`}
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.altText || `${productTitle} ${idx + 1}`}
+                      width={100}
+                      height={100}
+                      className="object-cover w-full h-full"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Trust Badges */}
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-lg p-4 text-center border border-meatzy-mint/30">
