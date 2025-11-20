@@ -11,6 +11,15 @@ export const Features: React.FC = () => {
                     The Terroir of Protein, Honestly Sourced
                 </h2>
 
+                {/* Hero Image */}
+                <div className="mb-12 max-w-4xl mx-auto">
+                    <img
+                        src="/meatzy-cares.png"
+                        alt="Premium meats and proteins"
+                        className="rounded-lg shadow-2xl w-full"
+                    />
+                </div>
+
                 <div className="space-y-6 text-left text-gray-700 text-base md:text-lg leading-relaxed">
                     <p>
                         We follow the same philosophy top chefs use: choose each protein from the region where it reaches its peak. Patagonian grasslands, Midwest family farms, Australia's pasture raised herds. Every place has its own terroir, and we select only producers who meet or exceed our internal standards and the USDA's, always hormone and antibiotic free.
