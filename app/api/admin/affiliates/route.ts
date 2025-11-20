@@ -81,6 +81,7 @@ export async function GET(request: NextRequest) {
     console.log(`Fetched ${users?.length || 0} users`);
 
     // Fetch all wallets
+    console.log('Fetching wallets...');
     const { data: wallets, error: walletsError } = await supabaseAdmin
       .from('wallet')
       .select('user_id, pending_balance, available_balance, lifetime_earnings');
@@ -88,6 +89,15 @@ export async function GET(request: NextRequest) {
     if (walletsError) {
       console.error('Error fetching wallets:', walletsError);
       // Continue without wallet data
+    } else {
+      console.log(`Fetched ${wallets?.length || 0} wallet records`);
+      // Log Lucas's wallet specifically
+      const lucasWallet = wallets?.find(w => users?.find(u => u.full_name?.includes('Lucas'))?.id === w.user_id);
+      if (lucasWallet) {
+        console.log('Lucas wallet data:', lucasWallet);
+      } else {
+        console.log('Lucas wallet not found in results');
+      }
     }
 
     // Join wallets with users
