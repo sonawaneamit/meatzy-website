@@ -25,65 +25,40 @@ export const Features: React.FC = () => {
             {/* Badges Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 max-w-6xl mx-auto">
                 {/* Badge 1 - Origin Verified */}
-                <div className="flex flex-col items-center text-center group">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 mb-4">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-gold via-amber-500 to-amber-700 shadow-xl group-hover:shadow-2xl transition-all"></div>
-                        <div className="absolute inset-[6px] md:inset-[8px] rounded-full bg-white flex items-center justify-center shadow-inner">
-                            <MapPin className="w-8 h-8 md:w-10 md:h-10 text-meatzy-gold" strokeWidth={3} />
-                        </div>
-                    </div>
+                <div className="flex flex-col items-center text-center gap-4">
+                    <MapPin className="w-16 h-16 md:w-20 md:h-20 text-meatzy-olive" strokeWidth={2} />
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
-                        Origin Verified
+                        Origin<br/>Verified
                     </h3>
                 </div>
 
                 {/* Badge 2 - Chef Tested */}
-                <div className="flex flex-col items-center text-center group">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 mb-4">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-rare via-red-600 to-red-800 shadow-xl group-hover:shadow-2xl transition-all"></div>
-                        <div className="absolute inset-[6px] md:inset-[8px] rounded-full bg-white flex items-center justify-center shadow-inner">
-                            <ChefHat className="w-8 h-8 md:w-10 md:h-10 text-meatzy-rare" strokeWidth={3} />
-                        </div>
-                    </div>
-                    <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
-                        Chef Tested
+                <div className="flex flex-col items-center text-center gap-4">
+                    <ChefHat className="w-16 h-16 md:w-20 md:h-20 text-meatzy-rare" strokeWidth={2} />
+                    <h3 className="font-black font-display text-meatzy-olive uppercase text-sm md:text-base tracking-wide">
+                        Chef<br/>Tested
                     </h3>
                 </div>
 
                 {/* Badge 3 - Sustainably Raised */}
-                <div className="flex flex-col items-center text-center group">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 mb-4">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-dill via-green-600 to-green-800 shadow-xl group-hover:shadow-2xl transition-all"></div>
-                        <div className="absolute inset-[6px] md:inset-[8px] rounded-full bg-white flex items-center justify-center shadow-inner">
-                            <Leaf className="w-8 h-8 md:w-10 md:h-10 text-meatzy-dill" strokeWidth={3} />
-                        </div>
-                    </div>
+                <div className="flex flex-col items-center text-center gap-4">
+                    <Leaf className="w-16 h-16 md:w-20 md:h-20 text-meatzy-olive" strokeWidth={2} />
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
-                        Sustainably Raised
+                        Sustainably<br/>Raised
                     </h3>
                 </div>
 
                 {/* Badge 4 - Hormone and Antibiotic Free */}
-                <div className="flex flex-col items-center text-center group">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 mb-4">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-olive via-gray-700 to-gray-900 shadow-xl group-hover:shadow-2xl transition-all"></div>
-                        <div className="absolute inset-[6px] md:inset-[8px] rounded-full bg-white flex items-center justify-center shadow-inner">
-                            <Shield className="w-8 h-8 md:w-10 md:h-10 text-meatzy-olive" strokeWidth={3} />
-                        </div>
-                    </div>
-                    <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide leading-tight">
+                <div className="flex flex-col items-center text-center gap-4">
+                    <Shield className="w-16 h-16 md:w-20 md:h-20 text-meatzy-rare" strokeWidth={2} />
+                    <h3 className="font-black font-display text-meatzy-olive uppercase text-sm md:text-base tracking-wide leading-tight">
                         Hormone &<br/>Antibiotic Free
                     </h3>
                 </div>
 
                 {/* Badge 5 - Transparent Sourcing */}
-                <div className="flex flex-col items-center text-center col-span-2 md:col-span-3 lg:col-span-1 group">
-                    <div className="relative w-24 h-24 md:w-28 md:h-28 mb-4">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400 via-meatzy-gold to-amber-700 shadow-xl group-hover:shadow-2xl transition-all"></div>
-                        <div className="absolute inset-[6px] md:inset-[8px] rounded-full bg-white flex items-center justify-center shadow-inner">
-                            <FileCheck className="w-8 h-8 md:w-10 md:h-10 text-amber-600" strokeWidth={3} />
-                        </div>
-                    </div>
+                <div className="flex flex-col items-center text-center col-span-2 md:col-span-3 lg:col-span-1 gap-4">
+                    <FileCheck className="w-16 h-16 md:w-20 md:h-20 text-meatzy-olive" strokeWidth={2} />
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide leading-tight">
                         Transparent<br/>Sourcing
                     </h3>
