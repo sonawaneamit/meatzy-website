@@ -160,7 +160,7 @@ export default function AdminDashboard() {
         has_purchased,
         commission_rate,
         created_at,
-        wallet:wallet(pending_balance, available_balance, total_earned)
+        wallet:wallet(pending_balance, available_balance, lifetime_earnings)
       `)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -386,7 +386,8 @@ export default function AdminDashboard() {
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Affiliate</th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Code</th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Status</th>
-                  <th className="text-right py-3 px-4 font-bold text-gray-700 uppercase text-xs">Earned</th>
+                  <th className="text-right py-3 px-4 font-bold text-gray-700 uppercase text-xs">Pending</th>
+                  <th className="text-right py-3 px-4 font-bold text-gray-700 uppercase text-xs">Lifetime</th>
                   <th className="text-right py-3 px-4 font-bold text-gray-700 uppercase text-xs">Available</th>
                   <th className="text-center py-3 px-4 font-bold text-gray-700 uppercase text-xs">Rate</th>
                   <th className="text-center py-3 px-4 font-bold text-gray-700 uppercase text-xs">Actions</th>
@@ -421,8 +422,11 @@ export default function AdminDashboard() {
                           </span>
                         )}
                       </td>
+                      <td className="py-4 px-4 text-right font-bold text-meatzy-rare">
+                        ${wallet?.pending_balance?.toFixed(2) || '0.00'}
+                      </td>
                       <td className="py-4 px-4 text-right font-bold text-meatzy-olive">
-                        ${wallet?.total_earned?.toFixed(2) || '0.00'}
+                        ${wallet?.lifetime_earnings?.toFixed(2) || '0.00'}
                       </td>
                       <td className="py-4 px-4 text-right font-bold text-meatzy-dill">
                         ${wallet?.available_balance?.toFixed(2) || '0.00'}
