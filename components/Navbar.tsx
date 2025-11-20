@@ -3,13 +3,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { ShoppingBag, Menu, User, X, ChevronDown } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCartDrawer } from '../context/CartDrawerContext';
+import { getCartId, getCart } from '../lib/shopify';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
-  const { items, setIsOpen } = useCart();
+  const [cartItemCount, setCartItemCount] = useState(0);
+  const { openDrawer } = useCartDrawer();
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -18,6 +20,25 @@ export const Navbar: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Fetch cart count
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      const cartId = getCartId();
+      if (cartId) {
+        const cart = await getCart(cartId);
+        if (cart) {
+          setCartItemCount(cart.totalQuantity || 0);
+        }
+      }
+    };
+
+    fetchCartCount();
+
+    // Refresh cart count every 2 seconds when on the page
+    const interval = setInterval(fetchCartCount, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   const navClasses = `fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b ${
@@ -127,11 +148,11 @@ export const Navbar: React.FC = () => {
                 Login
               </a>
             </div>
-            <div className="relative cursor-pointer" onClick={() => setIsOpen(true)}>
+            <div className="relative cursor-pointer" onClick={openDrawer}>
                 <ShoppingBag className="w-6 h-6 hover:text-meatzy-rare transition-colors" />
-                {items.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-meatzy-rare text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold border-2 border-white">
-                        {items.length}
+                {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-meatzy-rare text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                        {cartItemCount}
                     </span>
                 )}
             </div>

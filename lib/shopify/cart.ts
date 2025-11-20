@@ -1,5 +1,5 @@
 import { shopifyClient } from './client';
-import { CREATE_CART, ADD_TO_CART } from './queries';
+import { CREATE_CART, ADD_TO_CART, GET_CART, UPDATE_CART_LINES, REMOVE_FROM_CART } from './queries';
 import type { Cart, CreateCartResponse, AddToCartResponse } from './types';
 import { getReferralCode } from '../../hooks/useReferralTracking';
 
@@ -211,4 +211,95 @@ export function clearCartId(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem('shopify_cart_id');
   localStorage.removeItem('shopify_checkout_url');
+}
+
+/**
+ * Get cart details from Shopify
+ */
+export async function getCart(cartId: string): Promise<Cart | null> {
+  try {
+    console.log('Fetching cart:', cartId);
+    const data = await shopifyClient.request<{ cart: Cart }>(GET_CART, { cartId });
+
+    if (!data.cart) {
+      console.error('Cart not found or expired');
+      clearCartId();
+      return null;
+    }
+
+    console.log('Cart fetched successfully:', data.cart.id);
+    return data.cart;
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+    clearCartId();
+    return null;
+  }
+}
+
+/**
+ * Update cart line quantity
+ */
+export async function updateCartLine(
+  cartId: string,
+  lineId: string,
+  quantity: number
+): Promise<Cart | null> {
+  try {
+    console.log('Updating cart line:', lineId, 'quantity:', quantity);
+    const data = await shopifyClient.request<{ cartLinesUpdate: { cart: Cart; userErrors: any[] } }>(
+      UPDATE_CART_LINES,
+      {
+        cartId,
+        lines: [{ id: lineId, quantity }],
+      }
+    );
+
+    if (data.cartLinesUpdate.userErrors.length > 0) {
+      console.error('Update cart errors:', data.cartLinesUpdate.userErrors);
+      return null;
+    }
+
+    if (!data.cartLinesUpdate.cart) {
+      console.error('Update cart returned null cart');
+      return null;
+    }
+
+    console.log('Cart line updated successfully');
+    return data.cartLinesUpdate.cart;
+  } catch (error) {
+    console.error('Error updating cart line:', error);
+    return null;
+  }
+}
+
+/**
+ * Remove item from cart
+ */
+export async function removeFromCart(cartId: string, lineId: string): Promise<Cart | null> {
+  try {
+    console.log('Removing from cart:', lineId);
+    const data = await shopifyClient.request<{ cartLinesRemove: { cart: Cart; userErrors: any[] } }>(
+      REMOVE_FROM_CART,
+      {
+        cartId,
+        lineIds: [lineId],
+      }
+    );
+
+    if (data.cartLinesRemove.userErrors.length > 0) {
+      console.error('Remove from cart errors:', data.cartLinesRemove.userErrors);
+      return null;
+    }
+
+    if (!data.cartLinesRemove.cart) {
+      console.error('Remove from cart returned null cart');
+      return null;
+    }
+
+    console.log('Item removed successfully');
+    return data.cartLinesRemove.cart;
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+    return null;
+  }
 }

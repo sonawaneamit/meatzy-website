@@ -21,7 +21,8 @@ interface CreateDiscountCodeResult {
 /**
  * Create a discount code in Shopify using Admin GraphQL API
  * Creates a fixed amount discount ($20 off) with minimum order requirement ($50)
- * One use per customer, unlimited total uses
+ * Single use code - each SafeLink click generates a unique code for one customer
+ * Stackable with other Shopify promotions (order, product, and shipping discounts)
  */
 export async function createDiscountCode(
   params: CreateDiscountCodeParams
@@ -72,7 +73,13 @@ export async function createDiscountCode(
         all: true
       },
       appliesOncePerCustomer: true,
-      usageLimit: null // Unlimited uses, but once per customer
+      usageLimit: 1, // Single use - each SafeLink generates unique code per customer
+      combinesWith: {
+        // Allow stacking with other discount types
+        orderDiscounts: true,
+        productDiscounts: true,
+        shippingDiscounts: true
+      }
     }
   };
 

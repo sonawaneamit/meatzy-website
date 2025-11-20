@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Star, Check, ChevronDown, ShoppingCart, Truck, Shield, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import { createCart, addToCart as addToShopifyCart, getCartId, saveCartId, saveCheckoutUrl, getCheckoutUrl } from '@/lib/shopify';
+import CartDrawer from '../../../components/CartDrawer';
 
 interface ProductImage {
   url: string;
@@ -71,6 +72,9 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
   const [expandedBoxItem, setExpandedBoxItem] = useState<number | null>(null);
   const [subscriptionFrequency, setSubscriptionFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | '6weeks' | 'bimonthly'>('monthly');
   const [addingToCart, setAddingToCart] = useState(false);
+  const [showUpsellModal, setShowUpsellModal] = useState(false);
+  const [upsellAddOns, setUpsellAddOns] = useState<Set<number>>(new Set());
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
 
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
@@ -78,6 +82,14 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
   const totalPrice = basePrice * quantity + Array.from(selectedAddOns).reduce((sum, idx) => sum + addOns[idx].price, 0);
 
   const handleAddToCart = async () => {
+    // Check if no add-ons selected - show upsell modal
+    if (selectedAddOns.size === 0) {
+      console.log('No add-ons selected, showing upsell modal');
+      setShowUpsellModal(true);
+      return;
+    }
+
+    console.log('Adding to cart with', selectedAddOns.size, 'add-ons:', Array.from(selectedAddOns));
     setAddingToCart(true);
 
     try {
@@ -85,11 +97,13 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
 
       if (!cartId) {
         // Create new cart with main product
+        console.log('Creating new cart with main product:', variantId, 'quantity:', quantity);
         const cart = await createCart(variantId, quantity);
         if (cart) {
           saveCartId(cart.id);
           await saveCheckoutUrl(cart.checkoutUrl);
           cartId = cart.id;
+          console.log('Cart created successfully:', cartId);
         } else {
           alert('Failed to create cart. Please try again.');
           setAddingToCart(false);
@@ -97,12 +111,14 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
         }
       } else {
         // Add main product to existing cart
+        console.log('Adding to existing cart:', cartId);
         const cart = await addToShopifyCart(cartId, [{
           merchandiseId: variantId,
           quantity
         }]);
         if (cart) {
           await saveCheckoutUrl(cart.checkoutUrl);
+          console.log('Added to existing cart successfully');
         }
       }
 
@@ -115,16 +131,16 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
           }))
           .filter(item => item.merchandiseId);
 
+        console.log('Adding', addOnItems.length, 'add-ons to cart:', addOnItems);
         if (addOnItems.length > 0) {
           await addToShopifyCart(cartId, addOnItems);
+          console.log('Add-ons added successfully');
         }
       }
 
-      // Redirect to checkout
-      const checkoutUrl = getCheckoutUrl();
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      }
+      // Show cart drawer instead of redirecting
+      console.log('Opening cart drawer');
+      setShowCartDrawer(true);
     } catch (error) {
       console.error('Error adding to cart:', error);
       alert('Failed to add to cart. Please try again.');
@@ -172,6 +188,76 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
       newSet.add(index);
     }
     setSelectedAddOns(newSet);
+  };
+
+  const toggleUpsellAddOn = (index: number) => {
+    const newSet = new Set(upsellAddOns);
+    if (newSet.has(index)) {
+      newSet.delete(index);
+    } else {
+      newSet.add(index);
+    }
+    setUpsellAddOns(newSet);
+  };
+
+  const proceedWithoutAddOns = async () => {
+    setShowUpsellModal(false);
+    setAddingToCart(true);
+
+    try {
+      let cartId = getCartId();
+
+      if (!cartId) {
+        const cart = await createCart(variantId, quantity);
+        if (cart) {
+          saveCartId(cart.id);
+          await saveCheckoutUrl(cart.checkoutUrl);
+        } else {
+          alert('Failed to create cart. Please try again.');
+          setAddingToCart(false);
+          return;
+        }
+      } else {
+        const cart = await addToShopifyCart(cartId, [{
+          merchandiseId: variantId,
+          quantity
+        }]);
+        if (cart) {
+          await saveCheckoutUrl(cart.checkoutUrl);
+        }
+      }
+
+      // Show cart drawer instead of redirecting
+      setShowCartDrawer(true);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add to cart. Please try again.');
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
+  const addUpsellItemsAndCheckout = () => {
+    console.log('Upsell: Selected add-ons from main page:', Array.from(selectedAddOns));
+    console.log('Upsell: Selected items from modal:', Array.from(upsellAddOns));
+
+    // Merge upsell selections into main selections
+    const combined = new Set([...selectedAddOns, ...upsellAddOns]);
+    console.log('Upsell: Combined selection:', Array.from(combined));
+
+    setSelectedAddOns(combined);
+    setShowUpsellModal(false);
+
+    // Trigger checkout with the combined items
+    setTimeout(() => {
+      const button = document.querySelector('[data-checkout-button]') as HTMLButtonElement;
+      if (button) {
+        console.log('Upsell: Triggering checkout button click');
+        button.click();
+      } else {
+        console.error('Upsell: Checkout button not found!');
+      }
+    }, 100);
   };
 
   return (
@@ -423,6 +509,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
               <button
                 onClick={handleAddToCart}
                 disabled={addingToCart}
+                data-checkout-button
                 className="w-full bg-meatzy-rare text-white py-4 font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-colors rounded-lg flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ShoppingCart className="w-5 h-5" />
@@ -606,6 +693,88 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
           <p className="text-gray-600">Based on 127 reviews</p>
         </div>
       </div>
+
+      {/* Upsell Modal */}
+      {showUpsellModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 md:p-8">
+              {/* Header */}
+              <div className="text-center mb-6">
+                <h2 className="text-3xl md:text-4xl font-black font-slab text-meatzy-olive uppercase mb-2">
+                  Wait! Don't Miss Out
+                </h2>
+                <p className="text-gray-600 text-lg">
+                  Add these popular items to your order and save on shipping
+                </p>
+              </div>
+
+              {/* Add-ons Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+                {addOns.slice(0, 8).map((addon, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleUpsellAddOn(idx)}
+                    className={`bg-white rounded-xl border-2 p-4 cursor-pointer transition-all text-left ${
+                      upsellAddOns.has(idx)
+                        ? 'border-meatzy-rare shadow-lg scale-105'
+                        : 'border-gray-200 hover:border-meatzy-mint'
+                    }`}
+                  >
+                    <div className="aspect-square bg-gray-100 rounded-lg mb-3 relative overflow-hidden">
+                      {addon.image ? (
+                        <Image
+                          src={addon.image}
+                          alt={addon.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <ShoppingCart className="w-8 h-8 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="font-bold text-meatzy-olive text-sm mb-1 leading-tight line-clamp-2">
+                      {addon.name}
+                    </h3>
+                    <p className="text-lg font-black text-meatzy-rare">
+                      ${addon.price.toFixed(2)}
+                    </p>
+                    {upsellAddOns.has(idx) && (
+                      <div className="mt-2 bg-green-100 text-green-700 text-xs font-bold py-1 px-2 rounded-full text-center flex items-center justify-center gap-1">
+                        <Check className="w-3 h-3" /> Added
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col md:flex-row gap-3">
+                <button
+                  onClick={proceedWithoutAddOns}
+                  disabled={addingToCart}
+                  className="flex-1 py-4 px-6 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold uppercase rounded-lg transition-colors disabled:opacity-50"
+                >
+                  No Thanks, Continue
+                </button>
+                <button
+                  onClick={addUpsellItemsAndCheckout}
+                  disabled={upsellAddOns.size === 0}
+                  className="flex-1 py-4 px-6 bg-meatzy-rare hover:bg-meatzy-welldone text-white font-bold uppercase rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Add {upsellAddOns.size > 0 ? `${upsellAddOns.size} Item${upsellAddOns.size > 1 ? 's' : ''}` : 'Items'} & Checkout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cart Drawer */}
+      <CartDrawer isOpen={showCartDrawer} onClose={() => setShowCartDrawer(false)} />
     </div>
   );
 }

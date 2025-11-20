@@ -20,14 +20,8 @@ export function ReferralBar() {
         <span className="inline-flex items-center gap-2">
           <span className="text-base">🎁</span>
           <span>
-            {referrerName} sent you ${discountAmount} off orders over ${minimumOrder}!
+            You have ${discountAmount} off from {referrerName}!
           </span>
-          {discountCode && (
-            <span className="hidden md:inline bg-white/20 px-2 py-1 rounded font-mono text-xs">
-              Code: {discountCode}
-            </span>
-          )}
-          <span className="hidden sm:inline">Applies automatically at checkout.</span>
         </span>
       </div>
     );
