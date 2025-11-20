@@ -41,46 +41,27 @@ export async function GET(
 
     console.log(`[SafeLink] Found affiliate: ${affiliate.email}`);
 
-    // 2. Check if discount code already exists
-    let discountCode = affiliate.shopify_discount_code;
+    // 2. Generate UNIQUE discount code for THIS customer (prevents code leakage)
+    // Format: REF-{AffiliateCode}-{UniqueID}
+    // Example: REF-20E3FG7J-A1B2C
+    const uniqueSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const discountCode = `REF-${affiliate.referral_code}-${uniqueSuffix}`;
 
-    if (!discountCode) {
-      // 3. Create new discount code dynamically via Shopify Admin API
-      const newCode = `REF-${affiliate.referral_code}`;
+    console.log(`[SafeLink] Creating unique discount code: ${discountCode}`);
 
-      console.log(`[SafeLink] Creating discount code: ${newCode}`);
+    // 3. Create discount code in Shopify
+    const result = await createDiscountCode({
+      code: discountCode,
+      title: `Referral from ${affiliate.full_name || affiliate.email}`,
+      amount: 20,        // $20 off
+      minimumAmount: 50  // Minimum $50 order
+    });
 
-      const result = await createDiscountCode({
-        code: newCode,
-        title: `Referral discount for ${affiliate.full_name || affiliate.email}`,
-        amount: 20,        // $20 off
-        minimumAmount: 50  // Minimum $50 order
-      });
-
-      if (result.success) {
-        discountCode = newCode;
-
-        console.log(`[SafeLink] Discount code created successfully: ${discountCode}`);
-
-        // 4. Store in Supabase
-        const { error: updateError } = await supabase
-          .from('users')
-          .update({
-            shopify_discount_code: discountCode,
-            discount_created_at: new Date().toISOString()
-          })
-          .eq('id', affiliate.id);
-
-        if (updateError) {
-          console.error('[SafeLink] Error updating user with discount code:', updateError);
-        }
-      } else {
-        console.error('[SafeLink] Failed to create discount code:', result.error);
-        // Fall back to generic code or skip discount
-        discountCode = 'REFERRAL20'; // Fallback generic code
-      }
+    if (!result.success) {
+      console.error('[SafeLink] Failed to create discount code:', result.error);
+      // Continue without discount - attribution still works via referral_code
     } else {
-      console.log(`[SafeLink] Using existing discount code: ${discountCode}`);
+      console.log(`[SafeLink] Discount code created successfully: ${discountCode}`);
     }
 
     // 5. Prepare referral data for cookie
