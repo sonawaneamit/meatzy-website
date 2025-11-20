@@ -1,0 +1,74 @@
+<!--
+  Shopify Order Confirmation Email - Custom Thank You Button
+
+  INSTALLATION:
+  1. Go to Shopify Admin
+  2. Settings → Notifications
+  3. Click "Order confirmation" email
+  4. Scroll to the bottom of the email template
+  5. Paste this code BEFORE the closing </body> tag
+  6. Click "Save"
+
+  This adds a prominent "Access Your Referral Dashboard" button
+  to every order confirmation email.
+-->
+
+<!-- Meatzy Referral Dashboard Section -->
+<table class="row" style="width: 100%; margin-top: 40px; margin-bottom: 40px;">
+  <tr>
+    <td class="shop-name__cell">
+      <table style="width: 100%;">
+        <tr>
+          <td style="padding: 40px 24px; background: linear-gradient(135deg, #C4504C 0%, #8B3A3A 100%); border-radius: 12px; text-align: center;">
+
+            <!-- Icon/Emoji -->
+            <div style="font-size: 48px; margin-bottom: 15px;">
+              🎉
+            </div>
+
+            <!-- Headline -->
+            <h2 style="color: #FFFFFF; font-family: 'Bebas Neue', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; margin: 0 0 15px 0; line-height: 1.2;">
+              Start Earning Today!
+            </h2>
+
+            <!-- Subheadline -->
+            <p style="color: #FFFFFF; font-size: 16px; margin: 0 0 25px 0; line-height: 1.5; opacity: 0.95;">
+              Share MEATZY with friends and earn <strong style="color: #F7D858;">13% commission</strong> on every sale
+            </p>
+
+            <!-- CTA Button -->
+            <a href="https://getmeatzy.com/thank-you?order_id={{ order.order_number }}&email={{ customer.email }}&name={{ customer.first_name }}%20{{ customer.last_name }}"
+               style="display: inline-block; padding: 18px 40px; background-color: #B8D5B8; color: #2D2B25; font-family: 'Bebas Neue', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; text-decoration: none; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+              Access Your Referral Dashboard →
+            </a>
+
+            <!-- Benefits List -->
+            <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 20px; margin-top: 20px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
+              <p style="color: #FFFFFF; font-size: 14px; font-weight: bold; margin: 0 0 12px 0; text-align: center;">
+                What You'll Get:
+              </p>
+              <ul style="color: #FFFFFF; font-size: 13px; margin: 0; padding-left: 20px; line-height: 1.8;">
+                <li>Your unique referral link + QR code</li>
+                <li>Social sharing tools for Instagram, TikTok, Facebook</li>
+                <li>Track your earnings in real-time</li>
+                <li>Earn from 4 levels deep (13%, 2%, 1%, 1%)</li>
+              </ul>
+            </div>
+
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<!-- Meatzy Branding Footer -->
+<table class="row" style="width: 100%; margin-top: 20px;">
+  <tr>
+    <td style="text-align: center; padding: 20px; font-size: 12px; color: #999;">
+      <p style="margin: 0;">
+        🥩 <strong>MEATZY</strong> - Premium grass-fed, pasture-raised meat delivered to your door
+      </p>
+    </td>
+  </tr>
+</table>
