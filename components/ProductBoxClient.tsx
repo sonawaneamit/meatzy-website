@@ -429,14 +429,9 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
 
         {/* Add-Ons Section - Prominently Placed */}
         <div className="mb-12">
-          <div className="bg-gradient-to-r from-meatzy-rare/90 to-meatzy-welldone/90 rounded-xl p-5 text-white mb-6">
-            <h3 className="text-2xl font-black font-slab uppercase text-center mb-1">
-              Boost Your Box
-            </h3>
-            <p className="text-center text-sm opacity-90">
-              Add premium proteins and save on shipping
-            </p>
-          </div>
+          <h3 className="text-3xl font-black font-slab text-meatzy-olive uppercase mb-6">
+            Frequently Bought Together
+          </h3>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {displayedAddOns.map((addon, idx) => (
