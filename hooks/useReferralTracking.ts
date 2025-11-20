@@ -15,10 +15,24 @@ export function useReferralTracking() {
     const refCode = searchParams?.get('ref');
 
     if (refCode) {
-      // Store in localStorage for later use during checkout/signup
+      // Check if we've already processed this code in this session
+      const processedKey = 'meatzy_ref_processed';
+      const lastProcessed = sessionStorage.getItem(processedKey);
+
       const upperCode = refCode.toUpperCase();
+
+      // Skip if we just processed this same code
+      if (lastProcessed === upperCode) {
+        console.log('Referral code already processed:', upperCode);
+        return;
+      }
+
+      // Store in localStorage for later use during checkout/signup
       localStorage.setItem(REFERRAL_CODE_KEY, upperCode);
       console.log('Referral code captured:', upperCode);
+
+      // Mark as processed before the API call
+      sessionStorage.setItem(processedKey, upperCode);
 
       // Also update the HTTPOnly cookie via API (overwrites existing referral)
       fetch('/api/referral/set-from-code', {
@@ -30,11 +44,18 @@ export function useReferralTracking() {
         .then(data => {
           if (data.success) {
             console.log('Referral cookie updated for:', data.referrerName);
-            // Force page reload to update ReferralBar
-            window.location.reload();
+
+            // Remove ?ref= from URL and reload to update ReferralBar
+            const url = new URL(window.location.href);
+            url.searchParams.delete('ref');
+            window.location.href = url.toString();
           }
         })
-        .catch(err => console.error('Failed to set referral cookie:', err));
+        .catch(err => {
+          console.error('Failed to set referral cookie:', err);
+          // Clear processed flag on error so it can retry
+          sessionStorage.removeItem(processedKey);
+        });
     }
   }, [searchParams]);
 }
