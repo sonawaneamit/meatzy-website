@@ -6,7 +6,6 @@ const reviews: Testimonial[] = [
   {
     id: '1',
     name: 'Chef Von',
-    role: 'Executive Chef',
     quote: "MEATZY exceeded my expectations. The marbling on the Wagyu was comparable to what I source for my restaurant.",
     rating: 5,
     image: "https://randomuser.me/api/portraits/men/32.jpg"
@@ -45,14 +44,6 @@ export const Testimonials: React.FC = () => {
                   {[...Array(review.rating)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-meatzy-dill text-meatzy-dill" />
                   ))}
-                </div>
-                <div className="flex items-center gap-3 mt-4">
-                    <div className="w-8 h-8 bg-meatzy-welldone rounded-full flex items-center justify-center text-white font-bold text-xs">
-                        {review.name.charAt(0)}
-                    </div>
-                    <div className="bg-meatzy-rare text-white text-[10px] font-bold uppercase px-2 py-1 rounded-full flex items-center gap-1">
-                        <span className="w-1 h-1 bg-white rounded-full"></span> Read More
-                    </div>
                 </div>
               </div>
               
