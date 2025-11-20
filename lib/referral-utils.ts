@@ -12,6 +12,7 @@ export function generateReferralLink(
     baseUrl?: string;
   }
 ): string {
+  // Use current domain (dynamically adapts to any domain or landing page)
   const baseUrl = options?.baseUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://getmeatzy.com');
 
   let link = `${baseUrl}?ref=${referralCode.toUpperCase()}`;

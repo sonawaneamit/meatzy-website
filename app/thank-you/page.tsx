@@ -92,9 +92,15 @@ function ThankYouContent() {
 
       setReferralCode(user.referral_code);
 
-      // Generate referral link with UTM
-      const link = generateReferralLink(user.referral_code, { includeUTM: true });
+      // Generate simple referral link (no UTM for cleaner look)
+      const link = generateReferralLink(user.referral_code);
       setReferralLink(link);
+
+      // Store the referral link in Supabase for customer support
+      await supabase
+        .from('users')
+        .update({ referral_link: link })
+        .eq('email', email.toLowerCase());
 
       // Generate social links
       const social = generateSocialLinks(user.referral_code, link);
@@ -188,30 +194,30 @@ function ThankYouContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-meatzy-tallow via-white to-meatzy-mint/20 pt-32 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-meatzy-tallow via-white to-meatzy-mint/20 pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4 md:px-8">
         {/* Order Confirmation */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-meatzy-dill rounded-full mb-6">
-            <CheckCircle className="w-12 h-12 text-white" />
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-meatzy-dill rounded-full mb-3">
+            <CheckCircle className="w-7 h-7 text-white" />
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-black font-slab text-meatzy-olive uppercase mb-4">
+          <h1 className="text-2xl md:text-3xl font-black font-slab text-meatzy-olive uppercase mb-2">
             Order Confirmed!
           </h1>
 
-          <p className="text-xl text-gray-600 mb-2">
+          <p className="text-base text-gray-600 mb-0.5">
             Thank you{customerName ? `, ${customerName}` : ''}!
           </p>
 
           {orderNumber && (
-            <p className="text-lg text-gray-500">
+            <p className="text-sm text-gray-500">
               Order #{orderNumber}
             </p>
           )}
 
           {customerEmail && (
-            <p className="text-sm text-gray-400 mt-2">
+            <p className="text-xs text-gray-400 mt-1">
               Confirmation sent to {customerEmail}
             </p>
           )}
@@ -353,27 +359,27 @@ function ThankYouContent() {
           {/* Right Column: Referral Widget */}
           <div>
             {!loading && referralCode && referralLink && (
-              <div className="bg-gradient-to-br from-meatzy-rare to-meatzy-welldone rounded-2xl shadow-2xl p-8 text-white sticky top-8">
+              <div className="bg-gradient-to-br from-meatzy-rare to-meatzy-welldone rounded-2xl shadow-2xl p-6 text-white sticky top-8">
                 {/* Header */}
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-black font-slab uppercase mb-2">
+                <div className="text-center mb-4">
+                  <h2 className="text-xl font-black font-slab uppercase mb-2">
                     Start Earning Today! 💰
                   </h2>
-                  <p className="text-sm opacity-90">
+                  <p className="text-xs opacity-90">
                     Share MEATZY with friends and earn{' '}
                     <span className="font-black text-meatzy-gold">13% commission</span> on every sale
                   </p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-3">
                   {/* Your Referral Link */}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <Share2 className="w-5 h-5" />
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <Share2 className="w-4 h-4" />
                     Your Referral Link
                   </h3>
 
-                    <div className="bg-white rounded-lg p-3 mb-3">
+                    <div className="bg-white rounded-lg p-2 mb-2">
                       <p className="text-meatzy-olive font-mono text-xs break-all">
                         {referralLink}
                       </p>
@@ -381,16 +387,16 @@ function ThankYouContent() {
 
                     <button
                       onClick={handleCopyLink}
-                      className="w-full bg-meatzy-dill hover:bg-meatzy-dill/90 text-white font-bold uppercase tracking-wider py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+                      className="w-full bg-meatzy-dill hover:bg-meatzy-dill/90 text-white font-bold uppercase tracking-wider py-1.5 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 text-xs"
                     >
                       {copied ? (
                         <>
-                          <CheckCircle className="w-4 h-4" />
+                          <CheckCircle className="w-3 h-3" />
                           Copied!
                         </>
                       ) : (
                         <>
-                          <Copy className="w-4 h-4" />
+                          <Copy className="w-3 h-3" />
                           Copy Link
                         </>
                       )}
@@ -399,110 +405,119 @@ function ThankYouContent() {
 
                   {/* QR Code */}
                   {qrCodeDataUrl && (
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                      <h3 className="text-sm font-bold uppercase tracking-wider mb-3 text-center">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                      <h3 className="text-xs font-bold uppercase tracking-wider mb-2 text-center">
                         Scan & Share
                       </h3>
 
-                      <div className="bg-white rounded-xl p-4 mb-3">
+                      <div className="bg-white rounded-xl p-2 mb-2 flex justify-center">
                         <img
                           src={qrCodeDataUrl}
                           alt="Referral QR Code"
-                          className="w-full h-auto"
+                          className="w-32 h-32"
                         />
                       </div>
 
                       <button
                         onClick={handleDownloadQR}
-                        className="w-full bg-meatzy-olive hover:bg-meatzy-rare text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
+                        className="w-full bg-meatzy-olive hover:bg-meatzy-rare text-white font-bold py-1.5 px-3 rounded-lg transition-colors text-xs flex items-center justify-center gap-1"
                       >
-                        <Download className="w-4 h-4" />
-                        Download QR
+                        <Download className="w-3 h-3" />
+                        Download
                       </button>
                     </div>
                   )}
 
                   {/* Social Sharing */}
                   {socialLinks && (
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                      <h3 className="text-sm font-bold uppercase tracking-wider mb-3">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                      <h3 className="text-xs font-bold uppercase tracking-wider mb-2">
                       Share on Social
                     </h3>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center justify-center gap-2">
+                      <a
+                        href={`https://www.instagram.com/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-90 text-white p-2.5 rounded-lg transition-colors flex items-center justify-center"
+                        title="Share on Instagram"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          copyToClipboard(referralLink);
+                          alert('Link copied! Now paste it in your Instagram bio or story.');
+                        }}
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                      </a>
+
+                      <a
+                        href={`https://www.tiktok.com/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-black hover:bg-gray-800 text-white p-2.5 rounded-lg transition-colors flex items-center justify-center"
+                        title="Share on TikTok"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          copyToClipboard(referralLink);
+                          alert('Link copied! Now paste it in your TikTok bio or video description.');
+                        }}
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                      </a>
+
                       <a
                         href={socialLinks.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-[#1877F2] hover:bg-[#1877F2]/90 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center text-sm"
+                        className="bg-[#1877F2] hover:bg-[#1877F2]/90 text-white p-2.5 rounded-lg transition-colors flex items-center justify-center"
+                        title="Share on Facebook"
                       >
-                        Facebook
-                      </a>
-
-                      <a
-                        href={socialLinks.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-[#1DA1F2] hover:bg-[#1DA1F2]/90 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center text-sm"
-                      >
-                        Twitter
-                      </a>
-
-                      <a
-                        href={socialLinks.whatsapp}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-[#25D366] hover:bg-[#25D366]/90 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center text-sm flex items-center justify-center gap-2"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                        WhatsApp
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                       </a>
 
                       <a
                         href={socialLinks.email}
-                        className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition-colors text-center text-sm flex items-center justify-center gap-2"
+                        className="bg-gray-700 hover:bg-gray-600 text-white p-2.5 rounded-lg transition-colors flex items-center justify-center"
+                        title="Share via Email"
                       >
-                        <Mail className="w-4 h-4" />
-                        Email
+                        <Mail className="w-5 h-5" />
                       </a>
                     </div>
                     </div>
                   )}
 
                   {/* Commission Structure */}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                    <h3 className="text-sm font-bold uppercase tracking-wider mb-3">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider mb-2">
                       How You Earn
                     </h3>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-lg bg-meatzy-gold flex items-center justify-center font-black text-meatzy-olive text-sm flex-shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-meatzy-gold flex items-center justify-center font-black text-meatzy-olive text-xs flex-shrink-0">
                           13%
                         </div>
-                        <p className="text-xs">
-                          <span className="font-bold">Direct Referrals</span><br/>
-                          People you refer directly
+                        <p className="text-xs leading-tight">
+                          <span className="font-bold">Direct Referrals</span>
                         </p>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center font-black text-sm flex-shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center font-black text-xs flex-shrink-0">
                           2%
                         </div>
-                        <p className="text-xs">
-                          <span className="font-bold">2nd Level</span><br/>
-                          People your referrals bring in
+                        <p className="text-xs leading-tight">
+                          <span className="font-bold">2nd Level</span>
                         </p>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center font-black text-sm flex-shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center font-black text-xs flex-shrink-0">
                           1%
                         </div>
-                        <p className="text-xs">
-                          <span className="font-bold">3rd & 4th Level</span><br/>
-                          Extended network earnings
+                        <p className="text-xs leading-tight">
+                          <span className="font-bold">3rd & 4th Level</span>
                         </p>
                       </div>
                     </div>
