@@ -31,7 +31,7 @@ export const Testimonials: React.FC = () => {
     <section className="py-24 bg-meatzy-tallow border-t border-meatzy-mint">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <h2 className="text-3xl md:text-5xl font-black font-slab text-meatzy-olive text-center mb-16 uppercase">
-          Hear what our clients are saying:
+          Hear what our customers are saying:
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
