@@ -206,7 +206,7 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
 
             {/* Main Product Image */}
             <div
-              className="order-1 md:order-2 flex-1 aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
+              className="order-1 md:order-2 aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}

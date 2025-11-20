@@ -190,7 +190,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 w-20 md:w-full bg-white ${
+                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 w-20 md:w-full ${
                       currentImageIndex === idx
                         ? 'border-meatzy-rare shadow-lg ring-2 ring-meatzy-rare/30'
                         : 'border-meatzy-mint/30 hover:border-meatzy-mint'
@@ -200,7 +200,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
                       src={image.url}
                       alt={image.altText || `Product ${idx + 1}`}
                       fill
-                      className="object-contain p-1"
+                      className="object-cover"
                     />
                   </button>
                 ))}
@@ -209,7 +209,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
 
             {/* Main Product Image */}
             <div
-              className="order-1 md:order-2 flex-1 aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
+              className="order-1 md:order-2 aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
