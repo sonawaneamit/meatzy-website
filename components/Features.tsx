@@ -1,76 +1,77 @@
 import React from 'react';
-import { ShieldCheck, Award, Zap, Globe } from 'lucide-react';
+import { ShieldCheck, Award, Zap, Globe, MapPin, ChefHat, Leaf, Shield, FileCheck } from 'lucide-react';
 
 export const Features: React.FC = () => {
   return (
     <section className="py-24 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="mb-12 text-center">
-                <span className="text-meatzy-rare font-marker text-2xl md:text-3xl mb-2 block transform -rotate-1">The Meatzy Standard</span>
-                <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-olive uppercase max-w-3xl mx-auto leading-none">
-                    Not Your Average Meat Subscription Box
+            {/* Main Content */}
+            <div className="text-center max-w-5xl mx-auto mb-16">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black font-slab text-meatzy-olive uppercase mb-8 leading-tight">
+                    The Terroir of Protein, Honestly Sourced
                 </h2>
+
+                <div className="space-y-6 text-left text-gray-700 text-base md:text-lg leading-relaxed">
+                    <p>
+                        We follow the same philosophy top chefs use: choose each protein from the region where it reaches its peak. Patagonian grasslands, Midwest family farms, Australia's pasture raised herds. Every place has its own terroir, and we select only producers who meet or exceed our internal standards and the USDA's, always hormone and antibiotic free.
+                    </p>
+
+                    <p>
+                        Some brands claim everything is "100 percent American," but the reality is more complicated. Many rely on labeling rules that allow imported meat to be repackaged and sold as "Product of USA." We never do. If a cut comes from abroad, we say so. If it is raised domestically, we say that too. No vague claims, no relabeling, just transparency backed by chef tested quality.
+                    </p>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Feature 1 - Sourced for Flavor */}
-                <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img
-                        src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?q=80&w=800&auto=format&fit=crop"
-                        alt="Grass-fed cattle on pasture"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
-                    />
-                    <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
-                        <Globe className="w-12 h-12 text-meatzy-gold mb-4 opacity-80 group-hover:opacity-100 transition-opacity" />
-                        <h3 className="text-white font-black font-slab text-2xl uppercase leading-tight drop-shadow-md">
-                            Sourced For<br/>Flavor,<br/>Not Just Origin
-                        </h3>
+            {/* Badges Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 max-w-6xl mx-auto">
+                {/* Badge 1 - Origin Verified */}
+                <div className="flex flex-col items-center text-center">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
+                        <MapPin className="w-10 h-10 md:w-12 md:h-12 text-white" />
                     </div>
+                    <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
+                        Origin Verified
+                    </h3>
                 </div>
 
-                 {/* Feature 2 - Better Value */}
-                 <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img
-                        src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop"
-                        alt="Premium beef cuts"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
-                    />
-                    <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
-                        <Zap className="w-12 h-12 text-meatzy-gold mb-4 opacity-80 group-hover:opacity-100 transition-opacity" />
-                        <h3 className="text-white font-black font-slab text-2xl uppercase leading-tight drop-shadow-md">
-                            Better Value<br/>Than The<br/>Stores
-                        </h3>
+                {/* Badge 2 - Chef Tested */}
+                <div className="flex flex-col items-center text-center">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
+                        <ChefHat className="w-10 h-10 md:w-12 md:h-12 text-white" />
                     </div>
+                    <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
+                        Chef Tested
+                    </h3>
                 </div>
 
-                 {/* Feature 3 - Customize Your Box */}
-                 <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img
-                        src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?q=80&w=800&auto=format&fit=crop"
-                        alt="Variety of premium meats"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
-                    />
-                    <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
-                        <Award className="w-12 h-12 text-meatzy-gold mb-4 opacity-80 group-hover:opacity-100 transition-opacity" />
-                        <h3 className="text-white font-black font-slab text-2xl uppercase leading-tight drop-shadow-md">
-                            Customize<br/>Your Box, Your<br/>Way
-                        </h3>
+                {/* Badge 3 - Sustainably Raised */}
+                <div className="flex flex-col items-center text-center">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
+                        <Leaf className="w-10 h-10 md:w-12 md:h-12 text-white" />
                     </div>
+                    <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
+                        Sustainably Raised
+                    </h3>
                 </div>
 
-                 {/* Feature 4 - Earn With Us */}
-                 <div className="relative h-80 group overflow-hidden shadow-xl cursor-pointer rounded-lg border-b-4 border-meatzy-gold">
-                    <img
-                        src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop"
-                        alt="Prepared steak dinner"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.5] group-hover:brightness-[0.4]"
-                    />
-                    <div className="absolute inset-0 p-8 flex flex-col justify-center text-center items-center border-2 border-white/10 m-2 rounded-md">
-                         <div className="w-12 h-12 rounded-full border-2 border-meatzy-gold flex items-center justify-center text-meatzy-gold font-black text-xl mb-4">$</div>
-                        <h3 className="text-white font-black font-slab text-2xl uppercase leading-tight drop-shadow-md">
-                            Earn With Us<br/>Real Cash, Not<br/>Just Points
-                        </h3>
+                {/* Badge 4 - Hormone and Antibiotic Free */}
+                <div className="flex flex-col items-center text-center">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
+                        <Shield className="w-10 h-10 md:w-12 md:h-12 text-white" />
                     </div>
+                    <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide leading-tight">
+                        Hormone &<br/>Antibiotic Free
+                    </h3>
+                </div>
+
+                {/* Badge 5 - Transparent Sourcing */}
+                <div className="flex flex-col items-center text-center col-span-2 md:col-span-3 lg:col-span-1">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
+                        <FileCheck className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                    </div>
+                    <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide leading-tight">
+                        Transparent<br/>Sourcing
+                    </h3>
                 </div>
             </div>
 
