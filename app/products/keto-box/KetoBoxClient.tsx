@@ -765,7 +765,7 @@ export default function KetoBoxClient({ productImages, addOns, basePrice, produc
                   className="flex-1 py-4 px-6 bg-meatzy-rare hover:bg-meatzy-welldone text-white font-bold uppercase rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  Add {upsellAddOns.size > 0 ? `${upsellAddOns.size} Item${upsellAddOns.size > 1 ? 's' : ''}` : 'Items'} & Checkout
+                  {upsellAddOns.size > 0 ? `Add ${upsellAddOns.size} Item${upsellAddOns.size > 1 ? 's' : ''} & ` : ''}Next
                 </button>
               </div>
             </div>

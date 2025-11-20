@@ -755,7 +755,7 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
                   disabled={upsellAddOns.size === 0}
                   className="flex-1 bg-meatzy-rare text-white py-3 px-6 rounded-lg font-bold uppercase hover:bg-meatzy-welldone transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add {upsellAddOns.size > 0 ? `${upsellAddOns.size} Item${upsellAddOns.size > 1 ? 's' : ''} &` : ''} Checkout
+                  {upsellAddOns.size > 0 ? `Add ${upsellAddOns.size} Item${upsellAddOns.size > 1 ? 's' : ''} & ` : ''}Next
                 </button>
               </div>
             </div>
