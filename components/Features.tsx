@@ -25,9 +25,12 @@ export const Features: React.FC = () => {
             {/* Badges Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 max-w-6xl mx-auto">
                 {/* Badge 1 - Origin Verified */}
-                <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
-                        <MapPin className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                <div className="flex flex-col items-center text-center group">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-gold to-amber-600 shadow-lg group-hover:shadow-xl transition-shadow"></div>
+                        <div className="absolute inset-[3px] rounded-full bg-white flex items-center justify-center">
+                            <MapPin className="w-10 h-10 md:w-12 md:h-12 text-meatzy-gold" strokeWidth={2.5} />
+                        </div>
                     </div>
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
                         Origin Verified
@@ -35,9 +38,12 @@ export const Features: React.FC = () => {
                 </div>
 
                 {/* Badge 2 - Chef Tested */}
-                <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
-                        <ChefHat className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                <div className="flex flex-col items-center text-center group">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-rare to-red-700 shadow-lg group-hover:shadow-xl transition-shadow"></div>
+                        <div className="absolute inset-[3px] rounded-full bg-white flex items-center justify-center">
+                            <ChefHat className="w-10 h-10 md:w-12 md:h-12 text-meatzy-rare" strokeWidth={2.5} />
+                        </div>
                     </div>
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
                         Chef Tested
@@ -45,9 +51,12 @@ export const Features: React.FC = () => {
                 </div>
 
                 {/* Badge 3 - Sustainably Raised */}
-                <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
-                        <Leaf className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                <div className="flex flex-col items-center text-center group">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-dill to-green-700 shadow-lg group-hover:shadow-xl transition-shadow"></div>
+                        <div className="absolute inset-[3px] rounded-full bg-white flex items-center justify-center">
+                            <Leaf className="w-10 h-10 md:w-12 md:h-12 text-meatzy-dill" strokeWidth={2.5} />
+                        </div>
                     </div>
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide">
                         Sustainably Raised
@@ -55,9 +64,12 @@ export const Features: React.FC = () => {
                 </div>
 
                 {/* Badge 4 - Hormone and Antibiotic Free */}
-                <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
-                        <Shield className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                <div className="flex flex-col items-center text-center group">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-meatzy-olive to-gray-800 shadow-lg group-hover:shadow-xl transition-shadow"></div>
+                        <div className="absolute inset-[3px] rounded-full bg-white flex items-center justify-center">
+                            <Shield className="w-10 h-10 md:w-12 md:h-12 text-meatzy-olive" strokeWidth={2.5} />
+                        </div>
                     </div>
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide leading-tight">
                         Hormone &<br/>Antibiotic Free
@@ -65,9 +77,12 @@ export const Features: React.FC = () => {
                 </div>
 
                 {/* Badge 5 - Transparent Sourcing */}
-                <div className="flex flex-col items-center text-center col-span-2 md:col-span-3 lg:col-span-1">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-meatzy-olive flex items-center justify-center mb-4">
-                        <FileCheck className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                <div className="flex flex-col items-center text-center col-span-2 md:col-span-3 lg:col-span-1 group">
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-500 to-meatzy-gold shadow-lg group-hover:shadow-xl transition-shadow"></div>
+                        <div className="absolute inset-[3px] rounded-full bg-white flex items-center justify-center">
+                            <FileCheck className="w-10 h-10 md:w-12 md:h-12 text-amber-600" strokeWidth={2.5} />
+                        </div>
                     </div>
                     <h3 className="font-black font-display text-meatzy-rare uppercase text-sm md:text-base tracking-wide leading-tight">
                         Transparent<br/>Sourcing
