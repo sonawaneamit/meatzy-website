@@ -7,6 +7,7 @@ export const Features: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
             {/* Main Content */}
             <div className="text-center max-w-5xl mx-auto mb-16">
+                <span className="text-meatzy-rare font-marker text-2xl md:text-3xl mb-4 block transform -rotate-1">Where It Comes From</span>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black font-slab text-meatzy-olive uppercase mb-8 leading-tight">
                     The Terroir of Protein, Honestly Sourced
                 </h2>
@@ -77,6 +78,7 @@ export const Features: React.FC = () => {
             {/* Us vs Them Comparison Section */}
             <div className="mt-32">
                 <div className="text-center mb-12">
+                    <span className="text-meatzy-rare font-marker text-2xl md:text-3xl mb-4 block transform -rotate-1">The Real Difference</span>
                     <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-olive uppercase mb-4">
                         Us vs. Them
                     </h2>
