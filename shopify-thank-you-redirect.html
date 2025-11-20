@@ -1,0 +1,143 @@
+<!--
+  Shopify Thank You Page Redirect Script
+
+  INSTALLATION:
+  1. Go to Shopify Admin
+  2. Settings → Checkout → Order status page → Additional scripts
+  3. Paste this entire code block
+  4. Save
+
+  This will show a button on the Shopify thank you page that redirects
+  to your custom thank you page with all the order details.
+-->
+
+<style>
+  .meatzy-redirect-button {
+    margin: 30px auto;
+    padding: 20px 40px;
+    background: linear-gradient(135deg, #C4504C 0%, #8B3A3A 100%);
+    color: white;
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(196, 80, 76, 0.3);
+    transition: all 0.3s ease;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    max-width: 500px;
+  }
+
+  .meatzy-redirect-button:hover {
+    background: linear-gradient(135deg, #8B3A3A 0%, #C4504C 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(196, 80, 76, 0.4);
+  }
+
+  .meatzy-redirect-container {
+    text-align: center;
+    margin: 40px 0;
+    padding: 30px;
+    background: linear-gradient(to bottom, #F9F5F0, #E8DFD1);
+    border-radius: 16px;
+    border: 2px solid #B8D5B8;
+  }
+
+  .meatzy-redirect-title {
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: #2D2B25;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+
+  .meatzy-redirect-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+  }
+
+  .meatzy-countdown {
+    font-size: 18px;
+    color: #C4504C;
+    font-weight: bold;
+    margin-top: 15px;
+  }
+</style>
+
+<div class="meatzy-redirect-container">
+  <div class="meatzy-redirect-title">🎉 Start Earning Today!</div>
+  <div class="meatzy-redirect-subtitle">
+    View your referral dashboard and share your link to earn 13% commission
+  </div>
+
+  <a href="#" id="meatzy-redirect-btn" class="meatzy-redirect-button">
+    Access Your Referral Dashboard
+  </a>
+
+  <div class="meatzy-countdown" id="meatzy-countdown">
+    Auto-redirecting in <span id="meatzy-timer">5</span> seconds...
+  </div>
+</div>
+
+<script>
+(function() {
+  // Get order details from Shopify Liquid variables
+  var orderNumber = "{{ order.order_number }}";
+  var customerEmail = "{{ customer.email }}";
+  var customerName = "{{ customer.first_name }} {{ customer.last_name }}".trim();
+
+  // Build custom thank you page URL with parameters
+  var baseUrl = "https://getmeatzy.com/thank-you";
+  var params = new URLSearchParams({
+    order_id: orderNumber,
+    email: customerEmail,
+    name: customerName
+  });
+
+  var redirectUrl = baseUrl + "?" + params.toString();
+
+  console.log('Meatzy redirect URL:', redirectUrl);
+
+  // Set button link
+  var btn = document.getElementById('meatzy-redirect-btn');
+  if (btn) {
+    btn.href = redirectUrl;
+  }
+
+  // Auto-redirect countdown (5 seconds)
+  var countdown = 5;
+  var timerElement = document.getElementById('meatzy-timer');
+  var countdownElement = document.getElementById('meatzy-countdown');
+
+  var interval = setInterval(function() {
+    countdown--;
+    if (timerElement) {
+      timerElement.textContent = countdown;
+    }
+
+    if (countdown <= 0) {
+      clearInterval(interval);
+      if (countdownElement) {
+        countdownElement.textContent = 'Redirecting now...';
+      }
+      // Redirect to custom thank you page
+      window.location.href = redirectUrl;
+    }
+  }, 1000);
+
+  // Clear countdown if user clicks button manually
+  if (btn) {
+    btn.addEventListener('click', function() {
+      clearInterval(interval);
+    });
+  }
+})();
+</script>
