@@ -85,7 +85,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-meatzy-tallow pt-32 pb-20">
+    <div className="min-h-screen bg-meatzy-tallow pt-8 pb-20">
       <div className="max-w-md mx-auto px-4">
 
         {/* Header */}

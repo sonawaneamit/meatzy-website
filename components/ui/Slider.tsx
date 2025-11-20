@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { HelpCircle } from 'lucide-react';
 
 interface SliderProps {
   label: string;
@@ -11,6 +12,7 @@ interface SliderProps {
   onChange: (value: number) => void;
   formatValue?: (value: number) => string;
   icon?: React.ReactNode;
+  helpText?: string;
 }
 
 export function Slider({
@@ -22,6 +24,7 @@ export function Slider({
   onChange,
   formatValue,
   icon,
+  helpText,
 }: SliderProps) {
   const displayValue = formatValue ? formatValue(value) : value;
   const percentage = ((value - min) / (max - min)) * 100;
@@ -35,6 +38,17 @@ export function Slider({
           <label className="text-sm font-bold text-gray-700 uppercase tracking-wide">
             {label}
           </label>
+          {helpText && (
+            <div className="group relative">
+              <HelpCircle className="w-3.5 h-3.5 text-gray-400 cursor-help" />
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10 w-72 max-w-[90vw]">
+                <div className="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-xl">
+                  {helpText}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         <span className="text-lg font-black text-meatzy-olive">
           {displayValue}

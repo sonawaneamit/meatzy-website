@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Calculator, Users, ShoppingCart, TrendingUp, Calendar } from 'lucide-react';
+import { X, Calculator, Users, ShoppingCart, TrendingUp, Calendar, HelpCircle } from 'lucide-react';
 import { useCalculator } from '@/context/CalculatorContext';
 import { useAuth } from '@/hooks/useAuth';
 import { Slider } from '@/components/ui/Slider';
@@ -29,13 +29,13 @@ export function EarningsCalculator() {
   const [showCalculator, setShowCalculator] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Show calculator after user scrolls 30-40% down the page
+  // Show calculator after user scrolls 25% down the page
   useEffect(() => {
     const handleScroll = () => {
       const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
 
-      // Show after 30% scroll
-      if (scrollPercentage >= 30 && !showCalculator) {
+      // Show after 25% scroll
+      if (scrollPercentage >= 25 && !showCalculator) {
         setShowCalculator(true);
       }
     };
@@ -55,6 +55,9 @@ export function EarningsCalculator() {
 
     // Store email in localStorage
     localStorage.setItem('meatzy_signup_email', email);
+
+    // Close calculator
+    setIsExpanded(false);
 
     // Redirect to signup with email param
     router.push(`/signup?email=${encodeURIComponent(email)}`);
@@ -76,12 +79,16 @@ export function EarningsCalculator() {
       {/* Desktop: Floating Widget */}
       <div className="hidden md:block">
         {!isExpanded ? (
-          // Collapsed State - Icon only with hover text
+          // Collapsed State - White icon on red background, flips on hover
           <button
             onClick={() => setIsExpanded(true)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="fixed bottom-6 right-6 z-[90] bg-white text-meatzy-rare rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-slideInUp border border-gray-200 hover:border-meatzy-rare group"
+            className={`fixed bottom-6 right-6 z-[90] rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-slideInUp border ${
+              isHovered
+                ? 'bg-white text-meatzy-rare border-meatzy-rare'
+                : 'bg-meatzy-rare text-white border-meatzy-rare'
+            }`}
             style={{
               width: isHovered ? 'auto' : '56px',
               paddingLeft: isHovered ? '20px' : '16px',
@@ -132,6 +139,7 @@ export function EarningsCalculator() {
                 step={1}
                 onChange={setReferrals}
                 icon={<Users className="w-4 h-4" />}
+                helpText="The number of people you directly invite to join Meatzy. You earn 13% commission on all their purchases."
               />
 
               <Slider
@@ -143,6 +151,7 @@ export function EarningsCalculator() {
                 onChange={setAvgOrderValue}
                 formatValue={(v) => `$${v}`}
                 icon={<ShoppingCart className="w-4 h-4" />}
+                helpText="The typical value of each customer order. Our average order is $189, including meat boxes and add-ons."
               />
 
               <Slider
@@ -154,6 +163,7 @@ export function EarningsCalculator() {
                 onChange={setGrowthRate}
                 formatValue={formatGrowth}
                 icon={<TrendingUp className="w-4 h-4" />}
+                helpText="How many people each of your referrals brings in on average. This creates a multiplying network effect across 4 tiers."
               />
 
               {/* Time Period Toggle */}
@@ -270,10 +280,10 @@ export function EarningsCalculator() {
       {/* Mobile: Bottom Drawer */}
       <div className="md:hidden">
         {!isExpanded ? (
-          // Collapsed State (Mobile) - Icon only
+          // Collapsed State (Mobile) - White icon on red background
           <button
             onClick={() => setIsExpanded(true)}
-            className="fixed bottom-4 right-4 z-[90] bg-white text-meatzy-rare p-4 rounded-full shadow-lg border border-gray-200 animate-slideInUp"
+            className="fixed bottom-4 right-4 z-[90] bg-meatzy-rare text-white p-4 rounded-full shadow-lg border border-meatzy-rare animate-slideInUp"
           >
             <Calculator className="w-5 h-5" />
           </button>
@@ -302,7 +312,7 @@ export function EarningsCalculator() {
             </div>
 
             {/* Calculator Inputs */}
-            <div className="p-4 space-y-4">
+            <div className="p-5 space-y-5">
               <Slider
                 label="Referrals"
                 value={referrals}
@@ -311,6 +321,7 @@ export function EarningsCalculator() {
                 step={1}
                 onChange={setReferrals}
                 icon={<Users className="w-4 h-4" />}
+                helpText="The number of people you directly invite to join Meatzy. You earn 13% commission on all their purchases."
               />
 
               <Slider
@@ -322,6 +333,7 @@ export function EarningsCalculator() {
                 onChange={setAvgOrderValue}
                 formatValue={(v) => `$${v}`}
                 icon={<ShoppingCart className="w-4 h-4" />}
+                helpText="The typical value of each customer order. Our average order is $189, including meat boxes and add-ons."
               />
 
               <Slider
@@ -333,6 +345,7 @@ export function EarningsCalculator() {
                 onChange={setGrowthRate}
                 formatValue={formatGrowth}
                 icon={<TrendingUp className="w-4 h-4" />}
+                helpText="How many people each of your referrals brings in on average. This creates a multiplying network effect across 4 tiers."
               />
 
               {/* Time Period Toggle */}
@@ -362,12 +375,12 @@ export function EarningsCalculator() {
             </div>
 
             {/* Earnings Breakdown */}
-            <div className="bg-meatzy-tallow/30 p-4 space-y-2.5">
-              <h4 className="text-xs font-black text-gray-600 uppercase tracking-wider mb-2">
+            <div className="bg-meatzy-tallow/30 p-5 space-y-3">
+              <h4 className="text-xs font-black text-gray-600 uppercase tracking-wider mb-3">
                 Potential Earnings
               </h4>
 
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-gray-600">
                     <span className="font-bold text-meatzy-olive">Tier 1</span> (13%)
@@ -405,7 +418,7 @@ export function EarningsCalculator() {
                 </div>
               </div>
 
-              <div className="border-t border-gray-300 pt-2 mt-2">
+              <div className="border-t border-gray-300 pt-3 mt-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-black text-gray-700 uppercase">
                     Total {timePeriod}
@@ -416,13 +429,13 @@ export function EarningsCalculator() {
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500 italic mt-2 leading-relaxed">
+              <p className="text-xs text-gray-500 italic mt-3 leading-relaxed">
                 * Based on 4-tier structure. Actual may vary.
               </p>
             </div>
 
             {/* Email Capture Form */}
-            <form onSubmit={handleEmailSubmit} className="p-4 border-t border-gray-200">
+            <form onSubmit={handleEmailSubmit} className="p-5 border-t border-gray-200">
               <h4 className="text-sm font-black text-meatzy-olive mb-2 uppercase tracking-wide">
                 Start Earning
               </h4>

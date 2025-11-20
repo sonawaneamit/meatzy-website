@@ -2,9 +2,8 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { Inter, Oswald, Merriweather, Permanent_Marker } from 'next/font/google';
 import { cookies } from 'next/headers';
-import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { ReferralBar } from '../components/ReferralBar';
+import { StickyHeader } from '../components/StickyHeader';
 import { Providers } from './providers';
 import { ReferralProvider } from '../context/ReferralContext';
 import { CartDrawerProvider } from '../context/CartDrawerContext';
@@ -43,8 +42,7 @@ export default async function RootLayout({
           <Providers>
             <CartDrawerProvider>
               <CalculatorProvider>
-                <ReferralBar />
-                <Navbar />
+                <StickyHeader />
                 <main className="pt-[140px]">
                   {children}
                 </main>

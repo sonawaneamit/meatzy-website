@@ -41,10 +41,10 @@ export const Navbar: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const navClasses = `fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b ${
+  const navClasses = `w-full transition-all duration-300 border-b ${
     isScrolled
-      ? 'bg-meatzy-tallow text-meatzy-olive shadow-sm border-gray-200 py-2 top-0'
-      : 'bg-meatzy-tallow text-meatzy-olive border-gray-200 py-4 top-10'
+      ? 'bg-meatzy-tallow text-meatzy-olive shadow-sm border-gray-200 py-2'
+      : 'bg-meatzy-tallow text-meatzy-olive border-gray-200 py-4'
   }`;
 
   // Handle mobile menu close
@@ -68,7 +68,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-    <nav className={`${navClasses} ${isScrolled ? 'top-0' : 'top-[40px]'}`}>
+    <nav className={navClasses}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
         
         <div className="flex items-center gap-4 md:hidden">
