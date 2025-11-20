@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Award, Zap, Globe, MapPin, ChefHat, Leaf, Shield, FileCheck } from 'lucide-react';
+import { ShieldCheck, Award, Zap, Globe, MapPin, ChefHat, Leaf, Shield, FileCheck, Check } from 'lucide-react';
 
 export const Features: React.FC = () => {
   return (
