@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     console.log('Fetching wallets...');
     const { data: wallets, error: walletsError } = await supabaseAdmin
       .from('wallet')
-      .select('user_id, pending_balance, available_balance, lifetime_earnings');
+      .select('user_id, pending_balance, available_balance, total_earned');
 
     if (walletsError) {
       console.error('Error fetching wallets:', walletsError);
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
         wallet: wallet ? {
           pending_balance: wallet.pending_balance,
           available_balance: wallet.available_balance,
-          lifetime_earnings: wallet.lifetime_earnings
+          lifetime_earnings: wallet.total_earned // Map total_earned to lifetime_earnings for consistency
         } : null
       };
     });
