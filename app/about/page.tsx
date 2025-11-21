@@ -74,37 +74,37 @@ export default function AboutPage() {
       </section>
 
       {/* The Story Behind The Box */}
-      <section className="py-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
-        <div className="text-center mb-12">
-          <span className="text-meatzy-rare font-marker text-2xl md:text-3xl transform -rotate-2 mb-2 block">The Story Behind The Box</span>
-          <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-olive uppercase mb-6">
+      <section className="py-12 px-4 md:px-8 max-w-6xl mx-auto w-full">
+        <div className="text-center mb-8">
+          <span className="text-meatzy-rare font-marker text-xl md:text-2xl transform -rotate-2 mb-1 block">The Story Behind The Box</span>
+          <h2 className="text-3xl md:text-4xl font-black font-slab text-meatzy-olive uppercase mb-4">
             Meatzy Was Born From A Simple Truth
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <p className="text-lg text-gray-700 leading-relaxed">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-4">
+            <p className="text-base text-gray-700 leading-relaxed">
               For years, we supplied proteins to some of the most exclusive hotels and restaurants - the kind of culinary-grade meats that chefs and insiders quietly reserved for their own kitchens. But somewhere along the way, Jorge asked a simple question:
             </p>
 
-            <div className="bg-meatzy-mint/20 border-l-4 border-meatzy-rare p-6 rounded-r-lg">
-              <p className="text-xl font-bold text-meatzy-olive italic">
+            <div className="bg-meatzy-mint/20 border-l-4 border-meatzy-rare p-4 rounded-r-lg">
+              <p className="text-lg font-bold text-meatzy-olive italic">
                 "Why should access to great food be limited to a few?"
               </p>
             </div>
 
-            <p className="text-lg text-gray-700 leading-relaxed">
+            <p className="text-base text-gray-700 leading-relaxed">
               That question sparked MEATZY - a brand built to bring restaurant-quality meats straight to everyone's table. But we didn't create MEATZY just to sell premium proteins. We built it to flip the system.
             </p>
           </div>
 
           <div className="relative">
-            <div className="absolute inset-0 bg-meatzy-rare/10 rounded-2xl transform -rotate-3"></div>
+            <div className="absolute inset-0 bg-meatzy-rare/10 rounded-xl transform -rotate-3"></div>
             <img
-              src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?q=80&w=800&auto=format&fit=crop"
+              src="/about-us-2.png"
               alt="Premium meats"
-              className="relative rounded-2xl shadow-xl"
+              className="relative rounded-xl shadow-xl aspect-square object-cover w-full"
             />
           </div>
         </div>
