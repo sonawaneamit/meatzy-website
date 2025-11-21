@@ -62,20 +62,42 @@ export async function GET(request: NextRequest) {
 
     console.log('Admin validated:', user.id);
 
-    // Fetch all affiliates
+    // Fetch all affiliates (try with tier_rates first, fall back without)
     console.log('Fetching affiliates...');
-    const { data: users, error: usersError } = await supabaseAdmin
+    let users: any[] | null = null;
+
+    // Try with tier_rates column
+    const { data: usersWithTiers, error: tiersError } = await supabaseAdmin
       .from('users')
       .select('id, email, full_name, referral_code, slug, safe_link, has_purchased, commission_rate, commission_override, tier_rates, created_at')
       .order('created_at', { ascending: false })
       .limit(100);
 
-    if (usersError) {
-      console.error('Error fetching users:', usersError);
+    if (tiersError?.code === '42703') {
+      // tier_rates column doesn't exist, fetch without it
+      console.log('tier_rates column not found, fetching without it...');
+      const { data: usersWithoutTiers, error: usersError } = await supabaseAdmin
+        .from('users')
+        .select('id, email, full_name, referral_code, slug, safe_link, has_purchased, commission_rate, commission_override, created_at')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (usersError) {
+        console.error('Error fetching users:', usersError);
+        return NextResponse.json({
+          error: 'Database error fetching users',
+          details: usersError.message
+        }, { status: 500 });
+      }
+      users = usersWithoutTiers;
+    } else if (tiersError) {
+      console.error('Error fetching users:', tiersError);
       return NextResponse.json({
         error: 'Database error fetching users',
-        details: usersError.message
+        details: tiersError.message
       }, { status: 500 });
+    } else {
+      users = usersWithTiers;
     }
 
     console.log(`Fetched ${users?.length || 0} users`);
