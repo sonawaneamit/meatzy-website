@@ -56,6 +56,39 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     loadAdminData();
+
+    // Refresh data when window gains focus (e.g., returning from affiliate detail page)
+    const handleFocus = () => {
+      console.log('Window focused, refreshing admin data...');
+      loadAffiliates();
+      loadStats();
+    };
+
+    // Refresh data when page becomes visible (handles tab switching and navigation)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('Page visible, refreshing admin data...');
+        loadAffiliates();
+        loadStats();
+      }
+    };
+
+    // Refresh data on browser back/forward navigation
+    const handlePopState = () => {
+      console.log('Navigation detected, refreshing admin data...');
+      loadAffiliates();
+      loadStats();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   const loadAdminData = async () => {
@@ -308,8 +341,8 @@ export default function AdminDashboard() {
         valueB = walletB?.pending_balance || 0;
         break;
       case 'rate':
-        valueA = a.commission_rate || 0;
-        valueB = b.commission_rate || 0;
+        valueA = a.commission_override || a.commission_rate || 0;
+        valueB = b.commission_override || b.commission_rate || 0;
         break;
       case 'date':
         valueA = new Date(a.created_at).getTime();
@@ -525,7 +558,7 @@ export default function AdminDashboard() {
                           INACTIVE
                         </span>
                       )}
-                      <span className="text-xs font-bold text-gray-500">{(affiliate.commission_rate * 100).toFixed(0)}%</span>
+                      <span className="text-xs font-bold text-gray-500">{((affiliate.commission_override || affiliate.commission_rate) * 100).toFixed(0)}%</span>
                     </div>
                   </div>
 
@@ -707,7 +740,7 @@ export default function AdminDashboard() {
                         ${wallet?.available_balance?.toFixed(2) || '0.00'}
                       </td>
                       <td className="py-4 px-4 text-center">
-                        <span className="text-sm font-bold">{(affiliate.commission_rate * 100).toFixed(0)}%</span>
+                        <span className="text-sm font-bold">{((affiliate.commission_override || affiliate.commission_rate) * 100).toFixed(0)}%</span>
                       </td>
                       <td className="py-4 px-4 text-center">
                         <button
