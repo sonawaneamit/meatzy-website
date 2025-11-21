@@ -780,7 +780,7 @@ export default function DashboardPage() {
               <Info className="w-5 h-5 text-meatzy-mint cursor-help" />
               <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-3 bg-white text-meatzy-olive text-xs rounded-lg shadow-xl z-10">
                 <p className="font-bold mb-1">What is a Referral SafeLink?</p>
-                <p>Your unique URL that tracks everyone you refer. When someone uses your SafeLink to purchase, you earn commissions automatically!</p>
+                <p>Your unique URL that tracks everyone you refer. Unlike promo codes that can be shared or leaked, your SafeLink ensures you get credit for every referral. Always share your SafeLink!</p>
               </div>
             </div>
           </div>

@@ -601,7 +601,7 @@ export default function AdminDashboard() {
                       <div className="relative group">
                         <Info className="w-3 h-3 text-gray-400 cursor-help" />
                         <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-10">
-                          Unique URL for each affiliate that tracks their referrals automatically.
+                          Unique URL that tracks referrals and prevents code leaks. Affiliates should always share their SafeLink.
                         </div>
                       </div>
                     </span>

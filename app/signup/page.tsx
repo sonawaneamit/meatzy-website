@@ -104,7 +104,7 @@ export default function SignupPage() {
             <span className="relative group">
               <Info className="w-4 h-4 text-gray-400 cursor-help" />
               <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-10">
-                A SafeLink is your unique URL that tracks everyone you refer to Meatzy.
+                Your SafeLink is a unique URL that tracks referrals and prevents code leaks, ensuring you get credit for every sale.
               </span>
             </span>
           </p>
