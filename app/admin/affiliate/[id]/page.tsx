@@ -21,6 +21,8 @@ import {
   Wallet,
   Lock,
   Filter,
+  Copy,
+  Check,
 } from 'lucide-react';
 
 interface AffiliateUser {
@@ -89,6 +91,7 @@ export default function AffiliateDetailPage() {
   const [editRate, setEditRate] = useState<number>(1.0);
   const [previewUserView, setPreviewUserView] = useState(false);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     loadAffiliateData();
@@ -329,8 +332,41 @@ export default function AffiliateDetailPage() {
                 <div className="text-2xl font-black font-mono text-meatzy-rare">
                   {affiliate.referral_code}
                 </div>
+                {/* SafeLink Copy Section */}
+                <div className="mt-3">
+                  <div className="text-xs text-gray-500 mb-1">SafeLink</div>
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+                    <div className="text-xs md:text-sm font-mono text-meatzy-olive bg-gray-100 px-2 py-1.5 rounded truncate max-w-[180px] sm:max-w-[250px]">
+                      meatzy.com/?ref={affiliate.referral_code}
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`https://meatzy.com/?ref=${affiliate.referral_code}`);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-bold transition-all whitespace-nowrap ${
+                        copied
+                          ? 'bg-green-500 text-white'
+                          : 'bg-meatzy-rare text-white hover:bg-meatzy-welldone'
+                      }`}
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
                 {affiliate.referrer && (
-                  <div className="text-xs text-gray-500 mt-2">
+                  <div className="text-xs text-gray-500 mt-3">
                     Referred by: {previewUserView
                       ? getDisplayName(affiliate.referrer.full_name, affiliate.referrer.email, false)
                       : affiliate.referrer.full_name
@@ -409,7 +445,7 @@ export default function AffiliateDetailPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-lg border border-meatzy-mint/30 p-6">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="w-8 h-8 text-green-600" />
@@ -452,16 +488,16 @@ export default function AffiliateDetailPage() {
         </div>
 
         {/* Request Payment Section */}
-        <div className="bg-white rounded-xl shadow-xl border-2 border-meatzy-mint/50 p-8 mb-8">
-          <div className="flex items-start justify-between gap-6">
-            <div className="flex-1">
+        <div className="bg-white rounded-xl shadow-xl border-2 border-meatzy-mint/50 p-4 md:p-8 mb-8">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-4 md:gap-6">
+            <div className="flex-1 w-full">
               <div className="flex items-center gap-3 mb-4">
-                <Wallet className={`w-8 h-8 ${(wallet?.balance || 0) >= 100 ? 'text-meatzy-dill' : 'text-gray-400'}`} />
+                <Wallet className={`w-6 h-6 md:w-8 md:h-8 flex-shrink-0 ${(wallet?.balance || 0) >= 100 ? 'text-meatzy-dill' : 'text-gray-400'}`} />
                 <div>
-                  <h2 className="text-2xl font-black font-slab text-meatzy-olive uppercase">
+                  <h2 className="text-lg md:text-2xl font-black font-slab text-meatzy-olive uppercase">
                     Payment Status
                   </h2>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs md:text-sm text-gray-600">
                     {(wallet?.balance || 0) >= 100
                       ? 'You can now request a payment!'
                       : 'Earn $100 to unlock payments'
@@ -476,7 +512,7 @@ export default function AffiliateDetailPage() {
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  <span className="font-bold">
+                  <span className="font-bold text-sm md:text-base">
                     ${(wallet?.balance || 0).toFixed(2)} available for withdrawal
                   </span>
                 </div>
@@ -503,7 +539,7 @@ export default function AffiliateDetailPage() {
             {/* Request Payment Button */}
             <button
               disabled={(wallet?.balance || 0) < 100}
-              className={`px-8 py-4 rounded-lg font-display font-bold uppercase tracking-widest text-lg transition-all flex items-center gap-3 whitespace-nowrap ${
+              className={`w-full lg:w-auto px-6 md:px-8 py-3 md:py-4 rounded-lg font-display font-bold uppercase tracking-widest text-sm md:text-lg transition-all flex items-center justify-center gap-2 md:gap-3 whitespace-nowrap ${
                 (wallet?.balance || 0) >= 100
                   ? 'bg-meatzy-dill text-white hover:bg-meatzy-olive shadow-lg hover:shadow-xl cursor-pointer'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -511,12 +547,12 @@ export default function AffiliateDetailPage() {
             >
               {(wallet?.balance || 0) >= 100 ? (
                 <>
-                  <Wallet className="w-6 h-6" />
+                  <Wallet className="w-5 h-5 md:w-6 md:h-6" />
                   Request Payment
                 </>
               ) : (
                 <>
-                  <Lock className="w-6 h-6" />
+                  <Lock className="w-5 h-5 md:w-6 md:h-6" />
                   Locked
                 </>
               )}
@@ -530,64 +566,64 @@ export default function AffiliateDetailPage() {
             Referral Tree
           </h2>
 
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-4 gap-2 md:gap-4 mb-6">
             <button
               onClick={() => handleTierClick(1)}
-              className={`text-center p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
+              className={`text-center p-2 md:p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
                 selectedTier === 1
-                  ? 'bg-blue-600 text-white ring-4 ring-blue-300'
+                  ? 'bg-blue-600 text-white ring-2 md:ring-4 ring-blue-300'
                   : 'bg-blue-50 hover:bg-blue-100'
               }`}
             >
-              <div className={`text-3xl font-black ${selectedTier === 1 ? 'text-white' : 'text-blue-600'}`}>
+              <div className={`text-xl md:text-3xl font-black ${selectedTier === 1 ? 'text-white' : 'text-blue-600'}`}>
                 {treeStats.tier1}
               </div>
-              <div className={`text-sm ${selectedTier === 1 ? 'text-blue-100' : 'text-gray-600'}`}>
+              <div className={`text-xs md:text-sm ${selectedTier === 1 ? 'text-blue-100' : 'text-gray-600'}`}>
                 Tier 1 (13%)
               </div>
             </button>
             <button
               onClick={() => handleTierClick(2)}
-              className={`text-center p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
+              className={`text-center p-2 md:p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
                 selectedTier === 2
-                  ? 'bg-green-600 text-white ring-4 ring-green-300'
+                  ? 'bg-green-600 text-white ring-2 md:ring-4 ring-green-300'
                   : 'bg-green-50 hover:bg-green-100'
               }`}
             >
-              <div className={`text-3xl font-black ${selectedTier === 2 ? 'text-white' : 'text-green-600'}`}>
+              <div className={`text-xl md:text-3xl font-black ${selectedTier === 2 ? 'text-white' : 'text-green-600'}`}>
                 {treeStats.tier2}
               </div>
-              <div className={`text-sm ${selectedTier === 2 ? 'text-green-100' : 'text-gray-600'}`}>
+              <div className={`text-xs md:text-sm ${selectedTier === 2 ? 'text-green-100' : 'text-gray-600'}`}>
                 Tier 2 (2%)
               </div>
             </button>
             <button
               onClick={() => handleTierClick(3)}
-              className={`text-center p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
+              className={`text-center p-2 md:p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
                 selectedTier === 3
-                  ? 'bg-yellow-600 text-white ring-4 ring-yellow-300'
+                  ? 'bg-yellow-600 text-white ring-2 md:ring-4 ring-yellow-300'
                   : 'bg-yellow-50 hover:bg-yellow-100'
               }`}
             >
-              <div className={`text-3xl font-black ${selectedTier === 3 ? 'text-white' : 'text-yellow-600'}`}>
+              <div className={`text-xl md:text-3xl font-black ${selectedTier === 3 ? 'text-white' : 'text-yellow-600'}`}>
                 {treeStats.tier3}
               </div>
-              <div className={`text-sm ${selectedTier === 3 ? 'text-yellow-100' : 'text-gray-600'}`}>
+              <div className={`text-xs md:text-sm ${selectedTier === 3 ? 'text-yellow-100' : 'text-gray-600'}`}>
                 Tier 3 (1%)
               </div>
             </button>
             <button
               onClick={() => handleTierClick(4)}
-              className={`text-center p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
+              className={`text-center p-2 md:p-4 rounded-lg transition-all cursor-pointer hover:shadow-lg ${
                 selectedTier === 4
-                  ? 'bg-purple-600 text-white ring-4 ring-purple-300'
+                  ? 'bg-purple-600 text-white ring-2 md:ring-4 ring-purple-300'
                   : 'bg-purple-50 hover:bg-purple-100'
               }`}
             >
-              <div className={`text-3xl font-black ${selectedTier === 4 ? 'text-white' : 'text-purple-600'}`}>
+              <div className={`text-xl md:text-3xl font-black ${selectedTier === 4 ? 'text-white' : 'text-purple-600'}`}>
                 {treeStats.tier4}
               </div>
-              <div className={`text-sm ${selectedTier === 4 ? 'text-purple-100' : 'text-gray-600'}`}>
+              <div className={`text-xs md:text-sm ${selectedTier === 4 ? 'text-purple-100' : 'text-gray-600'}`}>
                 Tier 4 (1%)
               </div>
             </button>
@@ -624,33 +660,33 @@ export default function AffiliateDetailPage() {
                 return (
                   <div
                     key={member.user_id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
+                    className="flex items-center justify-between gap-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-full ${
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
                         member.level === 1 ? 'bg-blue-600' :
                         member.level === 2 ? 'bg-green-600' :
                         member.level === 3 ? 'bg-yellow-600' :
                         'bg-purple-600'
                       }`} />
-                      <div>
-                        <div className="font-bold text-meatzy-olive">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-meatzy-olive truncate">
                           {displayName}
                         </div>
                         {!previewUserView && (
-                          <div className="text-xs text-gray-500">{member.users.email}</div>
+                          <div className="text-xs text-gray-500 truncate">{member.users.email}</div>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs px-2 py-1 rounded ${
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className={`text-xs px-2 py-1 rounded whitespace-nowrap ${
                         member.users.has_purchased
                           ? 'bg-green-100 text-green-700'
                           : 'bg-gray-100 text-gray-600'
                       }`}>
                         {member.users.has_purchased ? 'Active' : 'Pending'}
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
                         Tier {member.level}
                       </span>
                     </div>
@@ -662,31 +698,81 @@ export default function AffiliateDetailPage() {
         </div>
 
         {/* Commission History */}
-        <div className="bg-white rounded-xl shadow-lg border border-meatzy-mint/30 p-6">
-          <h2 className="text-2xl font-black font-slab text-meatzy-olive uppercase mb-6">
+        <div className="bg-white rounded-xl shadow-lg border border-meatzy-mint/30 p-4 md:p-6">
+          <h2 className="text-xl md:text-2xl font-black font-slab text-meatzy-olive uppercase mb-4 md:mb-6">
             Commission History
           </h2>
 
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-black text-meatzy-olive">{commissionStats.count}</div>
-              <div className="text-sm text-gray-600">Total Commissions</div>
+          <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
+            <div className="text-center p-2 md:p-4 bg-gray-50 rounded-lg">
+              <div className="text-lg md:text-2xl font-black text-meatzy-olive">{commissionStats.count}</div>
+              <div className="text-[10px] md:text-sm text-gray-600">Total Commissions</div>
             </div>
-            <div className="text-center p-4 bg-yellow-50 rounded-lg">
-              <div className="text-2xl font-black text-yellow-600">
+            <div className="text-center p-2 md:p-4 bg-yellow-50 rounded-lg">
+              <div className="text-base md:text-2xl font-black text-yellow-600">
                 ${commissionStats.pending.toFixed(2)}
               </div>
-              <div className="text-sm text-gray-600">Pending</div>
+              <div className="text-[10px] md:text-sm text-gray-600">Pending</div>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-black text-green-600">
+            <div className="text-center p-2 md:p-4 bg-green-50 rounded-lg">
+              <div className="text-base md:text-2xl font-black text-green-600">
                 ${commissionStats.approved.toFixed(2)}
               </div>
-              <div className="text-sm text-gray-600">Approved</div>
+              <div className="text-[10px] md:text-sm text-gray-600">Approved</div>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Card Layout */}
+          <div className="md:hidden space-y-3">
+            {commissions.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No commissions yet
+              </div>
+            ) : (
+              commissions.map((commission) => {
+                const fromName = previewUserView
+                  ? getDisplayName(commission.referred_user?.full_name, commission.referred_user?.email, false)
+                  : (commission.referred_user?.full_name || 'Unknown');
+
+                return (
+                  <div key={commission.id} className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-meatzy-olive truncate">{fromName}</div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(commission.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0 ml-2">
+                        <div className="font-black text-meatzy-olive">${commission.commission_amount.toFixed(2)}</div>
+                        <span className={`text-xs px-2 py-0.5 rounded ${
+                          commission.status === 'approved' ? 'bg-green-100 text-green-700' :
+                          commission.status === 'paid' ? 'bg-blue-100 text-blue-700' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {commission.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className={`px-2 py-1 rounded ${
+                        commission.tier_level === 1 ? 'bg-blue-100 text-blue-700' :
+                        commission.tier_level === 2 ? 'bg-green-100 text-green-700' :
+                        commission.tier_level === 3 ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-purple-100 text-purple-700'
+                      }`}>
+                        Tier {commission.tier_level} ({commission.base_percentage}%)
+                      </span>
+                      <span className="text-gray-500">Order: ${commission.order_total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Desktop Table Layout */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-gray-200">

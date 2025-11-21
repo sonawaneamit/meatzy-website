@@ -542,26 +542,26 @@ export default function DashboardPage() {
         </div>
 
         {/* Request Payment Section */}
-        <div className="bg-white rounded-xl shadow-xl border-2 border-meatzy-mint/50 p-8 mb-8">
-          <div className="flex items-start justify-between gap-6">
-            <div className="flex-1">
+        <div className="bg-white rounded-xl shadow-xl border-2 border-meatzy-mint/50 p-4 md:p-8 mb-8">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-4 md:gap-6">
+            <div className="flex-1 w-full">
               <div className="flex items-center gap-3 mb-3">
-                <div className={`p-3 rounded-full ${
+                <div className={`p-2 md:p-3 rounded-full flex-shrink-0 ${
                   (wallet?.available_balance || 0) >= 100
                     ? 'bg-meatzy-dill/20'
                     : 'bg-gray-100'
                 }`}>
-                  <Wallet className={`w-6 h-6 ${
+                  <Wallet className={`w-5 h-5 md:w-6 md:h-6 ${
                     (wallet?.available_balance || 0) >= 100
                       ? 'text-meatzy-dill'
                       : 'text-gray-400'
                   }`} />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black font-slab text-meatzy-olive uppercase">
+                  <h3 className="text-lg md:text-2xl font-black font-slab text-meatzy-olive uppercase">
                     Request Payment
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs md:text-sm text-gray-600">
                     Minimum payout: $100
                   </p>
                 </div>
@@ -571,8 +571,8 @@ export default function DashboardPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <Check className="w-5 h-5 text-meatzy-dill" />
-                    <p className="text-meatzy-dill font-bold">
-                      You're eligible for payment! 🎉
+                    <p className="text-meatzy-dill font-bold text-sm md:text-base">
+                      You're eligible for payment!
                     </p>
                   </div>
                   <p className="text-sm text-gray-600 mb-4">
@@ -604,7 +604,7 @@ export default function DashboardPage() {
 
             <button
               disabled={(wallet?.available_balance || 0) < 100}
-              className={`px-8 py-4 rounded-lg font-display font-bold uppercase tracking-widest text-lg transition-all flex items-center gap-3 ${
+              className={`w-full lg:w-auto px-6 md:px-8 py-3 md:py-4 rounded-lg font-display font-bold uppercase tracking-widest text-sm md:text-lg transition-all flex items-center justify-center gap-2 md:gap-3 ${
                 (wallet?.available_balance || 0) >= 100
                   ? 'bg-meatzy-dill text-white hover:bg-meatzy-olive shadow-lg hover:shadow-xl cursor-pointer'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -612,12 +612,12 @@ export default function DashboardPage() {
             >
               {(wallet?.available_balance || 0) >= 100 ? (
                 <>
-                  <Wallet className="w-6 h-6" />
+                  <Wallet className="w-5 h-5 md:w-6 md:h-6" />
                   Request Payment
                 </>
               ) : (
                 <>
-                  <Lock className="w-6 h-6" />
+                  <Lock className="w-5 h-5 md:w-6 md:h-6" />
                   Locked
                 </>
               )}
@@ -627,13 +627,13 @@ export default function DashboardPage() {
 
         {/* Order History Section - Only shown if user has orders */}
         {isCustomer && (
-          <div className="bg-white rounded-xl shadow-lg border border-meatzy-mint/30 p-6 mb-8">
-            <div className="flex justify-between items-center mb-6">
+          <div className="bg-white rounded-xl shadow-lg border border-meatzy-mint/30 p-4 md:p-6 mb-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-meatzy-olive/20 rounded-lg">
-                  <ShoppingBag className="w-6 h-6 text-meatzy-olive" />
+                  <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-meatzy-olive" />
                 </div>
-                <h2 className="text-2xl font-black font-slab text-meatzy-olive uppercase">
+                <h2 className="text-xl md:text-2xl font-black font-slab text-meatzy-olive uppercase">
                   Your Orders
                 </h2>
               </div>
@@ -641,10 +641,10 @@ export default function DashboardPage() {
               {/* Manage Subscriptions Placeholder Button */}
               <button
                 disabled
-                className="px-6 py-3 bg-gray-200 text-gray-400 rounded-lg font-bold uppercase tracking-wide cursor-not-allowed flex items-center gap-2 text-sm"
+                className="w-full md:w-auto px-4 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-400 rounded-lg font-bold uppercase tracking-wide cursor-not-allowed flex items-center justify-center gap-2 text-xs md:text-sm whitespace-nowrap"
                 title="Coming soon - Subscription management will be available after integration"
               >
-                <TrendingUp className="w-5 h-5" />
+                <TrendingUp className="w-4 h-4 md:w-5 md:h-5" />
                 Manage Subscriptions
               </button>
             </div>
