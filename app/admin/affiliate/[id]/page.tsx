@@ -339,7 +339,7 @@ export default function AffiliateDetailPage() {
                     Referral SafeLink
                     <div className="relative group">
                       <Info className="w-3 h-3 text-gray-400 cursor-help" />
-                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-10 text-left">
+                      <div className="absolute right-0 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-50 text-left">
                         Unique URL that tracks referrals and prevents code leaks. Always share the SafeLink!
                       </div>
                     </div>

@@ -633,7 +633,7 @@ export default function AdminDashboard() {
                       Referral SafeLink
                       <div className="relative group">
                         <Info className="w-3 h-3 text-gray-400 cursor-help" />
-                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-10">
+                        <div className="absolute right-0 sm:left-0 sm:right-auto bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-50">
                           Unique URL that tracks referrals and prevents code leaks. Affiliates should always share their SafeLink.
                         </div>
                       </div>

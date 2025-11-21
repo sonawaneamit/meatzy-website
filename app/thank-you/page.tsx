@@ -410,7 +410,7 @@ function ThankYouContent() {
                     Your Referral SafeLink
                     <div className="relative group">
                       <Info className="w-3.5 h-3.5 opacity-70 cursor-help" />
-                      <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-white text-meatzy-olive text-[10px] rounded-lg shadow-xl z-10">
+                      <div className="absolute right-0 sm:left-0 sm:right-auto bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-white text-meatzy-olive text-[10px] rounded-lg shadow-xl z-50">
                         <p className="font-bold mb-0.5">What's a SafeLink?</p>
                         <p>Your unique URL that tracks referrals and prevents code leaks. Always share your SafeLink to ensure you get credit!</p>
                       </div>
