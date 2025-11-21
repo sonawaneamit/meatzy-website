@@ -203,6 +203,10 @@ export default function AffiliateDetailPage() {
 
       setAffiliate(prev => prev ? { ...prev, commission_override: editRate } : null);
       setEditing(false);
+
+      // Signal admin dashboard to refresh data
+      localStorage.setItem('admin_data_updated', Date.now().toString());
+
       alert('Commission rate updated successfully');
     } catch (error) {
       console.error('Error updating rate:', error);
@@ -396,10 +400,10 @@ export default function AffiliateDetailPage() {
                         <input
                           type="number"
                           min="0"
-                          max="1"
-                          step="0.1"
+                          max="10"
+                          step="0.01"
                           value={editRate}
-                          onChange={(e) => setEditRate(parseFloat(e.target.value))}
+                          onChange={(e) => setEditRate(parseFloat(e.target.value) || 0)}
                           className="w-24 px-3 py-1 border border-gray-300 rounded"
                         />
                         <span className="text-lg font-bold">× 100%</span>

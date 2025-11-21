@@ -57,37 +57,53 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadAdminData();
 
-    // Refresh data when window gains focus (e.g., returning from affiliate detail page)
-    const handleFocus = () => {
-      console.log('Window focused, refreshing admin data...');
-      loadAffiliates();
-      loadStats();
-    };
+    // Check if data was updated in another page (affiliate detail)
+    const checkForUpdates = () => {
+      const lastUpdate = localStorage.getItem('admin_data_updated');
+      const lastChecked = localStorage.getItem('admin_data_last_checked');
 
-    // Refresh data when page becomes visible (handles tab switching and navigation)
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        console.log('Page visible, refreshing admin data...');
+      if (lastUpdate && lastUpdate !== lastChecked) {
+        console.log('Data update detected, refreshing...');
+        localStorage.setItem('admin_data_last_checked', lastUpdate);
         loadAffiliates();
         loadStats();
       }
     };
 
-    // Refresh data on browser back/forward navigation
-    const handlePopState = () => {
-      console.log('Navigation detected, refreshing admin data...');
-      loadAffiliates();
-      loadStats();
+    // Check immediately on mount
+    checkForUpdates();
+
+    // Refresh data when window gains focus
+    const handleFocus = () => {
+      console.log('Window focused, checking for updates...');
+      checkForUpdates();
+    };
+
+    // Refresh data when page becomes visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('Page visible, checking for updates...');
+        checkForUpdates();
+      }
+    };
+
+    // Listen for storage changes from other pages/tabs
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'admin_data_updated') {
+        console.log('Storage event detected, refreshing...');
+        loadAffiliates();
+        loadStats();
+      }
     };
 
     window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('storage', handleStorage);
 
     return () => {
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('storage', handleStorage);
     };
   }, []);
 
