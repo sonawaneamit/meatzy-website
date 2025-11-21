@@ -23,11 +23,11 @@ export const Features: React.FC = () => {
 
                 <div className="space-y-6 text-left text-gray-700 text-base md:text-lg leading-relaxed">
                     <p>
-                        We follow the same philosophy top chefs use: choose each protein from the region where it reaches its peak. Patagonian grasslands, Midwest family farms, Australia's pasture raised herds. Every place has its own terroir, and we select only producers who meet or exceed our internal standards and the USDA's, always hormone and antibiotic free.
+                        We follow the same philosophy top chefs use: choose each protein from the region where it reaches its peak. Patagonian grasslands, Midwest family farms, Australia's pasture raised herds. Every place has its own terroir, and we select only producers who meet or exceed our internal standards and the USDA's, always <span className="font-bold text-meatzy-rare">hormone and antibiotic-free</span>.
                     </p>
 
                     <p>
-                        Some brands claim everything is "100 percent American," but the reality is more complicated. Many rely on labeling rules that allow imported meat to be repackaged and sold as "Product of USA." We never do. If a cut comes from abroad, we say so. If it is raised domestically, we say that too. No vague claims, no relabeling, just transparency backed by chef tested quality.
+                        Some brands claim everything is <span className="font-bold text-meatzy-rare">"100% American,"</span> but the reality is more complicated. Many rely on labeling rules that allow imported meat to be repackaged and sold as <span className="font-bold text-meatzy-rare">"Product of USA."</span> We never do. If a cut comes from abroad, we say so. If it is raised domestically, we say that too. No vague claims, no relabeling, just transparency backed by chef tested quality.
                     </p>
                 </div>
             </div>
