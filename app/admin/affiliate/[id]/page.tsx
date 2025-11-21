@@ -214,24 +214,36 @@ export default function AffiliateDetailPage() {
       setSavingTier(tier);
       const supabase = createClient();
 
+      // Get auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Session expired. Please log in again.');
+        return;
+      }
+
       // Update the tier rates object
       const newRates = { ...tierRates, [`tier${tier}`]: rate };
 
-      const { error } = await supabase
-        .from('users')
-        .update({ tier_rates: newRates })
-        .eq('id', affiliateId);
+      // Use API route with admin privileges
+      const response = await fetch('/api/admin/affiliate/update-tier-rates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          affiliateId,
+          tierRates: newRates
+        })
+      });
 
-      if (error) {
-        // If tier_rates column doesn't exist, show helpful message
-        if (error.code === '42703') {
-          alert('Please add the tier_rates column to your Supabase users table first.\n\nRun this SQL:\nALTER TABLE users ADD COLUMN tier_rates JSONB;');
-          setEditingTier(null);
-          return;
-        }
-        throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to update');
       }
 
+      console.log('Tier rate updated successfully:', result);
       setTierRates(newRates);
       setEditingTier(null);
 
@@ -239,7 +251,7 @@ export default function AffiliateDetailPage() {
       localStorage.setItem('admin_data_updated', Date.now().toString());
     } catch (error) {
       console.error('Error updating tier rate:', error);
-      alert('Failed to update tier rate');
+      alert('Failed to update tier rate: ' + (error as Error).message);
     } finally {
       setSavingTier(null);
     }
