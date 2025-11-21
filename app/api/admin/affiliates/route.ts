@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     console.log('Fetching affiliates...');
     const { data: users, error: usersError } = await supabaseAdmin
       .from('users')
-      .select('id, email, full_name, referral_code, slug, safe_link, has_purchased, commission_rate, commission_override, created_at')
+      .select('id, email, full_name, referral_code, slug, safe_link, has_purchased, commission_rate, commission_override, tier_rates, created_at')
       .order('created_at', { ascending: false })
       .limit(100);
 
