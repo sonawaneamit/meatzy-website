@@ -21,6 +21,8 @@ import {
   ArrowUp,
   ArrowDown,
   Info,
+  Link,
+  Loader2,
 } from 'lucide-react';
 
 type SortField = 'lifetime' | 'available' | 'pending' | 'rate' | 'date' | 'status' | null;
@@ -53,6 +55,10 @@ export default function AdminDashboard() {
   // Sorting
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+
+  // Backfill slugs
+  const [backfillLoading, setBackfillLoading] = useState(false);
+  const [backfillResult, setBackfillResult] = useState<{ updated: number; failed: number } | null>(null);
 
   useEffect(() => {
     loadAdminData();
@@ -290,6 +296,46 @@ export default function AdminDashboard() {
     router.push(`/admin/affiliate/${affiliateId}`);
   };
 
+  const backfillMissingSlugs = async () => {
+    setBackfillLoading(true);
+    setBackfillResult(null);
+
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        alert('Session expired. Please log in again.');
+        return;
+      }
+
+      const response = await fetch('/api/admin/backfill-slugs', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to backfill slugs');
+      }
+
+      setBackfillResult({ updated: result.updated, failed: result.failed });
+
+      // Refresh affiliates list to show new slugs
+      if (result.updated > 0) {
+        loadAffiliates();
+      }
+    } catch (error) {
+      console.error('Error backfilling slugs:', error);
+      alert('Failed to generate SafeLinks: ' + (error as Error).message);
+    } finally {
+      setBackfillLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-meatzy-tallow pt-0">
@@ -511,6 +557,31 @@ export default function AdminDashboard() {
                 <option value="active">Active Only</option>
                 <option value="inactive">Inactive Only</option>
               </select>
+              {/* Generate Missing SafeLinks Button */}
+              {affiliates.some(a => !a.slug) && (
+                <button
+                  onClick={backfillMissingSlugs}
+                  disabled={backfillLoading}
+                  className="w-full sm:w-auto px-4 py-2 bg-meatzy-olive text-white text-sm font-bold rounded-lg hover:bg-meatzy-rare transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {backfillLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Link className="w-4 h-4" />
+                      Generate Missing SafeLinks
+                    </>
+                  )}
+                </button>
+              )}
+              {backfillResult && (
+                <span className="text-xs text-green-600 font-bold self-center">
+                  {backfillResult.updated} generated{backfillResult.failed > 0 ? `, ${backfillResult.failed} failed` : ''}
+                </span>
+              )}
             </div>
           </div>
 
@@ -579,20 +650,21 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* Code Row */}
+                  {/* SafeLink Row */}
                   <div className="flex items-center gap-2 mb-3">
-                    <code className="bg-white px-2 py-1 rounded text-xs font-mono border">{affiliate.referral_code}</code>
-                    {affiliate.safe_link && (
+                    {affiliate.slug ? (
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText(affiliate.safe_link);
+                          navigator.clipboard.writeText(`https://meatzy.com/go/${affiliate.slug}`);
                           alert('Referral SafeLink copied!');
                         }}
-                        className="flex items-center gap-1 text-xs text-meatzy-olive hover:text-meatzy-rare transition-colors"
+                        className="flex items-center gap-1 text-xs text-meatzy-olive hover:text-meatzy-rare transition-colors bg-white px-2 py-1 rounded border"
                       >
                         <Copy className="w-3 h-3" />
-                        <span className="font-mono truncate max-w-[100px]">/go/{affiliate.slug}</span>
+                        <span className="font-mono">/go/{affiliate.slug}</span>
                       </button>
+                    ) : (
+                      <span className="text-xs text-gray-400">No SafeLink</span>
                     )}
                   </div>
 
@@ -644,7 +716,6 @@ export default function AdminDashboard() {
                       Affiliate {getSortIcon('date')}
                     </button>
                   </th>
-                  <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Code</th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">
                     <span className="flex items-center gap-1">
                       Referral SafeLink
@@ -715,13 +786,10 @@ export default function AdminDashboard() {
                         </button>
                       </td>
                       <td className="py-4 px-4">
-                        <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">{affiliate.referral_code}</code>
-                      </td>
-                      <td className="py-4 px-4">
-                        {affiliate.safe_link ? (
+                        {affiliate.slug ? (
                           <button
                             onClick={() => {
-                              navigator.clipboard.writeText(affiliate.safe_link);
+                              navigator.clipboard.writeText(`https://meatzy.com/go/${affiliate.slug}`);
                               alert('Referral SafeLink copied!');
                             }}
                             className="flex items-center gap-2 text-sm text-meatzy-olive hover:text-meatzy-rare transition-colors"

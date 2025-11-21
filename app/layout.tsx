@@ -10,6 +10,7 @@ import { CartDrawerProvider } from '../context/CartDrawerContext';
 import { CalculatorProvider } from '../context/CalculatorContext';
 import { EarningsCalculator } from '../components/EarningsCalculator';
 import { parseReferralCookie } from '../lib/referral-cookie-utils';
+import { ReferralWelcomePopup } from '../components/ReferralWelcomePopup';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -42,6 +43,7 @@ export default async function RootLayout({
           <Providers>
             <CartDrawerProvider>
               <CalculatorProvider>
+                <ReferralWelcomePopup />
                 <StickyHeader />
                 <main className="pt-20">
                   {children}

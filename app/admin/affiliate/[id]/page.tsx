@@ -32,6 +32,7 @@ interface AffiliateUser {
   full_name: string;
   phone?: string;
   referral_code: string;
+  slug?: string;
   has_purchased: boolean;
   commission_rate: number;
   commission_override?: number;
@@ -392,11 +393,14 @@ export default function AffiliateDetailPage() {
                   </div>
                   <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
                     <div className="text-xs md:text-sm font-mono text-meatzy-olive bg-gray-100 px-2 py-1.5 rounded truncate max-w-[180px] sm:max-w-[250px]">
-                      meatzy.com/?ref={affiliate.referral_code}
+                      meatzy.com/go/{affiliate.slug || affiliate.referral_code}
                     </div>
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText(`https://meatzy.com/?ref=${affiliate.referral_code}`);
+                        const safeLink = affiliate.slug
+                          ? `https://meatzy.com/go/${affiliate.slug}`
+                          : `https://meatzy.com/?ref=${affiliate.referral_code}`;
+                        navigator.clipboard.writeText(safeLink);
                         setCopied(true);
                         setTimeout(() => setCopied(false), 2000);
                       }}

@@ -32,7 +32,7 @@ import {
   Info
 } from 'lucide-react';
 import QRCodeLib from 'qrcode';
-import { generateReferralLink, generateSocialLinks, copyToClipboard, downloadQRCode } from '../../lib/referral-utils';
+import { generateSafeLink, generateReferralLink, generateSocialLinks, copyToClipboard, downloadQRCode } from '../../lib/referral-utils';
 import { getDisplayName } from '../../lib/privacy-utils';
 
 interface ShopifyOrder {
@@ -270,7 +270,7 @@ export default function DashboardPage() {
   const generateQRCode = async () => {
     if (!user?.referral_code) return;
 
-    const referralLink = generateReferralLink(user.referral_code, { includeUTM: true });
+    const referralLink = generateSafeLink(user.slug, user.referral_code, { includeUTM: true });
 
     try {
       const dataUrl = await QRCodeLib.toDataURL(referralLink, {
@@ -288,7 +288,7 @@ export default function DashboardPage() {
   };
 
   const copyReferralLink = async () => {
-    const link = generateReferralLink(user.referral_code, { includeUTM: true });
+    const link = generateSafeLink(user.slug, user.referral_code, { includeUTM: true });
     const success = await copyToClipboard(link);
     if (success) {
       setCopied(true);
@@ -395,7 +395,7 @@ export default function DashboardPage() {
     currentPage * ordersPerPage
   );
 
-  const referralLink = generateReferralLink(user.referral_code, { includeUTM: true });
+  const referralLink = generateSafeLink(user.slug, user.referral_code, { includeUTM: true });
   const socialLinks = generateSocialLinks(user.referral_code, referralLink);
 
   return (

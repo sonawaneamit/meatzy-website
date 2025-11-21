@@ -3,7 +3,37 @@
  */
 
 /**
+ * Generate a SafeLink URL using slug (preferred) or fallback to referral code
+ * SafeLinks use the /go/{slug} route which provides better security:
+ * - HTTPOnly cookies prevent JS access to referral data
+ * - Unique discount codes per visitor prevent code leaking/sharing
+ */
+export function generateSafeLink(
+  slug: string | undefined | null,
+  referralCode: string,
+  options?: {
+    includeUTM?: boolean;
+    baseUrl?: string;
+  }
+): string {
+  const baseUrl = options?.baseUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://getmeatzy.com');
+
+  // Prefer slug-based SafeLink, fallback to ?ref= format
+  if (slug) {
+    let link = `${baseUrl}/go/${slug}`;
+    if (options?.includeUTM) {
+      link += `?utm_source=referral&utm_medium=affiliate&utm_campaign=${referralCode}`;
+    }
+    return link;
+  }
+
+  // Fallback to ?ref= format for users without slug
+  return generateReferralLink(referralCode, options);
+}
+
+/**
  * Generate a referral link with optional UTM parameters
+ * @deprecated Use generateSafeLink() instead for better security
  */
 export function generateReferralLink(
   referralCode: string,
