@@ -372,8 +372,8 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
               </div>
             )}
 
-            {/* Frequently Bought Together - In Left Column */}
-            <div className="mt-12">
+            {/* Frequently Bought Together - In Left Column (Hidden on mobile/tablet) */}
+            <div className="mt-12 hidden lg:block">
               <h3 className="text-xl font-black font-slab text-meatzy-olive uppercase mb-4">
                 Frequently Bought Together
               </h3>
@@ -590,6 +590,65 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Frequently Bought Together - Mobile/Tablet Only (Below Add to Cart) */}
+        <div className="mb-16 lg:hidden">
+          <h3 className="text-xl font-black font-slab text-meatzy-olive uppercase mb-4">
+            Frequently Bought Together
+          </h3>
+
+          <div className="grid grid-cols-3 gap-3">
+            {(showAllAddOns ? addOns : addOns.slice(0, 6)).map((addon, idx) => (
+              <div
+                key={idx}
+                className={`bg-white rounded-lg border-2 p-3 cursor-pointer transition-all ${
+                  selectedAddOns.has(idx)
+                    ? 'border-meatzy-rare shadow-lg scale-105'
+                    : 'border-meatzy-mint/30 hover:border-meatzy-mint'
+                }`}
+                onClick={() => toggleAddOn(idx)}
+              >
+                <div className="aspect-square bg-gray-100 rounded-lg mb-2 relative overflow-hidden">
+                  {addon.image ? (
+                    <Image
+                      src={addon.image}
+                      alt={addon.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <ShoppingCart className="w-6 h-6 text-gray-400" />
+                    </div>
+                  )}
+                  {selectedAddOns.has(idx) && (
+                    <div className="absolute top-1 right-1 bg-green-500 text-white rounded-full p-1">
+                      <Check className="w-3 h-3" />
+                    </div>
+                  )}
+                </div>
+                <h4 className="font-bold text-meatzy-olive text-xs mb-1 leading-tight line-clamp-2">
+                  {addon.name}
+                </h4>
+                <p className="text-sm font-black text-meatzy-rare">
+                  ${addon.price.toFixed(2)}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Show More/Less Button */}
+          {addOns.length > 6 && (
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => setShowAllAddOns(!showAllAddOns)}
+                className="w-full bg-white border-2 border-meatzy-rare text-meatzy-rare px-6 py-3 rounded-lg font-bold uppercase tracking-wide hover:bg-meatzy-rare hover:text-white transition-all text-sm"
+              >
+                {showAllAddOns ? 'Show Less' : `Show ${addOns.length - 6} More Add-Ons`}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* What's Inside - Interactive Cards */}
