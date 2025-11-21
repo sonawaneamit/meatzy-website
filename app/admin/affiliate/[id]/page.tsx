@@ -222,7 +222,15 @@ export default function AffiliateDetailPage() {
         .update({ tier_rates: newRates })
         .eq('id', affiliateId);
 
-      if (error) throw error;
+      if (error) {
+        // If tier_rates column doesn't exist, show helpful message
+        if (error.code === '42703') {
+          alert('Please add the tier_rates column to your Supabase users table first.\n\nRun this SQL:\nALTER TABLE users ADD COLUMN tier_rates JSONB;');
+          setEditingTier(null);
+          return;
+        }
+        throw error;
+      }
 
       setTierRates(newRates);
       setEditingTier(null);
