@@ -88,11 +88,17 @@ export default function AffiliateDetailPage() {
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [tree, setTree] = useState<TreeMember[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
-  const [editRate, setEditRate] = useState<number>(1.0);
   const [previewUserView, setPreviewUserView] = useState(false);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Default tier rates
+  const DEFAULT_TIER_RATES = { tier1: 13, tier2: 2, tier3: 1, tier4: 1 };
+
+  // Tier rate editing state
+  const [tierRates, setTierRates] = useState(DEFAULT_TIER_RATES);
+  const [editingTier, setEditingTier] = useState<number | null>(null);
+  const [savingTier, setSavingTier] = useState<number | null>(null);
 
   useEffect(() => {
     loadAffiliateData();
@@ -137,7 +143,20 @@ export default function AffiliateDetailPage() {
 
       if (affiliateError) throw affiliateError;
       setAffiliate(affiliateData);
-      setEditRate(affiliateData.commission_override || affiliateData.commission_rate);
+
+      // Load tier rates (stored as JSON in tier_rates column, or use defaults)
+      if (affiliateData.tier_rates) {
+        try {
+          const rates = typeof affiliateData.tier_rates === 'string'
+            ? JSON.parse(affiliateData.tier_rates)
+            : affiliateData.tier_rates;
+          setTierRates({ ...DEFAULT_TIER_RATES, ...rates });
+        } catch {
+          setTierRates(DEFAULT_TIER_RATES);
+        }
+      } else {
+        setTierRates(DEFAULT_TIER_RATES);
+      }
 
       // Load wallet
       const { data: walletData } = await supabase
@@ -190,27 +209,31 @@ export default function AffiliateDetailPage() {
     }
   };
 
-  const handleSaveRate = async () => {
+  const saveTierRate = async (tier: number, rate: number) => {
     try {
+      setSavingTier(tier);
       const supabase = createClient();
+
+      // Update the tier rates object
+      const newRates = { ...tierRates, [`tier${tier}`]: rate };
 
       const { error } = await supabase
         .from('users')
-        .update({ commission_override: editRate })
+        .update({ tier_rates: newRates })
         .eq('id', affiliateId);
 
       if (error) throw error;
 
-      setAffiliate(prev => prev ? { ...prev, commission_override: editRate } : null);
-      setEditing(false);
+      setTierRates(newRates);
+      setEditingTier(null);
 
       // Signal admin dashboard to refresh data
       localStorage.setItem('admin_data_updated', Date.now().toString());
-
-      alert('Commission rate updated successfully');
     } catch (error) {
-      console.error('Error updating rate:', error);
-      alert('Failed to update commission rate');
+      console.error('Error updating tier rate:', error);
+      alert('Failed to update tier rate');
+    } finally {
+      setSavingTier(null);
     }
   };
 
@@ -255,8 +278,7 @@ export default function AffiliateDetailPage() {
     count: commissions.length,
   };
 
-  const effectiveRate = affiliate.commission_override || affiliate.commission_rate;
-
+  
   return (
     <div className="min-h-screen bg-meatzy-tallow pt-0 pb-8">
       <div className="max-w-7xl mx-auto px-4">
@@ -389,62 +411,85 @@ export default function AffiliateDetailPage() {
               </div>
             </div>
 
-            {/* Commission Rate - Admin Only (Hidden in Preview Mode) */}
+            {/* Commission Rates by Tier - Admin Only (Hidden in Preview Mode) */}
             {!previewUserView && (
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">Commission Rate</div>
-                    {editing ? (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          min="0"
-                          max="10"
-                          step="0.01"
-                          value={editRate}
-                          onChange={(e) => setEditRate(parseFloat(e.target.value) || 0)}
-                          className="w-24 px-3 py-1 border border-gray-300 rounded"
-                        />
-                        <span className="text-lg font-bold">× 100%</span>
-                        <button
-                          onClick={handleSaveRate}
-                          className="ml-2 p-1 bg-green-500 text-white rounded hover:bg-green-600"
-                        >
-                          <Save className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setEditing(false);
-                            setEditRate(effectiveRate);
-                          }}
-                          className="p-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-black text-meatzy-olive">
-                          {(effectiveRate * 100).toFixed(0)}%
-                        </span>
-                        {affiliate.commission_override && (
-                          <span className="text-xs bg-meatzy-gold/20 text-meatzy-gold px-2 py-1 rounded">
-                            Override
-                          </span>
-                        )}
-                        <button
-                          onClick={() => setEditing(true)}
-                          className="ml-2 p-1 text-gray-400 hover:text-meatzy-olive"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-500 mb-3">Commission Rates by Tier</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[1, 2, 3, 4].map((tier) => {
+                        const tierKey = `tier${tier}` as keyof typeof tierRates;
+                        const rate = tierRates[tierKey];
+                        const isEditing = editingTier === tier;
+                        const isSaving = savingTier === tier;
+                        const isCustom = rate !== DEFAULT_TIER_RATES[tierKey];
+                        const tierColors = {
+                          1: 'border-blue-200 bg-blue-50',
+                          2: 'border-green-200 bg-green-50',
+                          3: 'border-yellow-200 bg-yellow-50',
+                          4: 'border-purple-200 bg-purple-50',
+                        };
+
+                        return (
+                          <div
+                            key={tier}
+                            className={`rounded-lg border-2 p-3 ${tierColors[tier as keyof typeof tierColors]} transition-all`}
+                          >
+                            <div className="text-xs text-gray-500 mb-1">Tier {tier}</div>
+                            {isEditing ? (
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  step="1"
+                                  defaultValue={rate}
+                                  autoFocus
+                                  className="w-14 px-2 py-1 text-lg font-bold border border-gray-300 rounded text-center"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      saveTierRate(tier, parseFloat((e.target as HTMLInputElement).value) || 0);
+                                    } else if (e.key === 'Escape') {
+                                      setEditingTier(null);
+                                    }
+                                  }}
+                                  onBlur={(e) => {
+                                    const newValue = parseFloat(e.target.value) || 0;
+                                    if (newValue !== rate) {
+                                      saveTierRate(tier, newValue);
+                                    } else {
+                                      setEditingTier(null);
+                                    }
+                                  }}
+                                />
+                                <span className="text-sm font-bold">%</span>
+                              </div>
+                            ) : (
+                              <div
+                                className="flex items-center gap-1 cursor-pointer group"
+                                onClick={() => setEditingTier(tier)}
+                              >
+                                <span className="text-xl font-black text-meatzy-olive">
+                                  {isSaving ? '...' : `${rate}%`}
+                                </span>
+                                {isCustom && (
+                                  <span className="text-[10px] bg-meatzy-gold/30 text-meatzy-gold px-1 rounded">
+                                    Custom
+                                  </span>
+                                )}
+                                <Edit2 className="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">Click any tier to edit. Press Enter to save or Escape to cancel.</p>
                   </div>
 
-                  <div className="flex gap-4">
-                    <div className="text-center">
+                  <div className="flex gap-4 sm:flex-col sm:items-end">
+                    <div className="text-center sm:text-right">
                       <div className="text-sm text-gray-500">Status</div>
                       <div className={`text-lg font-bold ${affiliate.has_purchased ? 'text-green-600' : 'text-yellow-600'}`}>
                         {affiliate.has_purchased ? 'Active' : 'Pending'}

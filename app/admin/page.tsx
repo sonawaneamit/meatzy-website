@@ -357,8 +357,8 @@ export default function AdminDashboard() {
         valueB = walletB?.pending_balance || 0;
         break;
       case 'rate':
-        valueA = a.commission_override || a.commission_rate || 0;
-        valueB = b.commission_override || b.commission_rate || 0;
+        valueA = a.tier_rates?.tier1 || 13;
+        valueB = b.tier_rates?.tier1 || 13;
         break;
       case 'date':
         valueA = new Date(a.created_at).getTime();
@@ -574,7 +574,7 @@ export default function AdminDashboard() {
                           INACTIVE
                         </span>
                       )}
-                      <span className="text-xs font-bold text-gray-500">{((affiliate.commission_override || affiliate.commission_rate) * 100).toFixed(0)}%</span>
+                      <span className="text-xs font-bold text-gray-500">{affiliate.tier_rates?.tier1 || 13}%</span>
                     </div>
                   </div>
 
@@ -756,7 +756,7 @@ export default function AdminDashboard() {
                         ${wallet?.available_balance?.toFixed(2) || '0.00'}
                       </td>
                       <td className="py-4 px-4 text-center">
-                        <span className="text-sm font-bold">{((affiliate.commission_override || affiliate.commission_rate) * 100).toFixed(0)}%</span>
+                        <span className="text-sm font-bold">{affiliate.tier_rates?.tier1 || 13}%</span>
                       </td>
                       <td className="py-4 px-4 text-center">
                         <button
