@@ -31,6 +31,18 @@ export const ProductGrid: React.FC = () => {
     return imageMap[handle] || null;
   };
 
+  // Map product handles to custom descriptions (same as product pages)
+  const getCustomDescription = (handle: string) => {
+    const descriptionMap: { [key: string]: string } = {
+      'keto-box': 'Power your keto diet with premium grass-fed beef, pasture-raised chicken, and heritage pork. Our Keto Box delivers high-protein, zero-carb cuts perfect for low-carb meal prep.',
+      'lean-machine': 'Build muscle and burn fat with our Lean Machine Box—packed with premium lean proteins including 93/7 ground beef, skinless chicken breast, and tenderloin cuts.',
+      'family-favorites': 'Simplify dinner time with family-friendly favorites the whole household will love. Versatile cuts perfect for busy weeknight meals and weekend BBQs.',
+      'holiday-box': 'Make every holiday meal unforgettable with premium grass-fed beef and specialty cuts. Show-stopping short ribs, tri-tip steaks, and entertaining essentials.',
+    };
+
+    return descriptionMap[handle] || null;
+  };
+
   useEffect(() => {
     getCollectionByHandle('homepage-boxes').then(collection => {
       if (collection) {
@@ -202,8 +214,8 @@ export const ProductGrid: React.FC = () => {
                 </div>
             </div>
 
-            <p className="text-gray-500 text-sm mb-6 leading-relaxed flex-grow line-clamp-3">
-              {product.description}
+            <p className="text-gray-500 text-sm mb-6 leading-relaxed flex-grow line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+              {getCustomDescription(product.handle) || product.description}
             </p>
 
             <div className="space-y-2 mb-6">

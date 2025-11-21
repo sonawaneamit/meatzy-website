@@ -4,13 +4,13 @@ import { ArrowRight, ShieldCheck, Award, Truck, CheckCircle2, Star, ChefHat, Ute
 export const Hero: React.FC = () => {
   return (
     <div className="flex flex-col">
-        <section className="relative min-h-[90vh] w-full flex items-center bg-meatzy-tallow overflow-hidden pt-40 lg:pt-36 pb-16">
+        <section className="relative min-h-[90vh] w-full flex items-center bg-meatzy-tallow overflow-hidden pt-12 lg:pt-16 pb-16">
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 w-full">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
                     
                     {/* Left Content */}
-                    <div className="relative z-10 order-2 lg:order-1 text-center lg:text-left py-10 lg:py-0">
+                    <div className="relative z-10 order-1 text-center lg:text-left py-10 lg:py-0">
                         <div className="inline-flex items-center gap-2 bg-white border border-meatzy-mint rounded-full px-4 py-1.5 mb-8 shadow-sm mx-auto lg:mx-0 animate-fade-in-up">
                             <div className="flex text-meatzy-gold">
                                 <Star className="w-3 h-3 fill-current" />
@@ -55,7 +55,7 @@ export const Hero: React.FC = () => {
                     </div>
 
                     {/* Right Image */}
-                    <div className="relative z-10 order-1 lg:order-2 h-full min-h-[400px] lg:min-h-[600px] flex items-center justify-center">
+                    <div className="relative z-10 order-2 h-full min-h-[400px] lg:min-h-[600px] flex items-center justify-center">
                         {/* Blob/Shape Background */}
                         <div className="absolute inset-0 bg-meatzy-marbling/30 rounded-[3rem] transform rotate-3 scale-90 z-0"></div>
                         

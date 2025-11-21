@@ -4,9 +4,13 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   background-color: #FFECDC;
   color: #2D2B25;
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
 }
