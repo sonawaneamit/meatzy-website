@@ -62,6 +62,20 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
 
+  // Map product handles to local images (same as homepage)
+  const localImageMap: { [key: string]: string } = {
+    'keto-box': '/keto-box.jpeg',
+    'lean-machine': '/lean-machine-box.jpeg',
+    'family-favorites': '/family-faves-box.jpeg',
+    'holiday-box': '/holiday-box.jpeg',
+  };
+
+  // Create display images with local image first, then Shopify images (skip first)
+  const localImage = localImageMap[productHandle];
+  const displayImages: ProductImage[] = localImage
+    ? [{ url: localImage, altText: productTitle }, ...productImages.slice(1)]
+    : productImages;
+
   const totalPrice = basePrice * quantity + Array.from(selectedAddOns).reduce((sum, idx) => sum + addOns[idx].price, 0);
 
   const handleAddToCart = async () => {
@@ -149,11 +163,11 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
 
   // Image navigation functions
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+    setCurrentImageIndex((prev) => (prev + 1) % displayImages.length);
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
+    setCurrentImageIndex((prev) => (prev - 1 + displayImages.length) % displayImages.length);
   };
 
   // Swipe handling
@@ -267,24 +281,24 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
           <div className="space-y-4">
             {/* Main Product Image */}
             <div
-              className="aspect-square bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
+              className="aspect-[4/3] bg-white rounded-2xl shadow-2xl relative overflow-hidden border border-meatzy-mint/30 group cursor-pointer"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
               onClick={nextImage}
             >
-              {productImages.length > 0 ? (
+              {displayImages.length > 0 ? (
                 <>
                   <Image
-                    src={productImages[currentImageIndex].url}
-                    alt={productImages[currentImageIndex].altText || productTitle}
+                    src={displayImages[currentImageIndex].url}
+                    alt={displayImages[currentImageIndex].altText || productTitle}
                     fill
                     className="object-cover"
                     priority
                   />
 
                   {/* Navigation Arrows - Desktop */}
-                  {productImages.length > 1 && (
+                  {displayImages.length > 1 && (
                     <>
                       <button
                         onClick={(e) => {
@@ -308,9 +322,9 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
                   )}
 
                   {/* Image Counter */}
-                  {productImages.length > 1 && (
+                  {displayImages.length > 1 && (
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-bold">
-                      {currentImageIndex + 1} / {productImages.length}
+                      {currentImageIndex + 1} / {displayImages.length}
                     </div>
                   )}
                 </>
@@ -334,9 +348,9 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
             </div>
 
             {/* Image Thumbnails */}
-            {productImages.length > 1 && (
+            {displayImages.length > 1 && (
               <div className="grid grid-cols-5 gap-2">
-                {productImages.map((image, idx) => (
+                {displayImages.map((image, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
@@ -358,20 +372,63 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
               </div>
             )}
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg p-4 text-center border border-meatzy-mint/30">
-                <Truck className="w-8 h-8 mx-auto mb-2 text-meatzy-rare" />
-                <p className="text-xs font-bold text-meatzy-olive">Ships Frozen with Dry Ice</p>
+            {/* Frequently Bought Together - In Left Column */}
+            <div className="mt-12">
+              <h3 className="text-xl font-black font-slab text-meatzy-olive uppercase mb-4">
+                Frequently Bought Together
+              </h3>
+
+              <div className="grid grid-cols-3 gap-3">
+                {(showAllAddOns ? addOns : addOns.slice(0, 6)).map((addon, idx) => (
+                  <div
+                    key={idx}
+                    className={`bg-white rounded-lg border-2 p-3 cursor-pointer transition-all ${
+                      selectedAddOns.has(idx)
+                        ? 'border-meatzy-rare shadow-lg scale-105'
+                        : 'border-meatzy-mint/30 hover:border-meatzy-mint'
+                    }`}
+                    onClick={() => toggleAddOn(idx)}
+                  >
+                    <div className="aspect-square bg-gray-100 rounded-lg mb-2 relative overflow-hidden">
+                      {addon.image ? (
+                        <Image
+                          src={addon.image}
+                          alt={addon.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <ShoppingCart className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
+                      {selectedAddOns.has(idx) && (
+                        <div className="absolute top-1 right-1 bg-green-500 text-white rounded-full p-1">
+                          <Check className="w-3 h-3" />
+                        </div>
+                      )}
+                    </div>
+                    <h4 className="font-bold text-meatzy-olive text-xs mb-1 leading-tight line-clamp-2">
+                      {addon.name}
+                    </h4>
+                    <p className="text-sm font-black text-meatzy-rare">
+                      ${addon.price.toFixed(2)}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div className="bg-white rounded-lg p-4 text-center border border-meatzy-mint/30">
-                <Shield className="w-8 h-8 mx-auto mb-2 text-meatzy-rare" />
-                <p className="text-xs font-bold text-meatzy-olive">100% Satisfaction Guarantee</p>
-              </div>
-              <div className="bg-white rounded-lg p-4 text-center border border-meatzy-mint/30">
-                <Award className="w-8 h-8 mx-auto mb-2 text-meatzy-rare" />
-                <p className="text-xs font-bold text-meatzy-olive">Free Shipping</p>
-              </div>
+
+              {/* Show More/Less Button */}
+              {addOns.length > 6 && (
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={() => setShowAllAddOns(!showAllAddOns)}
+                    className="w-full bg-white border-2 border-meatzy-rare text-meatzy-rare px-6 py-3 rounded-lg font-bold uppercase tracking-wide hover:bg-meatzy-rare hover:text-white transition-all text-sm"
+                  >
+                    {showAllAddOns ? 'Show Less' : `Show ${addOns.length - 6} More Add-Ons`}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -412,6 +469,12 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
                   </li>
                 ))}
               </ul>
+
+              {/* Certification Logos */}
+              <div className="flex items-center justify-start gap-4 mt-6 pt-4 border-t border-gray-100">
+                <img src="/udsa-organic.png" alt="USDA Organic" className="h-12 w-auto" />
+                <img src="/certified-humane.png" alt="Certified Humane" className="h-10 w-auto" />
+              </div>
             </div>
 
             {/* Subscription Selector */}
@@ -510,70 +573,23 @@ export default function ProductBoxClient({ productTitle, productHandle, productD
                 {addingToCart ? 'Adding...' : 'Add to Cart'}
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Add-Ons Section - Prominently Placed */}
-        <div className="mb-12">
-          <h3 className="text-3xl font-black font-slab text-meatzy-olive uppercase mb-6">
-            Frequently Bought Together
-          </h3>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {displayedAddOns.map((addon, idx) => (
-              <div
-                key={idx}
-                className={`bg-white rounded-xl border-2 p-4 cursor-pointer transition-all ${
-                  selectedAddOns.has(idx)
-                    ? 'border-meatzy-rare shadow-lg scale-105'
-                    : 'border-meatzy-mint/30 hover:border-meatzy-mint'
-                }`}
-                onClick={() => toggleAddOn(idx)}
-              >
-                <div className="aspect-square bg-gray-100 rounded-lg mb-3 relative overflow-hidden">
-                  {addon.image ? (
-                    <Image
-                      src={addon.image}
-                      alt={addon.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <ShoppingCart className="w-8 h-8 text-gray-400" />
-                    </div>
-                  )}
-                </div>
-                <h3 className="font-bold text-meatzy-olive text-sm mb-1 leading-tight">
-                  {addon.name}
-                </h3>
-                <p className="text-lg font-black text-meatzy-rare">
-                  ${addon.price.toFixed(2)}
-                </p>
-                {selectedAddOns.has(idx) && (
-                  <div className="mt-2 bg-green-100 text-green-700 text-xs font-bold py-1 px-2 rounded-full text-center flex items-center justify-center gap-1">
-                    <Check className="w-3 h-3" /> Added
-                  </div>
-                )}
+            {/* Trust Badges */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg p-4 text-center border border-meatzy-mint/30">
+                <Truck className="w-8 h-8 mx-auto mb-2 text-meatzy-rare" />
+                <p className="text-xs font-bold text-meatzy-olive">Ships Frozen with Dry Ice</p>
               </div>
-            ))}
-          </div>
-
-          {/* Show More/Less Button */}
-          {addOns.length > 6 && (
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => setShowAllAddOns(!showAllAddOns)}
-                className="bg-white border-2 border-meatzy-rare text-meatzy-rare px-8 py-3 rounded-lg font-bold uppercase tracking-wide hover:bg-meatzy-rare hover:text-white transition-all"
-              >
-                {showAllAddOns ? (
-                  <>Show Less</>
-                ) : (
-                  <>Show {addOns.length - 6} More Add-Ons</>
-                )}
-              </button>
+              <div className="bg-white rounded-lg p-4 text-center border border-meatzy-mint/30">
+                <Shield className="w-8 h-8 mx-auto mb-2 text-meatzy-rare" />
+                <p className="text-xs font-bold text-meatzy-olive">100% Satisfaction Guarantee</p>
+              </div>
+              <div className="bg-white rounded-lg p-4 text-center border border-meatzy-mint/30">
+                <Award className="w-8 h-8 mx-auto mb-2 text-meatzy-rare" />
+                <p className="text-xs font-bold text-meatzy-olive">Free Shipping</p>
+              </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* What's Inside - Interactive Cards */}
