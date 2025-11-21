@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import { createUser } from '../../lib/supabase/referral';
-import { Users, Mail, User as UserIcon, ArrowRight, CheckCircle } from 'lucide-react';
+import { Users, Mail, User as UserIcon, ArrowRight, CheckCircle, Info } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -99,8 +99,14 @@ export default function SignupPage() {
             Become An Affiliate
           </h1>
 
-          <p className="text-gray-600">
-            Sign up to get your referral link and start earning commissions
+          <p className="text-gray-600 flex items-center justify-center gap-1.5">
+            Sign up to get your Referral SafeLink and start earning commissions
+            <span className="relative group">
+              <Info className="w-4 h-4 text-gray-400 cursor-help" />
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-10">
+                A SafeLink is your unique URL that tracks everyone you refer to Meatzy.
+              </span>
+            </span>
           </p>
         </div>
 

@@ -23,6 +23,7 @@ import {
   Filter,
   Copy,
   Check,
+  Info,
 } from 'lucide-react';
 
 interface AffiliateUser {
@@ -332,9 +333,17 @@ export default function AffiliateDetailPage() {
                 <div className="text-2xl font-black font-mono text-meatzy-rare">
                   {affiliate.referral_code}
                 </div>
-                {/* SafeLink Copy Section */}
+                {/* Referral SafeLink Copy Section */}
                 <div className="mt-3">
-                  <div className="text-xs text-gray-500 mb-1">SafeLink</div>
+                  <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+                    Referral SafeLink
+                    <div className="relative group">
+                      <Info className="w-3 h-3 text-gray-400 cursor-help" />
+                      <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-10">
+                        Unique URL that tracks this affiliate's referrals automatically.
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
                     <div className="text-xs md:text-sm font-mono text-meatzy-olive bg-gray-100 px-2 py-1.5 rounded truncate max-w-[180px] sm:max-w-[250px]">
                       meatzy.com/?ref={affiliate.referral_code}

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import QRCodeLib from 'qrcode';
-import { CheckCircle, Copy, Download, Share2, Mail, MessageCircle } from 'lucide-react';
+import { CheckCircle, Copy, Download, Share2, Mail, MessageCircle, Info } from 'lucide-react';
 import { generateReferralLink, generateSocialLinks, copyToClipboard, downloadQRCode } from '@/lib/referral-utils';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -403,11 +403,18 @@ function ThankYouContent() {
                 </div>
 
                 <div className="space-y-3">
-                  {/* Your Referral Link */}
+                  {/* Your Referral SafeLink */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
                     <h3 className="text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <Share2 className="w-4 h-4" />
-                    Your Referral Link
+                    Your Referral SafeLink
+                    <div className="relative group">
+                      <Info className="w-3.5 h-3.5 opacity-70 cursor-help" />
+                      <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-white text-meatzy-olive text-[10px] rounded-lg shadow-xl z-10">
+                        <p className="font-bold mb-0.5">What's a SafeLink?</p>
+                        <p>Your unique URL that tracks referrals. Share it to earn commissions!</p>
+                      </div>
+                    </div>
                   </h3>
 
                     <div className="bg-white rounded-lg p-2 mb-2">
@@ -428,7 +435,7 @@ function ThankYouContent() {
                       ) : (
                         <>
                           <Copy className="w-3 h-3" />
-                          Copy Link
+                          Copy SafeLink
                         </>
                       )}
                     </button>
@@ -444,7 +451,7 @@ function ThankYouContent() {
                       <div className="bg-white rounded-xl p-2 mb-2 flex justify-center">
                         <img
                           src={qrCodeDataUrl}
-                          alt="Referral QR Code"
+                          alt="SafeLink QR Code"
                           className="w-32 h-32"
                         />
                       </div>

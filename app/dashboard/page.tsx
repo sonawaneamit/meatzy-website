@@ -28,7 +28,8 @@ import {
   Lock,
   ShoppingBag,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Info
 } from 'lucide-react';
 import QRCodeLib from 'qrcode';
 import { generateReferralLink, generateSocialLinks, copyToClipboard, downloadQRCode } from '../../lib/referral-utils';
@@ -770,18 +771,25 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Referral Link & QR Code Section */}
+        {/* Referral SafeLink & QR Code Section */}
         <div className="bg-gradient-to-br from-meatzy-olive to-meatzy-rare rounded-xl p-8 mb-8 text-white">
           <div className="flex items-center gap-3 mb-4">
             <Share2 className="w-6 h-6" />
-            <h2 className="text-2xl font-black font-slab uppercase">Share & Earn</h2>
+            <h2 className="text-2xl font-black font-slab uppercase">Your Referral SafeLink</h2>
+            <div className="relative group">
+              <Info className="w-5 h-5 text-meatzy-mint cursor-help" />
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-3 bg-white text-meatzy-olive text-xs rounded-lg shadow-xl z-10">
+                <p className="font-bold mb-1">What is a Referral SafeLink?</p>
+                <p>Your unique URL that tracks everyone you refer. When someone uses your SafeLink to purchase, you earn commissions automatically!</p>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Referral Link */}
+            {/* Referral SafeLink */}
             <div className="lg:col-span-2">
               <p className="text-meatzy-mint mb-4">
-                Share this link to earn commissions on every purchase!
+                Share your SafeLink to earn commissions on every purchase!
               </p>
 
               <div className="flex gap-3 mb-4">
@@ -855,7 +863,7 @@ export default function DashboardPage() {
                 <>
                   <img
                     src={qrCodeDataUrl}
-                    alt="Referral QR Code"
+                    alt="SafeLink QR Code"
                     className="w-48 h-48 mb-4"
                   />
                   <button
@@ -889,7 +897,7 @@ export default function DashboardPage() {
 
             {commissions.length === 0 ? (
               <p className="text-gray-500 text-center py-8">
-                No commissions yet. Start sharing your link!
+                No commissions yet. Start sharing your SafeLink!
               </p>
             ) : (
               <div className="space-y-3">
@@ -928,7 +936,7 @@ export default function DashboardPage() {
 
             {referrals.length === 0 ? (
               <p className="text-gray-500 text-center py-8">
-                No referrals yet. Share your link to get started!
+                No referrals yet. Share your SafeLink to get started!
               </p>
             ) : (
               <div className="space-y-3">

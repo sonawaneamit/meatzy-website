@@ -20,6 +20,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Info,
 } from 'lucide-react';
 
 type SortField = 'lifetime' | 'available' | 'pending' | 'rate' | 'date' | 'status' | null;
@@ -535,7 +536,7 @@ export default function AdminDashboard() {
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(affiliate.safe_link);
-                          alert('SafeLink copied!');
+                          alert('Referral SafeLink copied!');
                         }}
                         className="flex items-center gap-1 text-xs text-meatzy-olive hover:text-meatzy-rare transition-colors"
                       >
@@ -594,7 +595,17 @@ export default function AdminDashboard() {
                     </button>
                   </th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">Code</th>
-                  <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">SafeLink</th>
+                  <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">
+                    <span className="flex items-center gap-1">
+                      Referral SafeLink
+                      <div className="relative group">
+                        <Info className="w-3 h-3 text-gray-400 cursor-help" />
+                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-[10px] rounded-lg shadow-xl z-10">
+                          Unique URL for each affiliate that tracks their referrals automatically.
+                        </div>
+                      </div>
+                    </span>
+                  </th>
                   <th className="text-left py-3 px-4 font-bold text-gray-700 uppercase text-xs">
                     <button
                       onClick={() => handleSort('status')}
@@ -661,10 +672,10 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => {
                               navigator.clipboard.writeText(affiliate.safe_link);
-                              alert('SafeLink copied!');
+                              alert('Referral SafeLink copied!');
                             }}
                             className="flex items-center gap-2 text-sm text-meatzy-olive hover:text-meatzy-rare transition-colors"
-                            title="Click to copy SafeLink"
+                            title="Click to copy Referral SafeLink"
                           >
                             <Copy className="w-4 h-4" />
                             <span className="font-mono text-xs truncate max-w-[150px]">

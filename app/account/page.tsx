@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
-import { Mail, User, ShoppingBag, DollarSign, TrendingUp, Users, ExternalLink } from 'lucide-react';
+import { Mail, User, ShoppingBag, DollarSign, TrendingUp, Users, ExternalLink, Copy, Check, Info, Share2 } from 'lucide-react';
 
 interface ShopifyOrder {
   id: string;
@@ -44,6 +44,7 @@ export default function AccountPage() {
   const [wallet, setWallet] = useState<WalletData | null>(null);
   const [orders, setOrders] = useState<ShopifyOrder[]>([]);
   const [isAffiliate, setIsAffiliate] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     checkAuthStatus();
@@ -342,7 +343,50 @@ export default function AccountPage() {
             <h1 className="text-4xl font-black font-slab text-meatzy-olive uppercase mb-2">
               Welcome Back, {userData.full_name || 'Affiliate'}!
             </h1>
-            <p className="text-gray-600">Your Referral Code: <span className="font-mono font-bold text-meatzy-rare">{userData.referral_code}</span></p>
+            <p className="text-gray-600 mb-3">Your Referral Code: <span className="font-mono font-bold text-meatzy-rare">{userData.referral_code}</span></p>
+            {/* Referral SafeLink */}
+            <div className="inline-flex flex-col sm:flex-row items-center gap-2 bg-gradient-to-r from-meatzy-olive to-meatzy-rare rounded-xl px-4 py-3">
+              <div className="flex items-center gap-2 text-white">
+                <Share2 className="w-4 h-4" />
+                <span className="text-sm font-bold">Your Referral SafeLink:</span>
+                <div className="relative group">
+                  <Info className="w-3.5 h-3.5 opacity-70 cursor-help" />
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-48 p-2 bg-white text-meatzy-olive text-[10px] rounded-lg shadow-xl z-10">
+                    <p className="font-bold mb-0.5">What's a SafeLink?</p>
+                    <p>Your unique URL that tracks referrals. Share it to earn commissions!</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <code className="bg-white/20 px-3 py-1.5 rounded text-white font-mono text-sm">
+                  meatzy.com/?ref={userData.referral_code}
+                </code>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`https://meatzy.com/?ref=${userData.referral_code}`);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded text-sm font-bold transition-all ${
+                    copied
+                      ? 'bg-green-500 text-white'
+                      : 'bg-white text-meatzy-olive hover:bg-meatzy-mint'
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Wallet Stats */}
