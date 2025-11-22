@@ -4,12 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { Product } from '@/lib/shopify/types';
 import { getCollectionByHandle, createCart, addToCart as addToShopifyCart, getCartId, saveCartId, saveCheckoutUrl, getCheckoutUrl } from '@/lib/shopify';
 import { Check, X, ShoppingCart, ChefHat } from 'lucide-react';
+import { AddonsModal } from '@/components/AddonsModal';
 
 export default function BuildBoxPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<Map<string, number>>(new Map());
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [showAddonsModal, setShowAddonsModal] = useState(false);
 
   const MAX_PRODUCTS = 6;
   const MAX_PER_PRODUCT = 2;
@@ -107,18 +109,48 @@ export default function BuildBoxPage() {
         }
       }
 
-      // Redirect to checkout
-      const checkoutUrl = getCheckoutUrl();
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        alert('Cart not found. Please try adding items again.');
-      }
+      // Show add-ons modal instead of redirecting immediately
+      setShowAddonsModal(true);
     } catch (error) {
       console.error('Error adding to cart:', error);
       alert('Failed to add to cart. Please try again.');
     } finally {
       setAddingToCart(false);
+    }
+  };
+
+  // Handle adding add-ons to cart
+  const handleAddAddons = async (selectedAddons: { product: Product; quantity: number }[]) => {
+    if (selectedAddons.length === 0) return;
+
+    try {
+      const cartId = getCartId();
+      if (!cartId) return;
+
+      const addOnItems = selectedAddons.map(({ product, quantity }) => ({
+        merchandiseId: product.variants.edges[0]?.node.id,
+        quantity
+      })).filter(item => item.merchandiseId);
+
+      if (addOnItems.length > 0) {
+        const cart = await addToShopifyCart(cartId, addOnItems);
+        if (cart) {
+          await saveCheckoutUrl(cart.checkoutUrl);
+        }
+      }
+    } catch (error) {
+      console.error('Error adding add-ons:', error);
+    }
+  };
+
+  // Handle continuing to checkout
+  const handleContinueToCheckout = () => {
+    setShowAddonsModal(false);
+    const checkoutUrl = getCheckoutUrl();
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    } else {
+      alert('Cart not found. Please try adding items again.');
     }
   };
 
@@ -273,6 +305,14 @@ export default function BuildBoxPage() {
           </div>
         </div>
       </div>
+
+      {/* Add-ons Modal */}
+      <AddonsModal
+        isOpen={showAddonsModal}
+        onClose={() => setShowAddonsModal(false)}
+        onAddAddons={handleAddAddons}
+        onContinue={handleContinueToCheckout}
+      />
     </div>
   );
 }
