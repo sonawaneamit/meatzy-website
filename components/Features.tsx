@@ -1,5 +1,24 @@
 import React from 'react';
-import { ShieldCheck, Award, Zap, Globe, MapPin, ChefHat, Leaf, Shield, FileCheck, Check, X, Minus } from 'lucide-react';
+import { ShieldCheck, Award, Zap, Globe, MapPin, ChefHat, Leaf, Shield, FileCheck, Check, X, HelpCircle } from 'lucide-react';
+
+// Styled comparison icons with circular backgrounds - subtle and delicate
+const CheckIcon = () => (
+  <div className="w-7 h-7 rounded-full bg-meatzy-dill/90 flex items-center justify-center mx-auto">
+    <Check className="w-4 h-4 text-white" strokeWidth={2.5} />
+  </div>
+);
+
+const XIcon = () => (
+  <div className="w-7 h-7 rounded-full bg-meatzy-rare/90 flex items-center justify-center mx-auto">
+    <X className="w-4 h-4 text-white" strokeWidth={2.5} />
+  </div>
+);
+
+const QuestionIcon = () => (
+  <div className="w-7 h-7 rounded-full bg-gray-400 flex items-center justify-center mx-auto">
+    <span className="text-white font-semibold text-sm">?</span>
+  </div>
+);
 
 export const Features: React.FC = () => {
   return (
@@ -123,15 +142,15 @@ export const Features: React.FC = () => {
                             <tr className="border-b border-gray-200 hover:bg-gray-50">
                                 <td className="p-4 font-bold text-meatzy-olive">Origin Transparency</td>
                                 <td className="p-4 bg-meatzy-rare/5 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">Always disclosed</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <QuestionIcon />
                                     <div className="text-xs text-gray-600 mt-1">Sometimes vague</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <XIcon />
                                     <div className="text-xs text-gray-600 mt-1">Often unclear</div>
                                 </td>
                             </tr>
@@ -140,15 +159,15 @@ export const Features: React.FC = () => {
                             <tr className="border-b border-gray-200 hover:bg-gray-50">
                                 <td className="p-4 font-bold text-meatzy-olive">Full Box Customization</td>
                                 <td className="p-4 bg-meatzy-rare/5 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">Build your own</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <QuestionIcon />
                                     <div className="text-xs text-gray-600 mt-1">Limited options</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">Buy individual</div>
                                 </td>
                             </tr>
@@ -157,15 +176,15 @@ export const Features: React.FC = () => {
                             <tr className="border-b border-gray-200 hover:bg-gray-50">
                                 <td className="p-4 font-bold text-meatzy-olive">Earn Cash Referrals</td>
                                 <td className="p-4 bg-meatzy-rare/5 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">Up to 17% per box</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <XIcon />
                                     <div className="text-xs text-gray-600 mt-1">No program</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <XIcon />
                                     <div className="text-xs text-gray-600 mt-1">No program</div>
                                 </td>
                             </tr>
@@ -174,15 +193,15 @@ export const Features: React.FC = () => {
                             <tr className="border-b border-gray-200 hover:bg-gray-50">
                                 <td className="p-4 font-bold text-meatzy-olive">Hormone & Antibiotic Free</td>
                                 <td className="p-4 bg-meatzy-rare/5 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">100% guaranteed</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">Usually yes</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <QuestionIcon />
                                     <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
                                 </td>
                             </tr>
@@ -191,15 +210,15 @@ export const Features: React.FC = () => {
                             <tr className="border-b border-gray-200 hover:bg-gray-50">
                                 <td className="p-4 font-bold text-meatzy-olive">Flexible Delivery Schedule</td>
                                 <td className="p-4 bg-meatzy-rare/5 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">4, 6, or 8 weeks</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <QuestionIcon />
                                     <div className="text-xs text-gray-600 mt-1">Limited options</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <X className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <XIcon />
                                     <div className="text-xs text-gray-600 mt-1">No subscription</div>
                                 </td>
                             </tr>
@@ -208,15 +227,15 @@ export const Features: React.FC = () => {
                             <tr className="hover:bg-gray-50">
                                 <td className="p-4 font-bold text-meatzy-olive">Chef Tested Quality</td>
                                 <td className="p-4 bg-meatzy-rare/5 text-center">
-                                    <Check className="w-8 h-8 text-meatzy-dill mx-auto" strokeWidth={3} />
+                                    <CheckIcon />
                                     <div className="text-xs text-gray-600 mt-1">Resort-grade</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <QuestionIcon />
                                     <div className="text-xs text-gray-600 mt-1">Variable</div>
                                 </td>
                                 <td className="p-4 text-center">
-                                    <Minus className="w-8 h-8 text-gray-400 mx-auto" strokeWidth={3} />
+                                    <QuestionIcon />
                                     <div className="text-xs text-gray-600 mt-1">Depends on brand</div>
                                 </td>
                             </tr>
