@@ -31,7 +31,24 @@ export default async function RootLayout({
   // Read referral cookie server-side
   const cookieStore = await cookies();
   const referralCookie = cookieStore.get('meatzy_ref');
+
+  // Debug: Log cookie value on server
+  console.log('[Layout] Raw referral cookie:', referralCookie?.value ? 'Present' : 'Not found');
+  if (referralCookie?.value) {
+    try {
+      const parsed = JSON.parse(referralCookie.value);
+      console.log('[Layout] Parsed cookie data:', {
+        referrerName: parsed.referrerName,
+        slug: parsed.slug,
+        hasAffiliateId: !!parsed.affiliateId
+      });
+    } catch (e) {
+      console.log('[Layout] Failed to parse cookie:', e);
+    }
+  }
+
   const referralData = parseReferralCookie(referralCookie?.value);
+  console.log('[Layout] Final referralData:', { hasReferral: referralData.hasReferral, referrerName: referralData.referrerName });
 
   return (
     <html lang="en">
