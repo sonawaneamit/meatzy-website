@@ -129,7 +129,7 @@ export function ReferralWelcomePopup() {
         </button>
 
         {/* Header Banner */}
-        <div className="bg-meatzy-dill text-white py-4 px-6 text-center">
+        <div className="bg-gradient-to-r from-meatzy-welldone to-meatzy-rare text-white py-4 px-6 text-center">
           <div className="flex items-center justify-center gap-2">
             <Gift className="w-6 h-6 animate-bounce" />
             <span className="font-display font-bold uppercase tracking-widest text-sm">
@@ -142,27 +142,27 @@ export function ReferralWelcomePopup() {
         {/* Content */}
         <div className="p-8 text-center">
           {/* Referrer Name */}
-          <p className="text-meatzy-rosemary text-sm font-bold uppercase tracking-wider mb-2">
+          <p className="text-meatzy-rare text-sm font-bold uppercase tracking-wider mb-2">
             {referrerName} sent you
           </p>
 
           {/* Main Message */}
-          <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-olive uppercase mb-4">
+          <h2 className="text-4xl md:text-5xl font-black font-slab text-meatzy-rare uppercase mb-4">
             ${discountAmount} OFF
           </h2>
 
           {/* Sub Message */}
-          <p className="text-meatzy-rosemary mb-6">
+          <p className="text-meatzy-olive mb-6">
             Premium grass-fed American meat, delivered to your door.
           </p>
 
           {/* Discount Code Display */}
           {discountCode && (
-            <div className="bg-meatzy-mint/50 border-2 border-dashed border-meatzy-dill rounded-lg p-4 mb-6">
-              <p className="text-xs text-meatzy-rosemary uppercase tracking-wider mb-1">
+            <div className="bg-meatzy-marbling/30 border-2 border-dashed border-meatzy-rare/40 rounded-lg p-4 mb-6">
+              <p className="text-xs text-meatzy-olive uppercase tracking-wider mb-1">
                 Your exclusive code
               </p>
-              <p className="font-mono font-bold text-lg text-meatzy-olive">
+              <p className="font-mono font-bold text-lg text-meatzy-welldone">
                 {discountCode}
               </p>
               <p className="text-xs text-meatzy-rosemary mt-1">
