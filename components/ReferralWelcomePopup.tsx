@@ -77,22 +77,28 @@ export function ReferralWelcomePopup() {
     const duration = 3000;
     const end = Date.now() + duration;
 
+    // Common options - z-index higher than popup (9999)
+    const baseOptions = {
+      colors: MEATZY_COLORS,
+      zIndex: 10000,
+    };
+
     // Left side burst
     confetti({
+      ...baseOptions,
       particleCount: 50,
       angle: 60,
       spread: 55,
       origin: { x: 0, y: 0.6 },
-      colors: MEATZY_COLORS,
     });
 
     // Right side burst
     confetti({
+      ...baseOptions,
       particleCount: 50,
       angle: 120,
       spread: 55,
       origin: { x: 1, y: 0.6 },
-      colors: MEATZY_COLORS,
     });
 
     // Continuous rain effect
@@ -103,11 +109,11 @@ export function ReferralWelcomePopup() {
       }
 
       confetti({
+        ...baseOptions,
         particleCount: 3,
         angle: 90,
         spread: 180,
         origin: { x: Math.random(), y: -0.1 },
-        colors: MEATZY_COLORS,
         gravity: 0.8,
         scalar: 1.2,
       });
