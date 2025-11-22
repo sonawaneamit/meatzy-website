@@ -8,7 +8,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useReferral } from '@/context/ReferralContext';
 import confetti from 'canvas-confetti';
 import { X, Gift } from 'lucide-react';
@@ -26,7 +26,7 @@ export function ReferralWelcomePopup() {
   const { hasReferral, referrerName, discountAmount, discountCode, slug } = useReferral();
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [popupTriggered, setPopupTriggered] = useState(false);
+  const hasTriggeredRef = useRef(false);
 
   useEffect(() => {
     // Debug logging
@@ -38,9 +38,12 @@ export function ReferralWelcomePopup() {
       return;
     }
 
-    // Only trigger once per component lifecycle
-    if (popupTriggered) return;
-    setPopupTriggered(true);
+    // Only trigger once - use ref to persist across re-renders
+    if (hasTriggeredRef.current) {
+      console.log('ReferralWelcomePopup - Already triggered, skipping');
+      return;
+    }
+    hasTriggeredRef.current = true;
 
     // Check if we've already shown the popup for THIS specific referrer
     // This allows showing popup again if user visits via different SafeLink
@@ -60,15 +63,14 @@ export function ReferralWelcomePopup() {
     console.log('ReferralWelcomePopup - Will show popup in 500ms');
 
     // Small delay to let the page load, then show popup
-    const timer = setTimeout(() => {
+    // Don't return cleanup - we want the timer to fire even if effect re-runs
+    setTimeout(() => {
       console.log('ReferralWelcomePopup - Setting showPopup to true NOW');
       setShowPopup(true);
       // Fire confetti!
       fireConfetti();
     }, 500);
-
-    return () => clearTimeout(timer);
-  }, [hasReferral, referrerName, slug, popupTriggered]);
+  }, [hasReferral, referrerName, slug]);
 
   const fireConfetti = () => {
     // Initial burst from both sides
