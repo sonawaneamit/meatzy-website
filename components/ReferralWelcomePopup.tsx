@@ -23,25 +23,41 @@ const MEATZY_COLORS = [
 ];
 
 export function ReferralWelcomePopup() {
-  const { hasReferral, referrerName, discountAmount, discountCode } = useReferral();
+  const { hasReferral, referrerName, discountAmount, discountCode, slug } = useReferral();
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [popupTriggered, setPopupTriggered] = useState(false);
 
   useEffect(() => {
+    // Debug logging
+    console.log('ReferralWelcomePopup - hasReferral:', hasReferral, 'referrerName:', referrerName, 'slug:', slug);
+
     // Wait for referral data to be available
-    if (!hasReferral || !referrerName) return;
+    if (!hasReferral || !referrerName) {
+      console.log('ReferralWelcomePopup - No referral data yet');
+      return;
+    }
 
     // Only trigger once per component lifecycle
     if (popupTriggered) return;
     setPopupTriggered(true);
 
-    // Check if we've already shown the popup (use localStorage for persistence)
-    const popupShown = localStorage.getItem('meatzy_referral_popup_shown');
-    if (popupShown) return;
+    // Check if we've already shown the popup for THIS specific referrer
+    // This allows showing popup again if user visits via different SafeLink
+    const shownForSlug = localStorage.getItem('meatzy_referral_popup_slug');
+    const currentSlug = slug || referrerName; // Use slug or fallback to referrerName
 
-    // Mark as shown immediately to prevent race conditions
-    localStorage.setItem('meatzy_referral_popup_shown', 'true');
+    console.log('ReferralWelcomePopup - shownForSlug:', shownForSlug, 'currentSlug:', currentSlug);
+
+    if (shownForSlug === currentSlug) {
+      console.log('ReferralWelcomePopup - Already shown for this referrer');
+      return;
+    }
+
+    // Mark as shown for this specific referrer
+    localStorage.setItem('meatzy_referral_popup_slug', currentSlug);
+
+    console.log('ReferralWelcomePopup - Showing popup!');
 
     // Small delay to let the page load, then show popup
     const timer = setTimeout(() => {
@@ -51,7 +67,7 @@ export function ReferralWelcomePopup() {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [hasReferral, referrerName, popupTriggered]);
+  }, [hasReferral, referrerName, slug, popupTriggered]);
 
   const fireConfetti = () => {
     // Initial burst from both sides
