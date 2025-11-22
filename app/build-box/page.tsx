@@ -165,7 +165,7 @@ export default function BuildBoxPage() {
   }
 
   return (
-    <div className="min-h-screen bg-meatzy-tallow -mt-[140px] pt-44 pb-20">
+    <div className="min-h-screen bg-meatzy-tallow -mt-[140px] pt-32 md:pt-44 pb-40">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
 
         {/* Header */}
@@ -216,11 +216,12 @@ export default function BuildBoxPage() {
             return (
               <div
                 key={product.id}
+                onClick={() => !isSelected && canAdd && handleToggleProduct(product.id)}
                 className={`relative bg-white border-2 rounded-xl overflow-hidden transition-all duration-300 ${
                   isSelected
                     ? 'border-meatzy-rare shadow-xl scale-105'
-                    : 'border-meatzy-mint hover:border-meatzy-dill hover:shadow-lg'
-                }`}
+                    : 'border-meatzy-mint hover:border-meatzy-dill hover:shadow-lg cursor-pointer'
+                } ${!isSelected && !canAdd ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {/* Selected Badge */}
                 {isSelected && (
@@ -253,7 +254,7 @@ export default function BuildBoxPage() {
                   )}
 
                   {isSelected ? (
-                    <div className="flex items-center gap-1 md:gap-2">
+                    <div className="flex items-center gap-1 md:gap-2" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => handleQuantityChange(product.id, -1)}
                         className="flex-1 bg-meatzy-mint text-meatzy-olive px-2 md:px-3 py-1.5 md:py-2 rounded-lg font-bold hover:bg-meatzy-dill transition-colors text-sm md:text-base"
@@ -271,7 +272,7 @@ export default function BuildBoxPage() {
                     </div>
                   ) : (
                     <button
-                      onClick={() => handleToggleProduct(product.id)}
+                      onClick={(e) => { e.stopPropagation(); handleToggleProduct(product.id); }}
                       disabled={totalSelected >= MAX_PRODUCTS}
                       className="w-full bg-meatzy-olive text-white py-2 md:py-2.5 rounded-lg font-display font-bold uppercase text-[10px] md:text-xs tracking-wider hover:bg-meatzy-rare transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -284,24 +285,29 @@ export default function BuildBoxPage() {
           })}
         </div>
 
-        {/* Add to Cart Button */}
-        <div className="sticky bottom-0 bg-white border-t-4 border-meatzy-gold shadow-2xl p-6 rounded-t-2xl">
-          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-center sm:text-left">
-              <p className="text-sm text-gray-500 mb-1">Custom Box</p>
-              <p className="text-3xl font-black text-meatzy-olive">
-                {totalSelected} / {MAX_PRODUCTS} proteins selected
-              </p>
-            </div>
+      </div>
 
-            <button
-              onClick={handleAddToCart}
-              disabled={totalSelected !== MAX_PRODUCTS || addingToCart}
-              className="w-full sm:w-auto px-12 py-4 bg-meatzy-rare text-white font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-lg flex items-center justify-center gap-3"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {addingToCart ? 'Adding...' : totalSelected === MAX_PRODUCTS ? 'Add to Cart' : `Select ${MAX_PRODUCTS - totalSelected} More`}
-            </button>
+      {/* Add to Cart Button - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 px-4 md:px-8 pb-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white border-t-4 border-meatzy-gold shadow-2xl p-6 rounded-2xl">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-center sm:text-left">
+                <p className="text-sm text-gray-500 mb-1">Custom Box</p>
+                <p className="text-3xl font-black text-meatzy-olive">
+                  {totalSelected} / {MAX_PRODUCTS} proteins selected
+                </p>
+              </div>
+
+              <button
+                onClick={handleAddToCart}
+                disabled={totalSelected !== MAX_PRODUCTS || addingToCart}
+                className="w-full sm:w-auto px-12 py-4 bg-meatzy-rare text-white font-display font-bold uppercase tracking-widest hover:bg-meatzy-welldone transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-lg flex items-center justify-center gap-3"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {addingToCart ? 'Adding...' : totalSelected === MAX_PRODUCTS ? 'Add to Cart' : `Select ${MAX_PRODUCTS - totalSelected} More`}
+              </button>
+            </div>
           </div>
         </div>
       </div>

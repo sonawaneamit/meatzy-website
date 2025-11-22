@@ -91,7 +91,7 @@ export const AddonsModal: React.FC<AddonsModalProps> = ({ isOpen, onClose, onAdd
               <div className="text-meatzy-olive font-display font-bold uppercase tracking-widest">Loading add-ons...</div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {addons.map((addon) => {
                 const isSelected = selectedAddons.has(addon.id);
                 const quantity = selectedAddons.get(addon.id) || 1;
@@ -100,16 +100,17 @@ export const AddonsModal: React.FC<AddonsModalProps> = ({ isOpen, onClose, onAdd
                 return (
                   <div
                     key={addon.id}
+                    onClick={() => !isSelected && handleToggleAddon(addon.id)}
                     className={`relative bg-white border-2 rounded-xl overflow-hidden transition-all duration-300 ${
                       isSelected
-                        ? 'border-meatzy-rare shadow-lg scale-105'
-                        : 'border-meatzy-mint hover:border-meatzy-dill'
+                        ? 'border-meatzy-rare shadow-lg scale-[1.02]'
+                        : 'border-meatzy-mint hover:border-meatzy-dill cursor-pointer'
                     }`}
                   >
                     {/* Selected Badge */}
                     {isSelected && (
-                      <div className="absolute top-3 right-3 z-10 bg-meatzy-rare text-white rounded-full p-2">
-                        <Check className="w-4 h-4" />
+                      <div className="absolute top-2 right-2 z-10 bg-meatzy-rare text-white rounded-full p-1.5">
+                        <Check className="w-3 h-3" />
                       </div>
                     )}
 
@@ -123,42 +124,41 @@ export const AddonsModal: React.FC<AddonsModalProps> = ({ isOpen, onClose, onAdd
                     </div>
 
                     {/* Info */}
-                    <div className="p-4">
-                      <h3 className="font-slab font-bold text-meatzy-olive text-lg mb-2 line-clamp-2">{addon.title}</h3>
-                      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{addon.description}</p>
+                    <div className="p-2 md:p-3">
+                      <h3 className="font-slab font-bold text-meatzy-olive text-xs md:text-sm mb-1 line-clamp-2 min-h-[32px] md:min-h-[40px]">{addon.title}</h3>
 
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-2xl font-black text-meatzy-welldone">${price.toFixed(2)}</span>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-base md:text-lg font-black text-meatzy-welldone">${price.toFixed(2)}</span>
                       </div>
 
                       {isSelected ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={() => handleQuantityChange(addon.id, -1)}
-                            className="bg-meatzy-mint text-meatzy-olive px-3 py-2 rounded-lg font-bold hover:bg-meatzy-dill transition-colors"
+                            className="flex-1 bg-meatzy-mint text-meatzy-olive px-2 py-1.5 rounded-lg font-bold hover:bg-meatzy-dill transition-colors text-sm"
                           >
                             -
                           </button>
-                          <span className="flex-1 text-center font-bold text-meatzy-olive">{quantity}</span>
+                          <span className="px-2 font-bold text-meatzy-olive text-sm">{quantity}</span>
                           <button
                             onClick={() => handleQuantityChange(addon.id, 1)}
-                            className="bg-meatzy-mint text-meatzy-olive px-3 py-2 rounded-lg font-bold hover:bg-meatzy-dill transition-colors"
+                            className="flex-1 bg-meatzy-mint text-meatzy-olive px-2 py-1.5 rounded-lg font-bold hover:bg-meatzy-dill transition-colors text-sm"
                           >
                             +
                           </button>
                           <button
                             onClick={() => handleToggleAddon(addon.id)}
-                            className="bg-meatzy-rare text-white px-4 py-2 rounded-lg font-bold hover:bg-meatzy-welldone transition-colors"
+                            className="bg-meatzy-rare text-white p-1.5 rounded-lg hover:bg-meatzy-welldone transition-colors"
                           >
-                            Remove
+                            <X className="w-4 h-4" />
                           </button>
                         </div>
                       ) : (
                         <button
-                          onClick={() => handleToggleAddon(addon.id)}
-                          className="w-full bg-meatzy-olive text-white py-3 rounded-lg font-display font-bold uppercase tracking-wider hover:bg-meatzy-rare transition-colors flex items-center justify-center gap-2"
+                          onClick={(e) => { e.stopPropagation(); handleToggleAddon(addon.id); }}
+                          className="w-full bg-meatzy-olive text-white py-2 rounded-lg font-display font-bold uppercase text-[10px] md:text-xs tracking-wider hover:bg-meatzy-rare transition-colors flex items-center justify-center gap-1"
                         >
-                          <Plus className="w-4 h-4" /> Add
+                          <Plus className="w-3 h-3" /> Add
                         </button>
                       )}
                     </div>
