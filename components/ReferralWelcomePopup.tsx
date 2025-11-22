@@ -26,19 +26,18 @@ export function ReferralWelcomePopup() {
   const { hasReferral, referrerName, discountAmount, discountCode } = useReferral();
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [hasChecked, setHasChecked] = useState(false);
+  const [popupTriggered, setPopupTriggered] = useState(false);
 
   useEffect(() => {
-    // Only run once
-    if (hasChecked) return;
-    setHasChecked(true);
-
-    // Only show popup if there's a referral
+    // Wait for referral data to be available
     if (!hasReferral || !referrerName) return;
 
-    // Check if we've already shown the popup (use localStorage for persistence across sessions)
-    const popupShown = localStorage.getItem('meatzy_referral_popup_shown');
+    // Only trigger once per component lifecycle
+    if (popupTriggered) return;
+    setPopupTriggered(true);
 
+    // Check if we've already shown the popup (use localStorage for persistence)
+    const popupShown = localStorage.getItem('meatzy_referral_popup_shown');
     if (popupShown) return;
 
     // Mark as shown immediately to prevent race conditions
@@ -52,7 +51,7 @@ export function ReferralWelcomePopup() {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [hasReferral, referrerName, hasChecked]);
+  }, [hasReferral, referrerName, popupTriggered]);
 
   const fireConfetti = () => {
     // Initial burst from both sides
