@@ -57,10 +57,11 @@ export function ReferralWelcomePopup() {
     // Mark as shown for this specific referrer
     localStorage.setItem('meatzy_referral_popup_slug', currentSlug);
 
-    console.log('ReferralWelcomePopup - Showing popup!');
+    console.log('ReferralWelcomePopup - Will show popup in 500ms');
 
     // Small delay to let the page load, then show popup
     const timer = setTimeout(() => {
+      console.log('ReferralWelcomePopup - Setting showPopup to true NOW');
       setShowPopup(true);
       // Fire confetti!
       fireConfetti();
@@ -122,11 +123,14 @@ export function ReferralWelcomePopup() {
 
   if (!showPopup) return null;
 
+  console.log('ReferralWelcomePopup - RENDERING POPUP NOW, showPopup:', showPopup);
+
   return (
     <div
       className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 ${
         isClosing ? 'opacity-0' : 'opacity-100'
       }`}
+      style={{ zIndex: 9999 }}
     >
       {/* Backdrop */}
       <div
@@ -137,8 +141,11 @@ export function ReferralWelcomePopup() {
       {/* Popup Card */}
       <div
         className={`relative bg-meatzy-tallow rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all duration-300 ${
-          isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100 animate-popIn'
+          isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
         }`}
+        style={{
+          animation: isClosing ? 'none' : 'popIn 0.4s ease-out'
+        }}
       >
         {/* Close Button */}
         <button
@@ -206,27 +213,6 @@ export function ReferralWelcomePopup() {
           </p>
         </div>
       </div>
-
-      {/* Animation Styles */}
-      <style jsx global>{`
-        @keyframes popIn {
-          0% {
-            transform: scale(0.8);
-            opacity: 0;
-          }
-          50% {
-            transform: scale(1.02);
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-
-        .animate-popIn {
-          animation: popIn 0.4s ease-out;
-        }
-      `}</style>
     </div>
   );
 }
